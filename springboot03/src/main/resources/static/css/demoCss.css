@@ -1,0 +1,42 @@
+#dataTable{
+    position: relative;
+    height:70%;
+    width:60%;
+
+    top:15%;
+    left:17%;
+    opacity: 1;
+
+    /*  overflow: scroll;
+      white-space:nowrap;*/
+}
+.ant-tabs-nav .ant-tabs-tab {
+    display: inline-block;
+    height: 100%;
+    margin-left: 1px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    position: relative;
+    -webkit-transition: color .3s cubic-bezier(.645,.045,.355,1);
+    transition: color .3s cubic-bezier(.645,.045,.355,1);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+
+span{
+    display: inline;
+}
+.ant-tabs.ant-tabs-top.ant-tabs-line {
+    width: 100%;
+}
+
+tbody.ant-table-tbody {
+    line-height: 10%;/*行高*/
+    text-align: center;/*表格文字居中*/
+}
+
+#appHzd{
+    width: 101%;height: 102%;
+
+}
