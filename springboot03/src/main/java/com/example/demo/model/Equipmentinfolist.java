@@ -8,7 +8,6 @@ import java.util.Date;
  */
 public class Equipmentinfolist {
 
-
     private Long id;
 
     private String equipmentNo;
@@ -62,6 +61,10 @@ public class Equipmentinfolist {
     private Integer flag;
 
     private Long equipmentid;
+    /**
+     * 新加出水口状态
+     */
+    private String status17;
 
     public Equipmentinfolist(Long id, String equipmentNo, String equipmentLocation, BigDecimal pressure, String status00, String status01, String status02, String status03, String status04, String status05, String status06, String status07, BigDecimal hrTemp, BigDecimal pressTraTemp, BigDecimal pressTraVoltage, BigDecimal nbiotVoltage, String status10, String status11, String status12, String status13, String status14, String status15, String status16, BigDecimal angleOfInclination, Date createdate, Integer flag, Long equipmentid) {
         this.id = id;
@@ -91,6 +94,14 @@ public class Equipmentinfolist {
         this.createdate = createdate;
         this.flag = flag;
         this.equipmentid = equipmentid;
+    }
+
+    public String getStatus17() {
+        return status17;
+    }
+
+    public void setStatus17(String status17) {
+        this.status17 = status17;
     }
 
     public Equipmentinfolist() {
@@ -312,6 +323,7 @@ public class Equipmentinfolist {
     public void setEquipmentid(Long equipmentid) {
         this.equipmentid = equipmentid;
     }
+
     @Override
     public String toString() {
         return "Equipmentinfolist{" +

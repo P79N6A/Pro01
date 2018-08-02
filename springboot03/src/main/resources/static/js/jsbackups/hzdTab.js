@@ -615,11 +615,11 @@ const renderContent = (value, row, index) => {
     return obj;
 };
 const columns = [
-     {
+    /* {
          title: '设备ID',
          dataIndex: 'equipmentLocation',
          width: '6%',
-        /* fixed:'left',*/
+        /!* fixed:'left',*!/
          render: (value, row, index) => {
              const obj = {
                  children: value,
@@ -633,23 +633,22 @@ const columns = [
              }
              return obj;
          },
-     },
+     },*/
     {
         title: '采集时间戳',
         dataIndex: 'createdate',
-        width: '16%',
-        // fixed:'left',
+        width: '14%',
+        fixed:'left',
         render: (text, row, index) => {
-            // if (index < 10) {
-            //     return <div>{text}</div>;
-            // }
-            // return {
-            //     children: {text}
-            //   /*  props: {
-            //         colSpan: 5,
-            //     },*/
-            // };
-            return <div>{text}</div>;
+            if (index < 10) {
+                return <a href="javascript:;">{text}</a>;
+            }
+            return {
+                children: <a href="javascript:;">{text}</a>,
+                /*  props: {
+                      colSpan: 5,
+                  },*/
+            };
         },
     },
     {
@@ -831,16 +830,16 @@ class IdxDataList extends React.Component {
     }
     render() {
         return (
-            <antd.Table
-                columns={columns}/* columns={this.columns}*/
-                rowKey={record => record.registered}/* rowKey={record => record.id}*/
-                dataSource={this.state.data}/* dataSource={this.state.data.rows}*/
-                pagination={this.state.pagination}
-                loading={this.state.loading}
-                onChange={this.handleTableChange}
-                scroll={{ x: '120%', y: 300}}
-                bordered
-                indentSize
+            <antd.Table rowKey="uid"
+                        columns={columns}/* columns={this.columns}*/
+                        rowKey={record => record.registered}/* rowKey={record => record.id}*/
+                        dataSource={this.state.data}/* dataSource={this.state.data.rows}*/
+                        pagination={this.state.pagination}
+                        loading={this.state.loading}
+                        onChange={this.handleTableChange}
+                        scroll={{ x: '120%', y: 300}}
+                        bordered
+                        indentSize
 
             />
         );
@@ -851,36 +850,11 @@ class IdxDataList extends React.Component {
 /**
  * render
  */
-$(document).ready(function() {
-    $("#hzdOpenTab").click(function () {
 
-        /* devId= $("#devIdText").val();传值进入<HzdTab/>
-         alert(devId);*/
-        /* debugger*/       ReactDOM.render(
-            <div>
-                <HzdTab/>
-            </div> ,document.getElementById("appHzd"));
-          $("#dataTable").css({
-               "background-color":"#a6c8e6"
-           });
-        $("#dataTable").slideDown(500);
-
-
-     /*   $("#dataTable").css("overflow","scroll");这两行不要随便加
-        $("#dataTable").css("white-space","nowrap");*/
-        /*  $("#dataTable").css({
-              "background-color":"#a6c8e6",
-              "overflow":"scroll",
-              "white-space":"nowrap"
-          });*/
-    });
-});
-
-//关闭按钮点击事件
-$("#hzdClose2Tab").click(function () {
-    /* debugger*/
-    $("#dataTable").slideUp(500);
-})
+ReactDOM.render(
+    <div>
+        <HzdTab/>
+    </div> ,document.getElementById("appHzd"));
 
 /*$(document).ready(function() {
     $("table.ant-table-fixed").colResizable({liveDrag:true, draggingClass:"dragging"});

@@ -7,21 +7,18 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
-
-
-/*
- created by zhoujun on 2018/6/19
- */
 @Service
-@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 public class EquipmentmanagerListServiceImp implements equipment_managerList_service {
+
+    private final EquipmentinfolistMapper mapper;
+
     @Autowired
-    private  EquipmentinfolistMapper mapper;
+    public EquipmentmanagerListServiceImp(EquipmentinfolistMapper mapper) {
+        this.mapper = mapper;
+    }
 
     /**
      * 通过equipmentid(设备编号)查询
@@ -32,61 +29,42 @@ public class EquipmentmanagerListServiceImp implements equipment_managerList_ser
     public List<Equipmentinfolist> selectByequipmentid(Long equipmentid) {
         return mapper.selectByequipmentid(equipmentid);
     }
-
-    /**
-     * 黄泽东
-     * @param keyword
-     * @return
-     */
     @Override
-    public PageInfo<Equipmentinfolist> selectByKeyWord(int pageNum, int pageSize,String keyword,Long equipmentid) {
-        //若是为空则查询所有的数据
+    public PageInfo<Equipmentinfolist> selectByKeyWord(int pageNum, int pageSize, String keyword, Long equipmentid) {
+        /*在PageInfo已经有（总页数，当前页，最后一页等），所以不再放入，所以注释
         int pageCount;//总页数
-        int totalCounts2=mapper.getCount();//总条数
+        //总条数
+        int totalCounts2=mapper.getCount();
         if(totalCounts2/pageSize==0){
             pageCount=totalCounts2/pageSize;
         }else {
             pageCount=totalCounts2/pageSize+1;
         }
-        System.out.println("一共有条数"+totalCounts2+"/n"+"一共页数:"+pageCount);
+        System.out.println("一共有条数"+totalCounts2+"/n"+"一共页数:"+pageCount);*/
 
         PageHelper.startPage(pageNum, pageSize);
 
+        List<Equipmentinfolist> lists=mapper.selectByKeyWord(keyword,equipmentid);
 
-        if(keyword.equals("")){
-
-            List<Equipmentinfolist> lists=mapper.sellectAll(equipmentid);
-            PageInfo<Equipmentinfolist> pageInfo = new PageInfo<>(lists);
-            return pageInfo;
-        }else{
-            List<Equipmentinfolist> lists=mapper.selectByKeyWord(keyword,equipmentid);
-            PageInfo<Equipmentinfolist> pageInfo = new PageInfo<>(lists);
-            return pageInfo;
-        }
-        //不为空则对传入的参数进行模糊查询的处理
-        //keyword="%"+keyword+"%";
+       /* PageInfo<Equipmentinfolist> pageInfo = new PageInfo<>(lists);
+        return pageInfo;*/
+        return new PageInfo<>(lists);
     }
 
+    /**
+     * @author HuangZeDong 功能分页和查Echarts
+     * @param pageNum pageNum
+     * @param pageSize pageSize
+     * @return Equipmentinfolist
+     */
+    @Override
+    public PageInfo<Equipmentinfolist> selectByEcharts(int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
 
+        List<Equipmentinfolist> lists=mapper.selectByEcharts();
 
-        /**
-         *
-         * @Title: getList
-         * @Description: 从数据库中获取所有商品类型列表
-         * @param current 当前页
-         * @param pageSize 当前页面展示数目
-         * @return
-         * @throws Exception
-         */
-        @Override
-        public List<Equipmentinfolist> getList(int current, int pageSize) throws Exception {
-            //使用分页插件,核心代码就这一行
-            int total=mapper.getCount();
-            System.out.println("一共有条数"+total);
-            PageHelper.startPage(current, pageSize);
-            // 获取
-            List<Equipmentinfolist> typeList = mapper.getList();
-            return typeList;
-        }
+        return new PageInfo<>(lists);
+    }
+
 
 }

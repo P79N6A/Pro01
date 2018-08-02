@@ -6,9 +6,6 @@ import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
-/*
- created by zhoujun on 2018/6/19
- */
 public interface equipment_managerList_service {
 
     /**
@@ -18,13 +15,21 @@ public interface equipment_managerList_service {
     List<Equipmentinfolist> selectByequipmentid(Long equipmentId);
 
     /**
-     * 黄泽东
-     * @param keyword
-     * @return
+     * 后端分页查询
+     * @param current current
+     * @param pageSize pageSize
+     * @param keyword keyword
+     * @param equipmentid equipmentid
+     * @return Equipmentinfolist
      */
-    public PageInfo<Equipmentinfolist> selectByKeyWord(int current, int pageSize,String keyword, Long equipmentid);
+    PageInfo<Equipmentinfolist> selectByKeyWord(int current, int pageSize, String keyword, Long equipmentid);
 
-
-    public List<Equipmentinfolist> getList(int pageNum, int pageSize)throws Exception;
+    /**
+     * 其实Echarts不用分页，这里偷懒就按照分页写，只是sql不一样
+     * @param current current
+     * @param pageSize pageSize
+     * @return Equipmentinfolist
+     */
+    PageInfo<Equipmentinfolist> selectByEcharts(int current, int pageSize);
 
 }

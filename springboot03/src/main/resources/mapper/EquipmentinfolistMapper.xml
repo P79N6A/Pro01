@@ -34,9 +34,9 @@
   </resultMap>
   <!-- created by zhoujun on 2018/6/19-->
   <sql id="Base_Column_List" >
-    id, equipment_no, equipment_location, pressure, status00, status01, status02, status03, 
-    status04, status05, status06, status07, hr_temp, press_tra_temp, press_tra_voltage, 
-    nbiot_voltage, status10, status11, status12, status13, status14, status15, status16, 
+    id, equipment_no, equipment_location, pressure, status00, status01, status02, status03,
+    status04, status05, status06, status07, hr_temp, press_tra_temp, press_tra_voltage,
+    nbiot_voltage, status10, status11, status12, status13, status14, status15, status16,
     angle_of_inclination, createdate, flag, equipmentid
   </sql>
 
@@ -47,18 +47,12 @@
     <include refid="Base_Column_List" />
     from fce_equipmentinfolist
   </select>
-  <!--黄泽东分页-->
 
-  <select id="getList" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from fce_equipmentinfolist
-  </select>
+
+
   <select id="getCount" resultType="int" parameterType="String">
     select count(*) from fce_equipmentinfolist
   </select>
-
-
 
 
   <!--where equipmentid = #{equipmentid,jdbcType=BIGINT}-->
@@ -67,14 +61,20 @@
     select
     <include refid="Base_Column_List" />
     from fce_equipmentinfolist
-    where   equipmentid = #{equid} and equipment_location like "%"#{keyword}"%"
-
+    where   equipmentid = #{equid}
+    <if test="keyword!= null" >
+      and (equipment_location like concat("%", #{keyword},"%") OR status01 like concat("%", #{keyword},"%"))
+    </if>
   </select>
-
+  <select id="selectByEcharts" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from fce_equipmentinfolist
+  </select>
   <!--equipmentid = #{equid} and equipment_location like "%"#{keyword}"%"-->
-<!--/*(
-    status10 like concat("%", #{keyword},"%") or equipment_location  like concat("%", #{keyword},"%"))AND (equipmentid=#{equipmentid}
-    )*/-->
+  <!--/*(
+      status10 like concat("%", #{keyword},"%") or equipment_location  like concat("%", #{keyword},"%"))AND (equipmentid=#{equipmentid}
+      )*/-->
   <!--/* where (
     id = #{keyword} or equipment_no= #{keyword} or equipment_location =keyword} or pressure =  #{keyword} or
     status00 = #{keyword} or  status01 = #{keyword} or status02 =#{keyword} or status03 like  "%"#{keyword}"%"            or
@@ -89,7 +89,7 @@
 
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from fce_equipmentinfolist
     where id = #{id,jdbcType=BIGINT}
@@ -106,26 +106,26 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.example.demo.model.Equipmentinfolist" >
-    insert into fce_equipmentinfolist (id, equipment_no, equipment_location, 
-      pressure, status00, status01, 
-      status02, status03, status04, 
-      status05, status06, status07, 
-      hr_temp, press_tra_temp, press_tra_voltage, 
-      nbiot_voltage, status10, status11, 
-      status12, status13, status14, 
-      status15, status16, angle_of_inclination, 
-      createdate, flag, equipmentid
-      )
-    values (#{id,jdbcType=BIGINT}, #{equipmentNo,jdbcType=VARCHAR}, #{equipmentLocation,jdbcType=VARCHAR}, 
-      #{pressure,jdbcType=DECIMAL}, #{status00,jdbcType=VARCHAR}, #{status01,jdbcType=VARCHAR}, 
-      #{status02,jdbcType=VARCHAR}, #{status03,jdbcType=VARCHAR}, #{status04,jdbcType=VARCHAR}, 
-      #{status05,jdbcType=VARCHAR}, #{status06,jdbcType=VARCHAR}, #{status07,jdbcType=VARCHAR}, 
-      #{hrTemp,jdbcType=DECIMAL}, #{pressTraTemp,jdbcType=DECIMAL}, #{pressTraVoltage,jdbcType=DECIMAL}, 
-      #{nbiotVoltage,jdbcType=DECIMAL}, #{status10,jdbcType=VARCHAR}, #{status11,jdbcType=VARCHAR}, 
-      #{status12,jdbcType=VARCHAR}, #{status13,jdbcType=VARCHAR}, #{status14,jdbcType=VARCHAR}, 
-      #{status15,jdbcType=VARCHAR}, #{status16,jdbcType=VARCHAR}, #{angleOfInclination,jdbcType=DECIMAL}, 
-      #{createdate,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}, #{equipmentid,jdbcType=BIGINT}
-      )
+    insert into fce_equipmentinfolist (id, equipment_no, equipment_location,
+    pressure, status00, status01,
+    status02, status03, status04,
+    status05, status06, status07,
+    hr_temp, press_tra_temp, press_tra_voltage,
+    nbiot_voltage, status10, status11,
+    status12, status13, status14,
+    status15, status16, angle_of_inclination,
+    createdate, flag, equipmentid
+    )
+    values (#{id,jdbcType=BIGINT}, #{equipmentNo,jdbcType=VARCHAR}, #{equipmentLocation,jdbcType=VARCHAR},
+    #{pressure,jdbcType=DECIMAL}, #{status00,jdbcType=VARCHAR}, #{status01,jdbcType=VARCHAR},
+    #{status02,jdbcType=VARCHAR}, #{status03,jdbcType=VARCHAR}, #{status04,jdbcType=VARCHAR},
+    #{status05,jdbcType=VARCHAR}, #{status06,jdbcType=VARCHAR}, #{status07,jdbcType=VARCHAR},
+    #{hrTemp,jdbcType=DECIMAL}, #{pressTraTemp,jdbcType=DECIMAL}, #{pressTraVoltage,jdbcType=DECIMAL},
+    #{nbiotVoltage,jdbcType=DECIMAL}, #{status10,jdbcType=VARCHAR}, #{status11,jdbcType=VARCHAR},
+    #{status12,jdbcType=VARCHAR}, #{status13,jdbcType=VARCHAR}, #{status14,jdbcType=VARCHAR},
+    #{status15,jdbcType=VARCHAR}, #{status16,jdbcType=VARCHAR}, #{angleOfInclination,jdbcType=DECIMAL},
+    #{createdate,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}, #{equipmentid,jdbcType=BIGINT}
+    )
   </insert>
   <insert id="insertSelective" parameterType="com.example.demo.model.Equipmentinfolist" >
     insert into fce_equipmentinfolist

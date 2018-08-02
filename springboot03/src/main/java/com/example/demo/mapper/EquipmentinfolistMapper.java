@@ -5,9 +5,6 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/*
- created by zhoujun on 2018/6/19
- */
 public interface EquipmentinfolistMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -23,16 +20,25 @@ public interface EquipmentinfolistMapper {
 
     List<Equipmentinfolist> selectByequipmentid(Long equipmentid);
 
-    /**@author 黄泽东
-     * @Date 2018/6/20
-     * @return
+
+    /**
+     * By HuangZeDong
+     * @param keyword keyword
+     * @param equipmentid equipmentid
+     * @return List<Equipmentinfolist>
      */
-    List<Equipmentinfolist> sellectAll(@Param("equid") Long equipmentid);
-    List<Equipmentinfolist> selectByKeyWord(@Param("keyword") String keyword, @Param("equid") Long equipmentid);
 
-    List<Equipmentinfolist>getList();
+    List<Equipmentinfolist> selectByKeyWord(@Param("keyword") String keyword,@Param("equid") Long equipmentid);
 
-
+    /**
+     *  By HuangZeDong
+     * @return int
+     */
     int getCount();
 
+    /**
+     *  By HuangZeDong
+     * @return List<Equipmentinfolist>
+     */
+    List<Equipmentinfolist> selectByEcharts();
 }
