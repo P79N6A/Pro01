@@ -1,0 +1,232 @@
+Everything in this file (probably) superseded by the Upgrade to 6_1 final.txt doc
+
+I just found this:  https://cwiki.apache.org/confluence/display/solr/Collections+API#CollectionsAPI-api_addreplica
+
+It may make all of this much easier but I haven't tested yet.
+
+However, it uses http calls.
+Will cURL be OK as a command line, scriptable tool?
+
+
+
+Adding or replacing a SOLR VM into an existing zookeeper / solr ecosystem
+for a particular collection.  Obviously if you have more than one collection,
+repeat the appropriate steps for each collection.
+
+In this case that would mean adding additional directories to /var/solr/data and adding or
+or editing new properties files.
+
+1. make the new vm
+2. install solr
+(or, duh, have that already done.)
+	a.Turn Solr OFF before the next bit.
+		I'm not sure it absolutely matters, but it's a habit of mine.
+		It's how I tested.
+		
+		sudo service solr stop
+	
+Now you have a choice...  
+
+CHOICE A:
+
+	Create the "core" directory as the solr user (or chown the directory)
+	Then, create and modify the core.properties file inside that directory (see below)
+		These files need to be owned by solr user, so either su solr or chown the files later.
+		
+			as solr user:  mkdir /var/solr/data/statdx_shard1_replica3
+			as solr user: nano /var/solr/data/statdx_shard1_replica3/core.properties
+			
+CHOICE B:
+
+========	
+3 copy the core (statdx) directory from a working machine into the new one.
+	(I don't know if the working machine has to be offline to do this.)
+	I did it while it was running, but no one was pinging SOLR either.
+	scp -Cpvr solr-5.4.0.tgz  john@192.168.56.15:/home/john
+    copy it to /var/solr/data on the new machine
+4. rename the statdx_shard1_replicaX to whatever the name was on the directory that was on the machine that went down
+5. Change the  in the core.properties file inside the statdx_shard1_replica3 directory
+	change the: name and coreNodeName entries only.  See below.
+
+The only advantage I can see to steps 3 - 5 is if your collection is really large and
+you know it's going to take a loooong time for it to update as a SOLR node and thus be
+unavailable.  If you bring the node up before exposing it to the users, it's probably moot.
+
+Creating the directory is MUCH easier to script and does NOT require networking.  I'm just
+exposing all I learned here in case any of it matters to Kevin.
+========
+
+
+6. Restart solr on that box
+	service solr restart
+	
+7. Run this command to verify that all is well
+	/opt/solr/bin/solr healthcheck -z 192.168.56.5,192.168.56.6,192.168.56.7/solr5_4 -c statdx
+	
+		The first command shows how it looked before adding one
+		The second (after all the equals signs) shows the additional "node"
+
+
+su - solr -c "/opt/solr/bin/solr create -c statdx -d /home/john/conf -shards 1 -replicationFactor 2"
+
+You will see something like this BEFORE you add the new node...
+
+john@solr5:~$ /opt/solr/bin/solr healthcheck -z 192.168.56.5,192.168.56.6,192.168.56.7/solr5_4 -c statdx
+{
+  "collection":"statdx",
+  "status":"healthy",
+  "numDocs":0,
+  "numShards":1,
+  "shards":[{
+      "shard":"shard1",
+      "status":"healthy",
+      "replicas":[
+        {
+          "name":"core_node1",
+          "url":"http://192.168.56.16:8983/solr/statdx_shard1_replica1/",
+          "numDocs":0,
+          "status":"active",
+          "uptime":"0 days, 0 hours, 1 minutes, 8 seconds",
+          "memory":"90.3 MB (%18.4) of 490.7 MB",
+          "leader":true},
+        {
+          "name":"core_node2",
+          "url":"http://192.168.56.15:8983/solr/statdx_shard1_replica2/",
+          "numDocs":0,
+          "status":"active",
+          "uptime":"0 days, 0 hours, 2 minutes, 49 seconds",
+          "memory":"70.7 MB (%14.4) of 490.7 MB"}]}]}
+          
+
+
+==========AFTER ADDING THE DIRECTORY AND CORE.PROPERTIES TO THE 3RD VM, RUN HEALTHCHECK AGAIN AND SEE THE 3RD NODE===========
+
+This should be "runnable" on any of the SOLR VMs assuming they're hooked to Zookeeper.
+
+/opt/solr/bin/solr healthcheck -z 192.168.56.5,192.168.56.6,192.168.56.7/solr5_4 -c statdx
+
+  "collection":"statdx",
+  "status":"healthy",
+  "numDocs":110738,
+  "numShards":1,
+  "shards":[{
+      "shard":"shard1",
+      "status":"healthy",
+      "replicas":[
+        {
+          "name":"core_node1",
+          "url":"http://192.168.56.16:8983/solr/statdx_shard1_replica1/",
+          "numDocs":110738,
+          "status":"active",
+          "uptime":"0 days, 0 hours, 40 minutes, 20 seconds",
+          "memory":"196.3 MB (%40) of 490.7 MB",
+          "leader":true},
+        {
+          "name":"core_node2",
+          "url":"http://192.168.56.15:8983/solr/statdx_shard1_replica2/",
+          "numDocs":110738,
+          "status":"active",
+          "uptime":"0 days, 0 hours, 42 minutes, 2 seconds",
+          "memory":"157 MB (%32) of 490.7 MB"},
+        {
+          "name":"core_node3",
+          "url":"http://192.168.56.17:8983/solr/statdx_shard1_replica3/",
+          "numDocs":110738,
+          "status":"active",
+          "uptime":"0 days, 0 hours, 27 minutes, 54 seconds",
+          "memory":"134.4 MB (%27.4) of 490.7 MB"}]}]}         
+===================================================================================
+
+
+The way I see this, it's good news.
+
+SOLR and Zookeeper don't appear to care how many replicas you said when you 
+built the collection originally.  Bring another one in correctly and it will be added to
+the list of replicas.
+
+Now, if you screw Zookeeper up while doing it, heaven help you!  We should maybe talk about
+that part - re-setting Zookeeper, given how simple our environment is (and we can keep
+it that way if we're smart) won't be too hard.  There are a few command lines to understand
+and you can start from scratch (or build a complete new set of VM's and do the smoke and 
+mirrors trick with the load balancer.)
+
+It's the instructions for building the whole thing from scratch, but two Zookeeper commands are key
+and Zoo and SOLR will play games with your mind if you get into an odd state so you have
+to know that BOTH commands are necessary if you are "rebuilding" Zookeeper's data about
+the SOLR VMs
+
+===============================================================
+
+
+
+
+========================CORE.PROPERTIES FILE INFORMATION =================================
+
+This is what the core.properties looked like in my first "core".  Take out the comment lines if you want.
+The original one was written automatically when I used the solr -create command to build 
+the collection with two replicas.
+
+core.properties file:
+||||||||||||||||||||||||||||||||||||||||||
+
+#Written by CorePropertiesLocator
+#Tue Mar 22 21:14:18 UTC 2016
+numShards=1
+name=statdx_shard1_replica1 
+shard=shard1
+collection=statdx
+coreNodeName=core_node1 
+
+||||||||||||||||||||||||||||||||||||||||||
+
+
+
+This is what I changed it to for my third solr instance (I had two already)
+
+It should be noted that the name of the core directory and the "name" and "coreNodeName"
+inside the core.properties file are all completely arbitrary.  I just came up with 
+a naming convention that seemed reasonable.  We can change it to anything else we want. 
+
+
+core.properties file:
+||||||||||||||||||||||||||||||||||||||||||
+
+#Written by CorePropertiesLocator
+#Tue Mar 22 21:14:18 UTC 2016
+numShards=1
+name=statdx_shard1_replica3 
+shard=shard1
+collection=statdx
+coreNodeName=core_node3 
+
+||||||||||||||||||||||||||||||||||||||||||
+
+
+=====junk================clipboard==================
+1.	Stop at the point where the instructions say “Consider Cloning at this point”
+a.	Or, start with that clone and skip step one.
+b.	If you are using a clone, depending on how you set up VM’s, make appropriate changes to:
+i.	The OS’s config files (hostname, ip address, etc.)
+c.	Make changes to the following SOLR configurations
+i.	/etc/default/solr.in.sh
+1.	Host and ZK_HOST
+ii.	/var/solr/solr.xml
+1.	Host
+
+
+=====
+
+1.	Follow the instructions for getting a machine / virtual machine set up and ready to go as a Solr server.  Or use a clone.  
+a.	Double check OS configs for network etc
+b.	Double check Solr configs
+2.	Turn Solr off (sudo service solr stop) 
+3.	Add a directory in /var/solr/data with the correct name
+a.	Alternatively, copy a directory from another machine and change the directory name
+4.	Add a core.properties file inside that directory with the correct configuration text.
+a.	Alternatively, change the text inside core.properties
+5.	Restart Solr on that machine (sudo service solr restart)
+6.	Run this command to verify (and check the UI’s cloud tab)
+a.	In this example, the collectionName is statdx and the –z option is for the list of Zookeeper URL’s with the solr5_4 chroot appended.
+b.	/opt/solr/bin/solr healthcheck -z 192.168.56.5,192.168.56.6,192.168.56.7/solr5_4 -c statdx
+
+

@@ -1,0 +1,124 @@
+body, html,
+#container {
+    /*position: absolute;*/
+    position: relative;
+    height: 100%;
+    width:100%;
+    margin: 0px;
+    z-index: 0;
+}
+
+#tip{
+    background-color: #fff;
+    padding: 0 10px;
+    border: 1px solid silver;
+    box-shadow: 3px 4px 3px 0px silver;
+    position: relative;
+    z-index: 2;
+    float: right;
+    font-size: 100%;
+    right: 2%;
+    top: 2%;
+    height: 40px;
+    width:600px;
+    border-radius: 3px;
+    line-height: 36px;
+    display: inline;
+}
+
+select{
+    width:15%;
+}
+
+#dataTable{
+    position: absolute;
+    height:70%;
+    width:55%;
+    background-color: #ffffff;
+    display: none;
+    top:15%;
+    left:17%;
+    opacity: 0.8;
+}
+
+#realTime{
+    display: none;
+    height:40%;
+    width:100%;
+    box-shadow: 3px 3px 5px silver;
+    opacity: 0.8;
+}
+
+#deviceInfo{
+    display: none;
+    height:47.5%;
+    width:100%;
+    box-shadow: 3px 3px 5px silver;
+    opacity: 0.8;
+    margin-bottom: 5%;
+}
+
+#showRealTime{
+    height:80%;
+    width:6%;
+    display: inline;
+}
+
+#showDeviceInfo{
+    height:100%;
+    width:6%;
+    margin-left: 3%;
+    display: inline;
+}
+
+#close{
+    position: relative;
+    height:15px;
+    width:15px;
+    top:0.5%;
+    right:0.2%;
+    float: right;
+    z-index: 4;
+}
+#close:hover{
+    cursor: pointer;
+}
+
+
+#left_menu{
+    display: none;
+    position: absolute;
+    height: 60%;
+    width: 15%;
+    background-color: #52ACF6;
+    opacity: 0.7;
+    top: 13%;
+    left:0.5%;
+    box-shadow: 3px 3px 5px silver;
+}
+
+
+#showLeft{
+    position: absolute;
+    height:40px;
+    width:40px;
+    left: 2%;
+    top: 1%;
+    background-color: #fff;
+    box-shadow: 3px 4px 3px 0px silver;
+    border-radius: 50%;
+}
+
+#right{
+    height:80%;
+    width:25%;
+    left:75%;
+    top:15%;
+    position: absolute;
+}
+.showImg{
+    height:40px;
+    width:40px;
+}
+
+

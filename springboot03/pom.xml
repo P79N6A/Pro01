@@ -22,9 +22,17 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+
+		<tomcat.version>9.0.6</tomcat.version><!--改变内置版本的8.5.31tomcat-->
 	</properties>
 
+
 	<dependencies>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId><!--9.0.6的依赖-->
+			<artifactId>tomcat-juli</artifactId>
+			<version>${tomcat.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>

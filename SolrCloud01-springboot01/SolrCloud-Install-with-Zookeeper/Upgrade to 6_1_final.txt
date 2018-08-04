@@ -1,0 +1,213 @@
+NOTE:  The "other" config file, solr.xml, is currently NOT modified by us.  It may become
+necessary to include it in this process at some point, but it is currently not something
+we have to touch.
+
+
+1. all the steps to create a new VM
+     (Don't forget networking so Zoo and Solr can talk)
+     
+2. All the steps to install and configure Solr (for production)including editing /etc/default/solr.in.sh
+          (See Replace SOLR 4 with SOLR 5 version 2.txt for step one and two unless I get really ambitious
+            and put it all in here...)
+            
+            OK - here it is - I included it now...
+            
+            Follow these instructions:
+		https://cwiki.apache.org/confluence/display/solr/Taking+Solr+to+Production
+			There is a "magic" script which does most of the work for you in terms of installation 
+				This gets you /var/solr/data  [this is where your "cores" will go]
+				This also gets you a "solr" user -- I was unable to find a password so I had
+					to sudo and make one I would know.
+				It may be nice to put this "solr" user into the sudoers file too... not sure 
+				if there are security concerns there.  This is not absolutely necessary.
+            ---------
+            Now you need to set up the config for SOLR itself.  The config handled in step 5 was for the collection
+			(statdx) but we still need to set some things for the server itself so that it will boot into cloud mode
+			among other things.
+	
+			nano /etc/default/solr.in.sh and add the following:
+	
+			Add the proper urls for ZK_HOST: ZK_HOST="192.168.56.5,192.168.56.6,192.168.56.7/solr5_4" (or solr6_x)
+			add the proper (self) url for the SOLR_HOST: SOLR_HOST="192.168.56.15" (or whatever is appropriate)
+			Make sure to take the comment "#" sign off the front of these lines, or make new ones, it doesn't matter.
+	
+			Note the bottom of the file.  SOLR_HOME is where SOLR will expect to find the collections
+			This should have been configured by the install script to: /var/solr/data
+	
+			You can now issue sudo service solr restart and the SOLR node should start in cloud mode.
+
+3. add the new 'node' to Zookeeper for the Solr Cloud:
+	/opt/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost zoo1,zoo2,zoo3 -cmd makepath /solr6_1
+	OR
+	/opt/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost 10.196.12.103,10.196.12.104,10.196.22.103 -cmd makepath /solr6_2
+
+	     /opt/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost zoo1,zoo2,zoo3 -cmd makepath /expath_solr5_4
+	(if your zk machines are defined in the hosts file, you can do this. If not, your command can look like this:
+	sudo /opt/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost 192.168.56.5,192.168.56.6,192.168.56.7 -cmd makepath /solr6_1
+	When I issued this command, I got no response -- typical Linux - if it didn't error, all is well.
+	
+4. If desired, verify the node you just created exists in Zookeeper using the zkCli.sh tool
+          zookeeper-3.4.6/bin/zkCli.sh
+    	This gets you a prompt: [zk: localhost:2181(CONNECTED) 0]
+    	Enter ls / to see if solr6_1 is there...
+
+
+===========================================================  
+The challenge: Solr developers change things in the main configurations files between major versions.
+
+How do we upgrade and not get bogged down in removing / changing things to match the new version?
+
+Answer: Copy the main configs from the NEW version's sample project (techproducts) and include our 
+configs as separate xml files.
+
+In the case of a major upgrade, the minor conf files (synonyms.txt, stopwords.txt etc...) can probably just be copied
+over the top of the ones from the sample config in the new version. But that may not always hold true.
+
+For minor upgrades, the config files will probably not change and can just be copied.
+===========================================================
+    	
+5.  Copy the configs from the "techproducts" sample project that comes with Solr to an easy-to-reach location
+		This command copies the "techproducts" conf directory to whatever directory you are currently "in"
+		cp -r /opt/solr-6.1.0/server/solr/configsets/sample_techproducts_configs/conf .
+		
+     
+6. Modify the managed-schema file (Name changed from schema.xml in 6.0 ) to include the statdx_custom_schema.incl file
+		Put this at the top of the file, right after the XML version declaration
+	
+	<!-- includes the file which contains all the costom configs used by STATdx.
+    This reqires the &statdx_custom_include line at the very bottom of this file too. -->	
+	<!DOCTYPE schema [
+    <!ENTITY statdx_custom_include SYSTEM "statdx_custom_schema.incl">
+    ]>
+    
+    Then, put this at the very bottom of the file, but still inside the </schema> tag.
+    
+    &statdx_custom_include;
+    
+7. Same thing for the solrconfig.xml file... put this at the top, under the XML version
+
+	<!-- includes the file which contains all the costom configs used by STATdx.
+    This reqires the &statdx_custom_solrconfig_include line at the very bottom of this file too. -->
+    <!DOCTYPE schema [
+    <!ENTITY statdx_custom_solrconfig_include SYSTEM "statdx_custom_solrconfig.incl">
+    ]>
+    
+    Then, put this line at the bottom, right before the closing </schema> tag.
+    
+    &statdx_custom_solrconfig_include;
+    
+8. Copy the two files that are to be included into the same configuration folder with the solrconfig.xml and manaaged_schema.  
+These may be on another VM, or in source control.
+
+		statdx_custom_solrconfig.incl
+		statdx_custom_schema.incl
+		
+9.  Replace the files or copy the contents of the following config files FROM source control (or an older VM)
+
+		synonyms.txt
+		example_synonym_file.txt
+		contentType_synonyms.txt
+		stopwords.txt
+
+10. The instructions for dealing with the extra code for handling multi-word synonyms has changed.
+    For the present, this is the website where future changes to this piece should show up.
+    https://github.com/healthonnet/hon-lucene-synonyms.
+    
+    The file I downloaded was: hon-lucene-synonyms-5.0.4.jar
+    
+    This time the instructions are:
+    Copy the file(found on the website) into:
+    
+    	
+	Make sure that the permissions on the file are correct.  In my case, root owned all files in this directory
+		sudo chown root:root hon-lucene-synonyms-5.0.4.jar
+		
+	(Note: there was also a change to the xml in our statdx_custom_solrconfig.incl which references 
+	the "SynonymExpandingExtendedDismaxQParserPlugin" [the class inside the jar].  I've already made 
+	that change so the statdx_custom_solrconfig.incl file is done and you don't need to worry about it this time.
+	
+	If they ever change some of the names of the classes inside the jar (they did it once!) then the 
+	reference in the xml (statdx_custom_solrconfig.incl) file will need to change too.  I can show you if you want to see.
+
+		
+11. Upload the configs to Zookeeper
+		sudo /opt/solr/server/scripts/cloud-scripts/zkcli.sh -cmd upconfig -confdir /home/jbickerstaff/conf -confname statdx -z 10.196.12.103/solr6_2
+		     sudo /opt/solr/server/scripts/cloud-scripts/zkcli.sh -cmd upconfig -confdir /home/john/conf -confname expath -z 192.168.56.5/expath_solr5_4
+		
+	Note: for convenience, here is the command to download the configs from Zookeeper.  "confdir" can be any existing directory.
+		sudo /opt/solr/server/scripts/cloud-scripts/zkcli.sh -cmd downconfig -confdir /home/john/6_1_conf/ -confname statdx -z 192.168.56.5/solr6_1
+		
+	==========================
+12.	MAKE SURE you restart Solr now -- or it won't pick up the hon-lucene...jar file or the configs
+	sudo service solr restart
+	==========================
+		
+		
+13. Make sure all planned Solr VMs are running (and restarted) and then add the collection using the files you copied and modified as the configs
+	
+	sudo su - solr -c "/opt/solr/bin/solr create -c statdx -d /home/john/conf -shards 1 -replicationFactor 2"
+	(I don't know if running as the solr user is absolutely necessary here, but since solr user owns the files on my boxes, I've used that.)
+	     sudo su - solr -c "/opt/solr/bin/solr create -c expath -n expath -shards 1 -replicationFactor 2"
+	               -n makes use of whatever you already uploaded for the named collection (in this case, expath)
+	
+	Meaning:
+			create = make a "collection"
+			-c --> give the collection this name (statdx in this case)
+			-d --> use this location as the location of the config files to be uploaded to Zookeeper
+			- shards --> split the collection into this many shards (we're using one, so basically no shards)
+			-replicationFactor --> make this many "extra" Solr servers for redundancy / load.  
+			          This number should match the number of VMs in our scenario and equals that many exact, entire copies of the data.
+			
+	IMPORTANT NOTE:  You MUST have the same number of Solr servers running with the "solr6_1" chroot
+	setting in the solr.in.sh file for this to work properly.
+	
+	IF you do have them all running, this command will create everything on all X number of machines.
+	
+14. Check the logs (tail -f /var/solr/logs/solr.log) and/or the logging link in the Solr Admin console for errors
+		What I do is have two command windows open and I trigger the tail command in the second one after I issue
+		sudo service solr restart in the first one.  Trigger it just after it says it's waiting to see Solr on port whatever
+		otherwise the log file isn't there for a moment and the command will fail.
+		
+15. Assuming everything went well (no errors) then run the code to load the text file(s) into Solr and check in the Admin console
+that you're getting data into Solr.  The correct number of "docs" is 6325... I forget the correct number of image docs at the moment.
+
+16. Solr should be ready to go using the newest version.  Run some queries to check.  
+	Run Quepid against it (change the Solr IP address settings in Tuning if necessary)
+	because all those queries are more likely to show up problems.
+	Don't forget that currently the "rules" are implemented on the /foo endpoint.  /select just returns the non-rule results.
+	
+	
+	==========
+	
+Note - output from Step 13 looks like this and explains how this can be done from the URL or cURL...
+
+Connecting to ZooKeeper at 192.168.56.5,192.168.56.6,192.168.56.7/solr5_4 ...
+Uploading /home/john/conf for config expath to ZooKeeper at 192.168.56.5,192.168.56.6,192.168.56.7/solr5_4
+
+Creating new collection 'expath' using command:
+http://localhost:8983/solr/admin/collections?action=CREATE&name=expath&numShards=1&replicationFactor=3&maxShardsPerNode=1&collection.configName=expath
+
+{
+  "responseHeader":{
+    "status":0,
+    "QTime":13396},
+  "success":{"":{
+      "responseHeader":{
+        "status":0,
+        "QTime":12649},
+      "core":"expath_shard1_replica1"}}}
+	
+	
+
+=======
+Note: here is the URL for putting into Quepid to hit solr in the cloud.
+Kevin controls WHICH Solr vms are behind the load balancer that this thing hits...
+I.E. he could change it so it hits 5.4 VMs or 6.2 machines or new ones we build later
+so verify which it's hitting if you're not sure.  At the time of this writing (sept 9 2016)
+the load balancer is pointed at solr3 and solr4 which are SOLR 6.2.
+
+https://sdxsolr.amirsys-int.com/solr/statdx/foo		
+
+id:id, title:title, id, content, contentType, category_ss, author_ss, imageCount_i, category_weight, score	
+
+		

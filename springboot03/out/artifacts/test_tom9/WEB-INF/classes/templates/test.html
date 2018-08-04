@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/react/15.4.2/react.min.js"></script>
+    <script src="https://cdn.bootcss.com/react/15.4.2/react-dom.min.js"></script>
+    <script src="https://cdn.bootcss.com/babel-standalone/6.22.1/babel.min.js"></script>
+    <style>
+
+
+    </style>
+</head>
+<body>
+    <h1 id="t">显示内容</h1>
+    <a href="find?id=1&aaa=huangzedong">超链接查询</a>
+    <form>
+        <input type="text" id="lid"/>
+        <input type="button" onclick="selectById()" value="表单JS查询.value"/>
+    </form >
+
+    <button type="button" id="btn2" >JQuery查询.val()</button>
+    <button type="button" onclick="change()">改变显示内容的值</button>
+
+    <a href="find2">超链接查询2</a>
+    <button type="button" id="btn3" >JQuery查询所有信息.val()</button>
+
+
+    <table class="show3" id="tableuserlist" border="1" cellpadding="10">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>ID</th>
+            <th>createdate</th>
+            <th>address</th>
+            <th>port</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</body>
+
+
+<div id="example"></div>
+<script type="text/babel">
+    ReactDOM.render(
+        <h1>Hello, world!</h1>,
+        document.getElementById('example')
+    );
+</script>
+<script>
+    /*JQUERY,AJAX格式例子，js  .value jquery .val()
+      $(function () {
+       $("#btn2").click(function () {
+           $.post("find",
+               {id:3
+               },
+               function (res) {
+                   $("#t").text(res.locainfo);
+                   console.log(res);
+               });
+       })
+
+      })*/
+    function  selectById() {
+        var id=document.getElementById("lid");
+        var id2=id.value;
+        $.post("find",
+            {id:id2
+            },
+            function (res) {
+                $("#t").text(res.locainfo);
+                console.log(res);
+            });
+    }
+
+    $(function (){
+
+        $("#btn2").click(function () {
+            var id=$("#lid").val();/!*这种*!/
+
+            alert(id);
+            $.post("find",
+                {id:id
+                },
+                function (res) {/*res?*/
+                $("#t").text(res.locainfo);
+                console.log(res);
+            });
+
+        })
+        
+    })
+
+
+
+    function change() {
+         $("#t").text("按钮改变标签值btn3");
+     }
+
+    $(function (){
+
+        $("#btn3").click(function () {
+            $.post("find2",
+                function (res) {/*res?*/
+
+                   /* $("#t").text(res[0].locainfo);
+                    var str = "";
+                    for(var i=0;i<res.length;i++){
+                        str += "<div>" + res[i].locainfo + "</div>"
+                    }
+
+                    $("#show3").append(str);
+
+                    console.log(res[0].locainfo);*/
+
+                    var obj=eval(res);
+                    var tbody=$('<tbody></tbody>');
+                    $(obj).each(function (index){
+                        var val=obj[index];
+                        var tr=$('<tr></tr>');
+                        tr.append('<td>'+ val.id + '</td>' + '<td>'+val.id + '</td>' +'<td>'+ val.createdate + '</td>' + '<td>'+ val.address + '</td>'+'<td>'+val.port+ '</td>');
+                        tbody.append(tr);
+                    });
+                    $('#tableuserlist tbody').replaceWith(tbody);
+                });
+
+        })
+
+    })
+
+
+
+</script>
+</html>

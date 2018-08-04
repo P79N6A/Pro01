@@ -1,0 +1,68 @@
+1. New VM's - however you do that (networking etc)
+
+2. Download .tgz for Solr 6.1 onto the VM(s)
+
+3. "Install for Production" following the instructions here: https://cwiki.apache.org/confluence/display/solr/Taking+Solr+to+Production
+          Or, if you’re Kevin and this is for the AWS Red Hat machines, there may be some modifications that I don’t know about…
+
+4. Fix the /etc/defaults/solr.in.sh file
+	nano /etc/default/solr.in.sh and add the proper URL’s or Hostnames for the ZK_HOST setting.
+	Your hostnames / URLs will probably be different of course.
+	 ZK_HOST: ZK_HOST="192.168.56.5,192.168.56.6,192.168.56.7/solr5_4”
+	      (Naturally, in the AWS environment, these URLs will need to be different, but this pattern works.)
+
+	add the proper (self) url for the SOLR_HOST: SOLR_HOST="192.168.56.15" (or whatever is appropriate)
+	Make sure to take the comment "#" sign off the front of these lines.
+	=====
+	Note the bottom of the file.  SOLR_HOME is where SOLR will expect to find the collections
+	This should have been configured by the install script to: /var/solr/data
+	
+	
+5. add the new 'node' to Zookeeper:
+	/opt/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost zoo1,zoo2,zoo3 -cmd makepath /solr6_1
+	(if your zk machines are defined in the hosts file, you can do this. If not, your command can look like this:
+	/opt/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost 192.168.56.5,192.168.56.6,192.168.56.7 -cmd makepath /solr6_1
+	When I issued this command, I got no response -- typical Linux - if it didn't error, all is well.
+	
+6. You can now issue sudo service solr restart on ALL the VM’s and the SOLR node should start in cloud mode.
+	
+	
+7. sudo cp -r /opt/solr-6.1.0/server/solr/configsets/sample_techproducts_configs/conf .
+	Use the line above to copy all the configs from the tech products sample to another directory
+	in this case I was "in" /home/john -- this created a copy of the conf directory at my "pointer" location
+	
+8.	THEN modify the files and copy over the synonym files etc... BEFORE pushing to Zookeeper in the next step.
+	Don't forget the statdx_custom_schema.incl and the statdx_custom_solrconfig.incl -- they need to be added...
+    Add the necessary stuff from the config files in our older (working) version of Solr for STATdx
+	a. schema.xml stuff goes into managed-schema file
+	b. solrconfig.xml stuff goes into solrconfig.xml
+	c. Synonyms
+	d. ?stopwords?
+	e. Extra Synonym file (for multiword synonyms)
+	
+9. Make sure both VMs are running and then add the collection using the files you copied and modified as the configs
+	sudo su - solr -c "/opt/solr/bin/solr create -c statdx -d /opt/solr-6.1.0/server/solr/configsets/sample_techproducts_configs/conf -shards 1 -replicationFactor 2"
+	sudo su - solr -c "/opt/solr/bin/solr create -c statdx -d /home/john/conf -shards 1 -replicationFactor 2"
+	
+	(I don't know if running as the solr user is absolutely necessary here, but since solr user owns the files on my boxes, I've used that.
+	
+
+	
+10. Push the Solr docs in the text file into Solr (consider the jar file instead of private program, although that probably requires
+	a change to the <add> </add> tag handling as presently constituted
+	
+11. Verify that the correct number of docs show up in SOLR and are searchable on the correct endpoints.
+
+
+
+**********
+
+A few random notes:
+
+How to download configs from Zookeeper if you need them.
+sudo /opt/solr/server/scripts/cloud-scripts/zkcli.sh -cmd downconfig -confdir /home/john/6_1_conf/ -confname statdx -z 192.168.56.5/solr6_1
+
+An "upload configs" command line I saved co copy and paste - this gets the techproducts configs into Zookeeper - not sure it's really useful, but there you go.
+sudo /opt/solr/server/scripts/cloud-scripts/zkcli.sh -cmd upconfig -confdir /opt/solr-6.1.0/server/solr/configsets/sample_techproducts_configs/conf -confname statdx -z 192.168.56.5/solr6_1
+   
+   
