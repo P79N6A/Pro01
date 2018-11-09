@@ -2,11 +2,13 @@ package com.example.demo.controller;
 
 import com.example.demo.model.FceLocalinfo;
 import com.example.demo.service.DemoService;
+import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,15 +57,6 @@ public class DemoController {
     @RequestMapping("/find2")
     @ResponseBody
     public List<FceLocalinfo> find2(HttpServletRequest request, HttpServletResponse response){
-
-      /*  Message message =PhaseInInterceptorChain.getCurrentMessage();
-
-        HttpServletResponse httpServletResponse=message.get(AbstractHttpDestination.HTTP_RESPONSE);
-        httpServletResponse.addHeader("Access-Control-Allow-Origin","*");
-        String origin = request.getHeader("Origin");
-        response.setHeader("Access-Control-Allow-Origin", origin);
-        response.addHeader("Access-Control-Allow-Origin","*");*/
-
         String origin = request.getHeader("Origin");
         response.setHeader("Access-Control-Allow-Origin", origin);
         return  demoService.find2();
@@ -128,4 +121,10 @@ public class DemoController {
         System.out.println("bigdecimala："+bigdecimala+"bigdecimalb:"+bigdecimalb);
         return "success";
     }
+
+    @RequestMapping("/testAop")
+    public String TestAop(){
+        return "";
+    }
+
 }

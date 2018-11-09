@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -48,8 +50,10 @@ public class EquipmentmanagerList_controller {
     @ResponseBody
     public PageInfo<Equipmentinfolist> queryHuang(int pageNum, int pageSize,
                                                   @RequestParam(value = "keyword",defaultValue = "" ,required = false)String keyword,
-                                                  @RequestParam(value = "equipmentid",defaultValue = "",required =false )Long equipmentid
-    ){
+                                                  @RequestParam(value = "equipmentid",defaultValue = "",required =false )Long equipmentid,
+    HttpServletRequest request, HttpServletResponse response){
+        String origin = request.getHeader("Origin");
+        response.setHeader("Access-Control-Allow-Origin", origin);
         //翻转equal调用""
         /*if (null!=keyword&&!"".equals(keyword)){
             System.out.println("关键字是"+keyword);
@@ -129,8 +133,10 @@ public class EquipmentmanagerList_controller {
     @ResponseBody
     public PageInfo<Equipmentinfolist> queryEcharts(int pageNum, int pageSize,
                                                     @RequestParam(value = "keyword",defaultValue = "" ,required = false)String keyword,
-                                                    @RequestParam(value = "equipmentid",defaultValue = "",required =false )Long equipmentid
-    ){
+                                                    @RequestParam(value = "equipmentid",defaultValue = "",required =false )Long equipmentid,
+                                                    HttpServletRequest request, HttpServletResponse response){
+        String origin = request.getHeader("Origin");
+        response.setHeader("Access-Control-Allow-Origin", origin);
         return service.selectByEcharts(pageNum,pageSize);
     }
 

@@ -1,42 +1,29 @@
 package com.example.demo.controller;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.common.SolrDocument;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 /**
  * @author HuangZeDong
  * @date 2018/7/24 @time 18:03
  **/
 
+@RestController
+public class Appletest{
 
-@Configuration
-public class Appletest extends WebMvcConfigurerAdapter {
+    @Autowired
+    private SolrClient client;
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowCredentials(true)
-                .allowedMethods("GET", "POST", "DELETE", "PUT")
-                .maxAge(3600);
+    @RequestMapping("/aa")
+    public String testSolr() throws IOException, SolrServerException {
+        SolrDocument document = client.getById("test", "fe7a5124-d75b-40b2-93fe-5555512ea6d2");
+        System.out.println(document);
+        return "index2";
     }
-
-/*
-    String origin = request.getHeader("Origin");
-response.setHeader("Access-Control-Allow-Origin", origin);
-        response.setHeader("Vary", "Origin");
-
-//                    // Access-Control-Max-Age
-//                    response.setHeader("Access-Control-Max-Age", "3600");
-
-        // Access-Control-Allow-Credentials
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-
-        // Access-Control-Allow-Methods
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-
-        // Access-Control-Allow-Headers
-        response.setHeader("Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept, " + "X-CSRF-TOKEN");*/
 }
