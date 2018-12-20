@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    h.tra_report_header_id,
+                    (SELECT
+                        sum_amount
+                    FROM
+                        (SELECT
+                            SUM(sum_amount) sum_amount
+                        FROM
+                            (SELECT
+                                (price * primary_quantity) sum_amount
+                            FROM
+                                tra_report_lines
+                            WHERE
+                                tra_report_header_id = ${/parameter/@tra_report_header_id}
+                            )
+                        )
+                    ) sum_amount,
+                    (SELECT
+                        tv.description
+                    FROM
+                        exp_expense_report_types_vl tv
+                    WHERE
+                        tv.expense_report_type_id = h.tra_report_type_id
+                    ) tra_report_type_name,
+                    (SELECT
+                        tv.report_name
+                    FROM
+                        exp_expense_report_types_vl tv
+                    WHERE
+                        tv.expense_report_type_id = h.tra_report_type_id
+                    ) report_name,
+                    (SELECT
+                        sr.param_name
+                    FROM
+                        exp_expense_report_types_vl tv,
+                        sys_reports sr
+                    WHERE
+                        tv.expense_report_type_id = h.tra_report_type_id AND
+                        tv.report_name            = sr.report_name AND
+                        ROWNUM                    = 1
+                    ) report_param_name,
+                    TO_CHAR(h.tra_report_type_id) tra_report_type_id,
+                    TO_CHAR(h.report_date, 'yyyy-mm-dd') tra_report_date,
+                    (SELECT
+                        ee.employee_code
+                        || ' - '
+                        || name
+                    FROM
+                        exp_employees ee
+                    WHERE
+                        ee.employee_id = h.employee_id
+                    ) tra_report_employee_name,
+                    (SELECT
+                        eop.description
+                    FROM
+                        exp_org_position_vl eop
+                    WHERE
+                        eop.position_id = h.position_id
+                    ) tra_report_position,
+                    h.position_id tra_report_position_id,
+                    h.currency_code ,
+                    (SELECT
+                        gv.currency_name
+                    FROM
+                        gld_currency_vl gv
+                    WHERE
+                        gv.currency_code = h.currency_code
+                    ) tra_report_currency_name,
+                    (SELECT
+                        code_value_name
+                    FROM
+                        sys_codes_vl sc,
+                        sys_code_values_v sv
+                    WHERE
+                        sc.code       = 'PAYMENT_OBJECT' AND
+                        sc.code_id    = sv.code_id AND
+                        sv.code_value = h.payee_category
+                    )payee_category_name,
+                    h.payee_category payee_category,
+                    (SELECT
+                        gb.functional_currency_code
+                    FROM
+                        fnd_companies fc,
+                        gld_set_of_books gb
+                    WHERE
+                        fc.company_id      = h.company_id AND
+                        fc.set_of_books_id = gb.set_of_books_id
+                    ) functional_currency_code,
+                    TO_CHAR(h.employee_id) employee_id,
+                    TO_CHAR(h.company_id) company_id,
+                    (SELECT
+                        company_short_name
+                    FROM
+                        fnd_companies_vl fv
+                    WHERE
+                        fv.company_id = h.company_id
+                    ) company_name,
+                    (SELECT
+                        (employee_code
+                        || ' - '
+                        || name) employee_name
+                    FROM
+                        exp_employees ee
+                    WHERE
+                        ee.employee_id = h.employee_id
+                    ) employee_name,
+                    h.position_id position_id,
+                    (SELECT
+                        ep.description
+                    FROM
+                        exp_org_position_vl ep
+                    WHERE
+                        ep.position_id = h.position_id
+                    ) position_name,
+                    h.unit_id,
+                    (SELECT eu.description FROM exp_org_unit_vl eu WHERE eu.unit_id = h.unit_id
+                    ) unit_name,
+                    (SELECT
+                        er.responsibility_center_id
+                    FROM
+                        exp_employee_assigns sa,
+                        exp_org_unit_vl eu,
+                        exp_org_position_vl ep,
+                        fnd_responsibility_centers_vl er
+                    WHERE
+                        sa.employee_id              = h.employee_id AND
+                        sa.company_id               = h.company_id AND
+                        sa.primary_position_flag    = 'Y' AND
+                        eu.unit_id                  = ep.unit_id AND
+                        sa.position_id              = ep.position_id AND
+                        er.responsibility_center_id = eu.responsibility_center_id
+                    ) responsibility_center_id,
+                    (SELECT
+                        er.responsibility_center_name
+                    FROM
+                        exp_employee_assigns sa,
+                        exp_org_unit_vl eu,
+                        exp_org_position_vl ep,
+                        fnd_responsibility_centers_vl er
+                    WHERE
+                        sa.employee_id              = h.employee_id AND
+                        sa.company_id               = h.company_id AND
+                        sa.primary_position_flag    = 'Y' AND
+                        eu.unit_id                  = ep.unit_id AND
+                        sa.position_id              = ep.position_id AND
+                        er.responsibility_center_id = eu.responsibility_center_id
+                    ) responsibility_center_name,
+                    (SELECT
+                        tv.payment_flag
+                    FROM
+                        exp_expense_report_types_vl tv
+                    WHERE
+                        tv.expense_report_type_id = h.tra_report_type_id
+                    ) payment_flag,
+                    (SELECT
+                        tv.req_required_flag
+                    FROM
+                        exp_expense_report_types_vl tv
+                    WHERE
+                        tv.expense_report_type_id = h.tra_report_type_id
+                    ) req_required_flag,
+                    (SELECT
+                        u.usedes_code
+                    FROM
+                        csh_payment_usedes u,
+                        exp_rep_ref_payment_usedes e
+                    WHERE
+                        u.usedes_id              = e.usedes_id AND
+                        e.expense_report_type_id = h.tra_report_type_id AND
+                        e.primary_flag           = 'Y'
+                    ) usedes,
+                    (SELECT
+                        u.description
+                    FROM
+                        csh_payment_usedes_vl u,
+                        exp_rep_ref_payment_usedes e
+                    WHERE
+                        u.usedes_id              = e.usedes_id AND
+                        e.expense_report_type_id = h.tra_report_type_id AND
+                        e.primary_flag           = 'Y'
+                    ) usedes_name,
+                    (SELECT
+                        tv.adjustment_flag
+                    FROM
+                        exp_expense_report_types_vl tv
+                    WHERE
+                        tv.expense_report_type_id = h.tra_report_type_id
+                    ) adjustment_flag,
+                    (SELECT
+                        ees.name
+                    FROM
+                        exp_employees ees,
+                        sys_user su
+                    WHERE
+                        ees.employee_id = su.employee_id AND
+                        su.user_id      = h.created_by
+                    ) tra_report_create_by,
+                    (SELECT TO_CHAR(SYSDATE, 'yyyy-mm-dd') FROM dual
+                    ) sys_date,
+                    (SELECT
+                        sv.code_value_name
+                    FROM
+                        sys_code_values_vl sv,
+                        sys_codes sc
+                    WHERE
+                        sv.code_id    = sc.code_id AND
+                        sc.code       = 'TRA_EXPENSE_REPORT_STATUS' AND
+                        sv.code_value = h.report_status
+                    ) tra_report_status,
+                    h.period_name,
+                    h.tra_report_number,
+                    h.payment_method_id,
+                    (SELECT
+                        description
+                    FROM
+                        csh_payment_methods_vl vv
+                    WHERE
+                        vv.payment_method_id = h.payment_method_id
+                    ) tra_report_payment_method,
+                    description ,
+                    attachment_num attach_id,
+                    payee_id ,
+                    DECODE(payee_category, 'EMPLOYEE',
+                    (SELECT
+                        ee.employee_code
+                        || ' - '
+                        || name
+                    FROM
+                        exp_employees ee
+                    WHERE
+                        ee.employee_id = h.payee_id
+                    ), 'CUSTOMER',
+                    (SELECT
+                        vc.customer_code
+                        || ' - '
+                        || vc.description
+                    FROM
+                        ord_system_customers_vl vc
+                    WHERE
+                        vc.customer_id = h.payee_id
+                    ),
+                    (SELECT
+                        vv.vender_code
+                        || ' - '
+                        || vv.description
+                    FROM
+                        pur_system_venders_vl vv
+                    WHERE
+                        vv.vender_id = h.payee_id
+                    )) payee_name,
+                    (SELECT
+                        v.budget_control_enabled
+                    FROM
+                        exp_expense_report_types_vl v
+                    WHERE
+                        v.expense_report_type_id = h.tra_report_type_id
+                    ) budget_control_enabled,
+                    h.exchange_rate_type rate_type,
+                    h.exchange_rate_quotation rate_quotation,
+                    h.exchange_rate rate,
+                    (SELECT
+                        type_name
+                    FROM
+                        gld_exchangerate_types_vl g
+                    WHERE
+                        g.type_code = h.exchange_rate_type
+                    ) rate_type_name,
+                    (SELECT
+                        v.code_value_name
+                    FROM
+                        sys_codes c,
+                        sys_code_values_vl v
+                    WHERE
+                        c.code       = 'EXCHANGE_RATE_QUOTATION' AND
+                        c.code_id    = v.code_id AND
+                        v.code_value = h.exchange_rate_quotation
+                    )rate_quotation_name,
+                    (SELECT
+                        MAX(ln.line_number)
+                    FROM
+                        tra_report_lines ln
+                    WHERE
+                        ln.Tra_Report_Header_Id = h.tra_report_header_id
+                    ) line_number,
+                    h.invoice_flag
+                FROM
+                    tra_report_headers h,
+                    (SELECT
+                        t2.employee_id
+                    FROM
+                        exp_document_authorities a,
+                        exp_employee_assigns t,
+                        exp_employee_assigns t2,
+                        exp_org_position p,
+                        exp_org_unit u,
+                        sys_user su
+                    WHERE
+                        su.user_id      = ${/session/@user_id} AND
+                        a.document_type = '02' AND
+                        (
+                            a.granted_position_id IS NULL OR
+                            a.granted_position_id  = t.position_id AND
+                            t.enabled_flag         = 'Y' AND
+                            t.company_id           = a.company_id AND
+                            t.employee_id          = su.employee_id
+                        )
+                        AND
+                        NVL(a.granted_employee_id, su.employee_id) = su.employee_id AND
+                        t2.enabled_flag                            = 'Y' AND
+                        p.enabled_flag                             = 'Y' AND
+                        u.enabled_flag                             = 'Y' AND
+                        p.position_id                              = t2.position_id AND
+                        u.unit_id                                  = p.unit_id AND
+                        a.start_date                              <= SYSDATE AND
+                        (
+                            a.end_date IS NULL OR
+                            a.end_date >= SYSDATE
+                        )
+                        AND
+                        a.query_authority = 'Y' AND
+                        t2.company_id     = a.company_id AND
+                        (
+                            a.org_unit_id IS NULL OR
+                            a.org_unit_id  = u.unit_id
+                        )
+                        AND
+                        (
+                            a.position_id IS NULL OR
+                            a.position_id  = p.position_id
+                        )
+                        AND
+                        (
+                            a.employee_id IS NULL OR
+                            a.employee_id  = t2.employee_id
+                        )
+                    GROUP BY
+                        t2.employee_id
+                    UNION
+                    SELECT
+                        su2.employee_id
+                    FROM
+                        sys_user su2
+                    WHERE
+                        su2.user_id = ${/session/@user_id}
+                    ) x
+                WHERE
+                    h.tra_report_header_id = ${/parameter/@tra_report_header_id} AND
+                    h.employee_id          = x.employee_id
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

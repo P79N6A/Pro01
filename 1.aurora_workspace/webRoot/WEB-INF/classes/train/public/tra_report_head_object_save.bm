@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: zhoutong
+    $Date: 2017-3-06 15:02:31
+    $Revision: 1.0  
+    $Purpose: 保存头费用对象bm
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="update">
+            <bm:update-sql><![CDATA[
+                    begin
+					 tra_report_pkg.update_exp_report_objects(
+							               ${../../@tra_report_header_id},
+							               '',
+							               '',
+							               ${@expense_object_type_id},
+							               ${@expense_object_id},
+							               ${/session/@user_id},
+							               ${@expense_object_desc}
+							            );
+		
+					end;
+]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="insert">
+            <bm:update-sql><![CDATA[
+                 
+                      begin
+                    tra_report_pkg.insert_exp_report_objects(
+                                           ${../../@tra_report_header_id},
+                                           '',
+                                           '',
+                                           ${@expense_object_type_id},
+                                           ${@expense_object_id},
+                                           ${/session/@user_id},
+                                           ${@expense_object_desc}
+                                        );
+                    end;
+                    
+           ]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

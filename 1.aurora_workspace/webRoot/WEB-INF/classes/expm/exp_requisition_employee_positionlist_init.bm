@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[		
+            select eo.position_id,em.employee_code||'-'||eo.description position_code
+			from exp_employee_assigns s,exp_employees em  ,exp_org_position_vl eo
+			where s.employee_id=nvl(${@employee_id},(select t.employee_id from exp_travel_plan_headers t where t.travel_plan_header_id=${@travel_plan_header_id}))
+			and   s.company_id=nvl(${@company_id},${/session/@company_id})
+			and   s.enabled_flag='Y'
+			and   s.position_id=eo.position_id
+			and   eo.enabled_flag='Y'
+			and   s.employee_id=em.employee_id
+			order by s.primary_position_flag desc 
+		    ]]></bm:query-sql>
+            <bm:parameters>
+                <bm:parameter name="employee_id"/>
+                <bm:parameter name="travel_plan_header_id"/>
+            </bm:parameters>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="position_id" databaseType="NUMBER" datatype="java.lang.Double" physicalName="POSITION_ID" required="true"/>
+        <bm:field name="position_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="POSITION_CODE"/>
+    </bm:fields>
+</bm:model>

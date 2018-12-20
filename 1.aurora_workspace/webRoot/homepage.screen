@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:c="aurora.application.action" xmlns:a="http://www.aurora-framework.org/application" xmlns:p="uncertain.proc" trace="true">
+    <a:init-procedure>
+        <a:model-query autocount="false" fetchall="true" model="sys.sys_widget_config" rootpath="widget_config"/>
+        <a:model-query autocount="false" fetchall="true" model="sys.sys_quick_page_config" rootpath="quick_page_config"/>
+    </a:init-procedure>
+    <a:view>
+        <script><![CDATA[
+            var mailSubject, mailBody , tabPageWidth;
+            function showEmpInfoByWidget(userId, userName, empId, empCode) {
+                if (typeof showEmpInfo == 'function') {
+                    showEmpInfo(userId, userName, empId, empCode);
+                }
+            }
+            
+            function setMailInfo(subject, body) {
+                mailSubject = subject;
+                mailBody = body;
+            }
+            
+            var defaultIndex = 0;
+            var currentIndex = 0;
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="user_info_widget_ds" autoCreate="true">
+                <a:datas datasource="/model/quick_page_config"/>
+            </a:dataSet>
+        </a:dataSets>
+        <div>
+            <a:tabPanel id="quick_page_panel" height="400" width="800">
+                <a:tabs>
+                    <a:placeHolder id="dynamicQuickPageTab"/>
+                </a:tabs>
+            </a:tabPanel>
+            <a:placeHolder id="dynamicQuickPageObject"/>
+            <script><![CDATA[
+            	
+            		$('quick_page_panel').selectTab(defaultIndex);
+            	
+            ]]></script>
+            <div id="widget_div" style="width:250px;height:99%;position:fixed;top:18px;right:0px;">
+                <a:placeHolder id="dynamicWidgetObject"/>
+            </div>
+        </div>
+        <script><![CDATA[
+            function homePageResize() {
+                //页面宽度
+                var viewWidth = $A.getViewportWidth();
+                var viewHeight = $A.getViewportHeight();
+                //自适应宽度
+                var marginWidth = 260;
+                var marginHeight = 5;
+                //设置Tab的宽度自适应
+                $('quick_page_panel').setWidth(viewWidth - marginWidth);
+                $('quick_page_panel').setHeight(viewHeight - marginHeight);
+                tabPageWidth = viewWidth - marginWidth;
+            }
+            
+            homePageResize();
+            
+            ////Ext.fly(window).on('resize', homePageResize);
+        ]]></script>
+    </a:view>
+    <a:view-config>
+        <c:create-config targetId="dynamicQuickPageTab">
+            <p:loop source="/model/quick_page_config">
+                <c:process-config>
+                    <a:tab prompt="${@page_title}" ref="${/request/@context_path}/${@page_url}" width="120"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="dynamicQuickPageObject">
+            <p:loop source="/model/quick_page_config">
+                <c:process-config>
+                    <script><![CDATA[
+                    	if('${@default_flag}' == 'Y'){
+                    	    defaultIndex = currentIndex;
+                    	}
+                    	currentIndex ++ ;
+                    ]]></script>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="dynamicWidgetObject">
+            <p:loop source="/model/widget_config">
+                <c:process-config>
+                    <div id="detail_widget_${@widget_id}">
+                        <a:screen-include screen="${@widget_url}"/>
+                    </div>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+    </a:view-config>
+</a:screen>

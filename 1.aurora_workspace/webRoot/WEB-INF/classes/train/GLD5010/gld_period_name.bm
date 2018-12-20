@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: xin.J  
+    $Date: 2017-8-10 下午11:57:10  
+    $Revision: 1.0  
+    $Purpose: 期间查询
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:fields>
+        <bm:field name="period_name" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="PERIOD_NAME" prompt="GLD_VOUCHER_HEADERS.PERIOD_NAME"/>
+    </bm:fields>
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    a.period_name
+                FROM
+                    gld_periods a
+                WHERE
+                    a.period_year     = 2017 AND
+                    a.period_set_code = 'ZYF' AND
+                    a.adjustment_flag = 'N'
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

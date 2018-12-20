@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: StephenWang4010  
+    $Date: 2013-3-1 下午2:00:25  
+    $Revision: 1.0  
+    $Purpose: 资产验收申请确认
+-->
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure>
+        <a:model-query fetchAll="true" model="eam.eam0311.eam0311_asset_books_query" rootPath="eam0320_asset_books"/>
+        <a:model-query fetchAll="true" model="eam.eam0910.eam0910_requisition_types_query" rootPath="eam0320_req_types"/>
+    </a:init-procedure>
+    <a:view>
+        <script><![CDATA[
+    		
+    			// 查询
+    			function eam0320_query() {
+    			    $('eam0320_req_result_ds').query();
+    			}
+    		
+    			// 重置
+    			function eam0320_reset() {
+    			    $('eam0320_req_form_ds').reset();
+    			}
+    			
+    			function eam0320_reqNumRenderer(value,record,name) {
+    			    var requisition_header_id = record.get("requisition_header_id");
+    			    var base_trx_category = record.get("base_trx_category");
+    			    return '<a href="javascript:eam0320_reqDetail(\''+ base_trx_category + '\',' + requisition_header_id + ');">' + value + '</a>';
+    			}
+    			
+    			// 打开申请详情页面
+    			function eam0320_reqDetail(base_trx_category,requisition_header_id) {
+    			    switch(base_trx_category) {
+    			        case 'ADD':
+    			        	var url0 = '${/request/@context_path}/modules/eam/EAM0320/eam_rec_req_confirm_details.screen?requisition_header_id=' + requisition_header_id;
+		    			    new Aurora.Window({
+			                    id: 'eam_rec_req_window',
+			                    url: url0,
+			                    fullScreen:true,
+			                    title: '${l:EAM_REQUISITION_ADD_CONFIRM}' 
+			                });
+		    			    break;
+    			        case 'ADJ':
+    			        	var url1 = '${/request/@context_path}/modules/eam/EAM0920/eam_asset_cost_vadj_req_confirm_details.screen?requisition_header_id=' + requisition_header_id;
+			                new Aurora.Window({
+			                    id: 'eam_asset_cost_vadj_comfirm_window',
+			                    url: url1,
+			                    fullScreen:true,
+			                    title: '${l:EAM_REQUISITION_VADJ_UPDATE.SEARCH}'/* ,
+			                    height: 500,
+			                    width: 1100 */
+			                });
+	    			        break;
+    			        case 'REV':
+	    			        var url2 = '${/request/@context_path}/modules/eam/EAM0920/eam_asset_imp_loss_req_confirm_details.screen?requisition_header_id=' + requisition_header_id;
+			                new Aurora.Window({
+			                    id: 'eam_asset_imp_loss_comfirm_window',
+			                    url: url2,
+			                    fullScreen:true,
+			                    title: '${l:EAM_REQUISITION_VADJ_UPDATE.SEARCH}'/* ,
+			                    height: 500,
+			                    width: 1100 */
+			                });
+	    			    	break;
+    			        case 'RNT':
+	    			        var url3 = '${/request/@context_path}/modules/eam/EAM0920/eam_asset_rent_req_confirm_details.screen?requisition_header_id=' + requisition_header_id;
+			                new Aurora.Window({
+			                    id: 'eam_asset_rent_comfirm_window',
+			                    url: url3,
+			                    fullScreen:true,
+			                    title: '${l:EAM_REQUISITION_VADJ_UPDATE.SEARCH}'/* ,
+			                    height: 500,
+			                    width: 1100 */
+			                });
+	    			    	break;
+	    			    case 'TRA':
+	    			    	var url4 = '${/request/@context_path}/modules/eam/EAM0920/eam_transfer_requisition_confirm_details.screen?requisition_header_id=' + requisition_header_id;
+			                new Aurora.Window({
+			                    id: 'eam_transfer_window',
+			                    url: url4,
+			                    fullScreen:true,
+			                    title: '${l:EAM_REQUISITION_TRA_CONFIRM}'/* ,
+			                    height: 500,
+			                    width: 1100 */
+			                });
+	    			    	break;
+					    case 'RET':
+					        var url5 = '${/request/@context_path}/modules/eam/EAM0920/eam_disposal_requisition_confirm_details_ret.screen?requisition_header_id=' + requisition_header_id;
+			                new Aurora.Window({
+			                    id: 'transfer_req_audit_details',
+			                    url: url5,
+			                    fullScreen:true,
+			                    title: '${l:EAM_REQUISITION_DPL_CONFIRM}' 
+			                });
+					    	break;
+					    case 'DPL':
+					        var url6 = '${/request/@context_path}/modules/eam/EAM0920/eam_disposal_requisition_confirm_details_dpl.screen?requisition_header_id=' + requisition_header_id;
+			                new Aurora.Window({
+			                    id: 'transfer_req_audit_details',
+			                    url: url6,
+			                    fullScreen:true,
+			                    title: '${l:EAM_REQUISITION_DPL_CONFIRM}' 
+			                });
+					    	break;
+					    case 'STL':
+					        var url7 = '${/request/@context_path}/modules/eam/EAM0920/eam_cststl_requisition_confirm_details.screen?requisition_header_id=' + requisition_header_id;
+			                new Aurora.Window({
+			                    id: 'transfer_req_audit_details',
+			                    url: url7,
+			                    fullScreen:true,
+			                    title: '${l:EAM_REQUISITION_CSTSTL_CONFIRM}' 
+			                });
+					    	break;
+    			        case 'LND':
+	    			        var url8 = '${/request/@context_path}/modules/eam/EAM0920/eam_asset_rent_req_confirm_details.screen?requisition_header_id=' + requisition_header_id;
+			                new Aurora.Window({
+			                    id: 'eam_asset_rent_comfirm_window',
+			                    url: url8,
+			                    fullScreen:true,
+			                    title: '${l:EAM_REQUISITION_VADJ_UPDATE.SEARCH}'/* ,
+			                    height: 500,
+			                    width: 1100 */
+			                });
+	    			    	break;
+    			    }
+    			}
+    			
+    			
+    			// 申请号编辑器
+    			/* function eam0320_reqNumRenderer(value,record,name) {
+    			    var requisition_header_id = record.get("requisition_header_id");
+    			    return '<a href="javascript:eam0320_reqDetail(' + requisition_header_id + ');">' + value + '</a>';
+    			} */
+    			
+    			// 打开申请详情页面
+    			/* function eam0320_reqDetail(requisition_header_id) {
+    			    Aurora.go('${/request/@context_path}/modules/eam/EAM0320/eam_rec_req_confirm_details.screen?requisition_header_id=' + requisition_header_id);
+    			} */
+    	]]></script>
+        <a:dataSets>
+            <!-- 资产账簿DS -->
+            <a:dataSet id="eam0320_asset_books_ds">
+                <a:datas dataSource="/model/eam0320_asset_books"/>
+            </a:dataSet>
+            <!-- 申请类型DS -->
+            <a:dataSet id="eam0320_req_type_ds">
+                <a:datas dataSource="/model/eam0320_req_types"/>
+            </a:dataSet>
+            <!-- 申请头信息DS -->
+            <a:dataSet id="eam0320_req_header_ds" autoQuery="true" model="eam.eam0320.eam0320_requisition_headers_query"/>
+            <!-- 查询表单DS -->
+            <a:dataSet id="eam0320_req_form_ds">
+                <a:fields>
+                    <a:field name="asset_book_desc" displayField="asset_book_desc" options="eam0320_asset_books_ds" prompt="EAM_ASSET_CATEGORIES.ASSET_BOOK" returnField="asset_book_id" valueField="asset_book_id"/>
+                    <a:field name="ast_requisition_type_id"/>
+                    <a:field name="requisition_type_desc" displayField="description" options="eam0320_req_type_ds" prompt="EAM_REQUISITION_TYPES.AST_REQUISITION_TYPE_CODE" returnField="ast_requisition_type_id" valueField="ast_requisition_type_id"/>
+                    <a:field name="req_date_from" prompt="EXP_REQUISITION_LINES.DATE_FROM"/>
+                    <a:field name="req_number_from" prompt="REQUISITION_NUMBER_FROM"/>
+                    <a:field name="req_number_to" prompt="REQUISITION_NUMBER_TO"/>
+                    <a:field name="req_date_to" prompt="EXP_REQUISITION_LINES.DATE_TO"/>
+                </a:fields>
+            </a:dataSet>
+            <!-- 查询结果DS -->
+            <a:dataSet id="eam0320_req_result_ds" autoQuery="true" fetchAll="false" model="eam.eam0320.eam0320_requisition_headers_query" queryDataSet="eam0320_req_form_ds"/>
+        </a:dataSets>
+        <a:screenBody>
+            <!-- 查询表单 -->
+            <a:form column="3" title="REC_REQUISITION_CONFIRM_QUERY" width="800">
+                <a:comboBox name="asset_book_desc" bindTarget="eam0320_req_form_ds">
+                    <a:events>
+                        <a:event name="enterdown" handler="eam0320_query"/>
+                    </a:events>
+                </a:comboBox>
+                <a:comboBox name="requisition_type_desc" bindTarget="eam0320_req_form_ds">
+                    <a:events>
+                        <a:event name="enterdown" handler="eam0320_query"/>
+                    </a:events>
+                </a:comboBox>
+                <a:datePicker name="req_date_from" bindTarget="eam0320_req_form_ds">
+                    <a:events>
+                        <a:event name="enterdown" handler="eam0320_query"/>
+                    </a:events>
+                </a:datePicker>
+                <a:textField name="req_number_from" bindTarget="eam0320_req_form_ds">
+                    <a:events>
+                        <a:event name="enterdown" handler="eam0320_query"/>
+                    </a:events>
+                </a:textField>
+                <a:textField name="req_number_to" bindTarget="eam0320_req_form_ds">
+                    <a:events>
+                        <a:event name="enterdown" handler="eam0320_query"/>
+                    </a:events>
+                </a:textField>
+                <a:datePicker name="req_date_to" bindTarget="eam0320_req_form_ds">
+                    <a:events>
+                        <a:event name="enterdown" handler="eam0320_query"/>
+                    </a:events>
+                </a:datePicker>
+            </a:form>
+            <a:hBox>
+                <a:button click="eam0320_query" text="HAP_QUERY"/>
+                <a:button click="eam0320_reset" text="HAP_RESET"/>
+            </a:hBox>
+            <!-- 结果展示 -->
+            <a:grid bindTarget="eam0320_req_result_ds" height="400" navBar="true" width="980">
+                <a:toolBar>
+                    <a:label/>
+                </a:toolBar>
+                <a:columns>
+                    <a:column name="asset_book_desc" align="center" width="150"/>
+                    <a:column name="requisition_number" align="center" renderer="eam0320_reqNumRenderer" width="150"/>
+                    <a:column name="ast_requisition_type_desc" align="center" width="150"/>
+                    <a:column name="requisition_date" align="center" renderer="Aurora.formatDate"/>
+                    <a:column name="employee_name" align="center" width="140"/>
+                    <a:column name="req_status_desc" align="center" width="80"/>
+                    <a:column name="description" width="200"/>
+                </a:columns>
+            </a:grid>
+        </a:screenBody>
+    </a:view>
+</a:screen>

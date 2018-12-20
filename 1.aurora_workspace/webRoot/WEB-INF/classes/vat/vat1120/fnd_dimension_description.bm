@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    (SELECT
+                        v.description
+                    FROM
+                        fnd_dimensions_vl v
+                    WHERE
+                        v.dimension_sequence     = 1 AND
+                        NVL(v.enabled_flag, 'N') = 'Y'
+                    ) d1_description,
+                    (SELECT
+                        v.description
+                    FROM
+                        fnd_dimensions_vl v
+                    WHERE
+                        v.dimension_sequence     = 2 AND
+                        NVL(v.enabled_flag, 'N') = 'Y'
+                    ) d2_description,
+                    (SELECT
+                        v.description
+                    FROM
+                        fnd_dimensions_vl v
+                    WHERE
+                        v.dimension_sequence     = 3 AND
+                        NVL(v.enabled_flag, 'N') = 'Y'
+                    ) d3_description,
+                    (SELECT
+                        v.description
+                    FROM
+                        fnd_dimensions_vl v
+                    WHERE
+                        v.dimension_sequence     = 4 AND
+                        NVL(v.enabled_flag, 'N') = 'Y'
+                    ) d4_description,
+                    (SELECT
+                        v.description
+                    FROM
+                        fnd_dimensions_vl v
+                    WHERE
+                        v.dimension_sequence     = 5 AND
+                        NVL(v.enabled_flag, 'N') = 'Y'
+                    ) d5_description,
+                    (SELECT
+                        v.description
+                    FROM
+                        fnd_dimensions_vl v
+                    WHERE
+                        v.dimension_sequence     = 6 AND
+                        NVL(v.enabled_flag, 'N') = 'Y'
+                    ) d6_description,
+                    (SELECT
+                        v.description
+                    FROM
+                        fnd_dimensions_vl v
+                    WHERE
+                        v.dimension_sequence     = 7 AND
+                        NVL(v.enabled_flag, 'N') = 'Y'
+                    ) d7_description,
+                    (SELECT
+                        v.description
+                    FROM
+                        fnd_dimensions_vl v
+                    WHERE
+                        v.dimension_sequence     = 8 AND
+                        NVL(v.enabled_flag, 'N') = 'Y'
+                    ) d8_description,
+                    (SELECT
+                        v.description
+                    FROM
+                        fnd_dimensions_vl v
+                    WHERE
+                        v.dimension_sequence     = 9 AND
+                        NVL(v.enabled_flag, 'N') = 'Y'
+                    ) d9_description,
+                    (SELECT
+                        v.description
+                    FROM
+                        fnd_dimensions_vl v
+                    WHERE
+                        v.dimension_sequence     = 10 AND
+                        NVL(v.enabled_flag, 'N') = 'Y'
+                    ) d10_description
+                FROM
+                    dual
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

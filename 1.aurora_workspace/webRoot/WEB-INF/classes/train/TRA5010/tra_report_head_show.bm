@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    NULL tra_report_header_id,
+                    (SELECT 0 FROM dual
+                    ) sum_amount,
+                    (SELECT
+                        tv.description
+                    FROM
+                        exp_expense_report_types_vl tv
+                    WHERE
+                        tv.expense_report_type_id = ${/parameter/@expense_report_type_id}
+                    ) tra_report_type_name,
+                    (SELECT
+                        tv.report_name
+                    FROM
+                        exp_expense_report_types_vl tv
+                    WHERE
+                        tv.expense_report_type_id = ${/parameter/@expense_report_type_id}
+                    ) report_name,
+                    (SELECT
+                        sr.param_name
+                    FROM
+                        exp_expense_report_types_vl tv,
+                        sys_reports sr
+                    WHERE
+                        tv.expense_report_type_id = ${/parameter/@expense_report_type_id} AND
+                        tv.report_name            = sr.report_name AND
+                        rownum                    = 1
+                    ) report_param_name,
+                    ${/parameter/@expense_report_type_id} tra_report_type_id,
+                    TO_CHAR(sysdate,'yyyy-mm-dd') tra_report_date,
+                    (SELECT
+                        ee.employee_code
+                        || ' - '
+                        || name
+                    FROM
+                        exp_employees ee
+                    WHERE
+                        ee.employee_id=${/parameter/@employee_id}
+                    ) tra_report_employee_name,
+                    (SELECT
+                        eop.description
+                    FROM
+                        exp_org_position_vl eop ,
+                        exp_employee_assigns eea
+                    WHERE
+                        eop.position_id          =eea.position_id AND
+                        eea.employee_id          =${/parameter/@employee_id} AND
+                        eea.primary_position_flag='Y' AND
+                        eea.company_id           =${/session/@company_id}
+                    ) tra_report_position,
+                    (SELECT
+                        eop.position_id
+                    FROM
+                        exp_org_position_vl eop ,
+                        exp_employee_assigns eea
+                    WHERE
+                        eop.position_id          =eea.position_id AND
+                        eea.employee_id          =${/parameter/@employee_id} AND
+                        eea.primary_position_flag='Y' AND
+                        eea.company_id           =${/session/@company_id}
+                    ) tra_report_position_id,
+                    ${/parameter/@currency_code} currency_code,
+                    (SELECT
+                        GV.CURRENCY_NAME
+                    FROM
+                        GLD_CURRENCY_VL GV
+                    WHERE
+                        GV.CURRENCY_CODE= ${/parameter/@currency_code}
+                    ) currency_name,
+                    (SELECT
+                        CODE_VALUE_NAME
+                    FROM
+                        SYS_CODES_VL SC,
+                        SYS_CODE_VALUES_V SV
+                    WHERE
+                        SC.code      ='PAYMENT_OBJECT' AND
+                        sc.code_id   =sv.code_id AND
+                        SV.code_value=
+                        (SELECT
+                            tv.payment_object
+                        FROM
+                            exp_expense_report_types_vl tv
+                        WHERE
+                            tv.expense_report_type_id = ${/parameter/@expense_report_type_id}
+                        )
+                    ) payee_category_name,
+                    (SELECT
+                        CODE_VALUE
+                    FROM
+                        SYS_CODES_VL SC,
+                        SYS_CODE_VALUES_V SV
+                    WHERE
+                        SC.code      ='PAYMENT_OBJECT' AND
+                        sc.code_id   =sv.code_id AND
+                        SV.code_value=
+                        (SELECT
+                            tv.payment_object
+                        FROM
+                            exp_expense_report_types_vl tv
+                        WHERE
+                            tv.expense_report_type_id = ${/parameter/@expense_report_type_id}
+                        )
+                    ) payee_category,
+                    (SELECT
+                        GB.FUNCTIONAL_CURRENCY_CODE
+                    FROM
+                        FND_COMPANIES FC,
+                        GLD_SET_OF_BOOKS GB
+                    WHERE
+                        FC.COMPANY_ID     =${/session/@company_id} AND
+                        FC.SET_OF_BOOKS_ID=GB.SET_OF_BOOKS_ID
+                    )FUNCTIONAL_CURRENCY_CODE,
+                   ${/parameter/@employee_id} employee_id,
+                   ${/session/@company_id} company_id,
+                    (SELECT
+                        company_short_name
+                    FROM
+                        fnd_companies_vl fv
+                    WHERE
+                        fv.company_id=${/session/@company_id}
+                    ) company_name,
+                    (SELECT
+                        (employee_code
+                        ||' - '
+                        ||name) employee_name
+                    FROM
+                        exp_employees ee
+                    WHERE
+                        ee.employee_id=${/parameter/@employee_id}
+                    ) employee_name,
+                    (SELECT
+                        ep.POSITION_ID
+                    FROM
+                        exp_employee_assigns sa,
+                        exp_org_unit_vl eu,
+                        exp_org_position_vl ep
+                    WHERE
+                        sa.employee_id          =${/parameter/@employee_id} AND
+                        sa.company_id           =${/session/@company_id} AND
+                        sa.primary_position_flag='Y' AND
+                        eu.UNIT_ID              =ep.UNIT_ID AND
+                        sa.position_id          =ep.POSITION_ID
+                    ) position_id,
+                    (SELECT
+                        ep.description
+                    FROM
+                        exp_employee_assigns sa,
+                        exp_org_unit_vl eu,
+                        exp_org_position_vl ep
+                    WHERE
+                        sa.employee_id          =${/parameter/@employee_id} AND
+                        sa.company_id           =${/session/@company_id} AND
+                        sa.primary_position_flag='Y' AND
+                        eu.UNIT_ID              =ep.UNIT_ID AND
+                        sa.position_id          =ep.POSITION_ID
+                    ) position_name,
+                    (SELECT
+                        eu.unit_id
+                    FROM
+                        exp_employee_assigns sa,
+                        exp_org_unit_vl eu,
+                        exp_org_position_vl ep
+                    WHERE
+                        sa.employee_id          =${/parameter/@employee_id} AND
+                        sa.company_id           =${/session/@company_id} AND
+                        sa.primary_position_flag='Y' AND
+                        eu.UNIT_ID              =ep.UNIT_ID AND
+                        sa.position_id          =ep.POSITION_ID
+                    ) unit_id,
+                    (SELECT
+                        eu.description
+                    FROM
+                        exp_employee_assigns sa,
+                        exp_org_unit_vl eu,
+                        exp_org_position_vl ep
+                    WHERE
+                        sa.employee_id          =${/parameter/@employee_id} AND
+                        sa.company_id           =${/session/@company_id} AND
+                        sa.primary_position_flag='Y' AND
+                        eu.UNIT_ID              =ep.UNIT_ID AND
+                        sa.position_id          =ep.POSITION_ID
+                    ) unit_name,
+                    (SELECT
+                        er.responsibility_center_id
+                    FROM
+                        exp_employee_assigns sa,
+                        exp_org_unit_vl eu,
+                        exp_org_position_vl ep,
+                        fnd_responsibility_centers_vl er
+                    WHERE
+                        sa.employee_id             =${/parameter/@employee_id} AND
+                        sa.company_id              =${/session/@company_id} AND
+                        sa.primary_position_flag   ='Y' AND
+                        eu.UNIT_ID                 =ep.UNIT_ID AND
+                        sa.position_id             =ep.POSITION_ID AND
+                        er.responsibility_center_id=eu.responsibility_center_id AND
+                        (
+                            (
+                                TRUNC(er.start_date_active) <= sysdate AND
+                                er.end_date_active          >= TRUNC(sysdate)
+                            )
+                            OR
+                            (
+                                TRUNC(er.start_date_active) <= sysdate AND
+                                er.end_date_active          IS NULL
+                            )
+                        )
+                    ) responsibility_center_id,
+                    (SELECT
+                        er.responsibility_center_name
+                    FROM
+                        exp_employee_assigns sa,
+                        exp_org_unit_vl eu,
+                        exp_org_position_vl ep,
+                        fnd_responsibility_centers_vl er
+                    WHERE
+                        sa.employee_id             =${/parameter/@employee_id} AND
+                        sa.company_id              =${/session/@company_id} AND
+                        sa.primary_position_flag   ='Y' AND
+                        eu.UNIT_ID                 =ep.UNIT_ID AND
+                        sa.position_id             =ep.POSITION_ID AND
+                        er.responsibility_center_id=eu.responsibility_center_id AND
+                        (
+                            (
+                                TRUNC(er.start_date_active) <= sysdate AND
+                                er.end_date_active          >= TRUNC(sysdate)
+                            )
+                            OR
+                            (
+                                TRUNC(er.start_date_active) <= sysdate AND
+                                er.end_date_active          IS NULL
+                            )
+                        )
+                    ) responsibility_center_name,
+                    (SELECT
+                        tv.payment_flag
+                    FROM
+                        exp_expense_report_types_vl tv
+                    WHERE
+                        tv.expense_report_type_id = ${/parameter/@expense_report_type_id}
+                    ) payment_flag,
+                    (SELECT
+                        tv.req_required_flag
+                    FROM
+                        exp_expense_report_types_vl tv
+                    WHERE
+                        tv.expense_report_type_id = ${/parameter/@expense_report_type_id}
+                    ) req_required_flag,
+                    (SELECT
+                        u.usedes_code
+                    FROM
+                        csh_payment_usedes u,
+                        exp_rep_ref_payment_usedes e
+                    WHERE
+                        u.usedes_id              = e.usedes_id AND
+                        e.expense_report_type_id = ${/parameter/@expense_report_type_id} AND
+                        e.primary_flag           ='Y'
+                    ) usedes,
+                    (SELECT
+                        u.description
+                    FROM
+                        csh_payment_usedes_vl u,
+                        exp_rep_ref_payment_usedes e
+                    WHERE
+                        u.usedes_id              = e.usedes_id AND
+                        e.expense_report_type_id = ${/parameter/@expense_report_type_id} AND
+                        e.primary_flag           ='Y'
+                    ) usedes_name,
+                    (SELECT
+                        tv.adjustment_flag
+                    FROM
+                        exp_expense_report_types_vl tv
+                    WHERE
+                        tv.expense_report_type_id = ${/parameter/@expense_report_type_id}
+                    ) adjustment_flag,
+                    (SELECT
+                        ees.name
+                    FROM
+                        exp_employees ees ,
+                        sys_user su
+                    WHERE
+                        ees.employee_id=su.employee_id AND
+                        su.user_id     =${/session/@user_id}
+                    ) tra_report_create_by,
+                 TO_CHAR(sysdate,'yyyy-mm-dd') sys_date,
+                    (SELECT
+                        sv.code_value_name
+                    FROM
+                        sys_code_values_vl sv,
+                        sys_codes sc
+                    WHERE
+                        sv.code_id   =sc.code_id AND
+                        sc.code      ='EXP_EXPENSE_REPORT_STATUS' AND
+                        sv.code_value='GENERATE'
+                    ) tra_report_status,
+                    (SELECT
+                        DECODE(
+                        (SELECT
+                            NVL(v.BUDGET_CONTROL_ENABLED,'N') FROM exp_expense_report_types_vl v WHERE v.expense_report_type_id=${/parameter/@expense_report_type_id}
+                        ),'N',
+                        (SELECT
+                            bgt_common_pkg.get_bgt_period_name(${/session/@company_id},sysdate)
+                        FROM
+                            dual
+                        ),
+                        (SELECT
+                            bgt_common_pkg.get_budget_period_name(${/session/@company_id},sysdate)
+                        FROM
+                            dual
+                        ))
+                    FROM
+                        dual
+                    ) period_name,
+                    '' tra_report_number,
+                    (SELECT
+                        tv2.payment_method
+                    FROM
+                        exp_expense_report_types_vl tv2
+                    WHERE
+                        tv2.expense_report_type_id = ${/parameter/@expense_report_type_id}
+                    ) AS payment_method_id,
+                    (SELECT
+                        tv3.payment_method_desc
+                    FROM
+                        exp_expense_report_types_vl tv3
+                    WHERE
+                        tv3.expense_report_type_id = ${/parameter/@expense_report_type_id}
+                    ) AS payment_method,
+                    NULL description,
+                    NULL attach_id,
+                    NULL payee_id,
+                    NULL payee_name ,
+                    (SELECT
+                        NVL(v.BUDGET_CONTROL_ENABLED,'N')
+                    FROM
+                        exp_expense_report_types_vl v
+                    WHERE
+                        v.expense_report_type_id=${/parameter/@expense_report_type_id}
+                    ) BUDGET_CONTROL_ENABLED,
+                    NULL rate_type,
+                    NULL rate_quotation,
+                    1 rate,
+                    NULL rate_type_name,
+                    NULL rate_quotation_name ,
+                    0 line_number,
+                    'N' invoice_flag
+                FROM
+                    dual
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

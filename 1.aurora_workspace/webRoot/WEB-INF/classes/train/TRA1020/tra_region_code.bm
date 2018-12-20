@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:o="aurora.database.local.oracle" xmlns:bm="http://www.aurora-framework.org/schema/bm" alias="f" baseTable="doc_category">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[		select * from     fnd_region_code_vl rc where rc.region_code like '__0000']]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <!-- <bm:fields>
+        <bm:field name="country_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="COUNTRY_CODE" required="true"/>
+        <bm:field name="country_description" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="COUNTRY_DESCRIPTION"/>
+        <bm:field name="region_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="REGION_CODE" required="true"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DESCRIPTION"/>
+        <bm:field name="created_by" databaseType="NUMBER" datatype="java.lang.Long" physicalName="CREATED_BY" required="true"/>
+        <bm:field name="creation_date" databaseType="DATE" datatype="java.util.Date" physicalName="CREATION_DATE" required="true"/>
+        <bm:field name="last_updated_by" databaseType="NUMBER" datatype="java.lang.Long" physicalName="LAST_UPDATED_BY" required="true"/>
+        <bm:field name="last_update_date" databaseType="DATE" datatype="java.util.Date" physicalName="LAST_UPDATE_DATE" required="true"/>
+    </bm:fields> -->
+    <!--    <bm:fields>
+        <bm:field name="category_id" databaseType="NUMBER" datatype="java.lang.Integer"/>
+        <bm:field name="category_name" databaseType="VARCHAR" datatype="java.lang.String"/>
+    </bm:fields>
+    <bm:primary-key>
+        <bm:pk-field name="category_id"/>
+    </bm:primary-key>
+    <bm:features>
+        <o:sequence-pk/>
+    </bm:features> -->
+</bm:model>

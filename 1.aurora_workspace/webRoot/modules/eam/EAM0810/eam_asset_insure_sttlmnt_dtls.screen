@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893
+    $Date: 2013-3-5 下午12:25:14  
+    $Revision: 1.0  
+    $Purpose: 理赔明细
+-->
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <a:init-procedure>
+        <a:model-query autoCount="false" fetchAll="true" fieldNameCase="lower" model="eam.eam0810.eam0810_asset_insure_sttlmnt_dtls_query" rootPath="sttlmnt_dtls_info"/>
+    </a:init-procedure>
+    <a:view>
+        <script><![CDATA[
+        	
+		]]></script>
+        <a:dataSets>
+            <a:dataSet id="eam0810_eam_asset_insure_sttlmnt_dtls_result_ds" autoPageSize="true" model="eam.eam0810.eam0810_asset_insure_sttlmnt_dtls_query" selectable="true" submitUrl="${/request/@context_path}/autocrud/eam.eam0810.eam0810_asset_insure_sttlmnt_dtls_edit/batch_update">
+                <a:datas dataSource="/model/sttlmnt_dtls_info"/>
+                <a:fields>
+                    <a:field name="insure_settlement_id"/>
+                    <a:field name="asset_insure_id" defaultValue="${/parameter/@asset_insure_id}"/>
+                    <a:field name="settelement_date" required="true"/>
+                    <a:field name="description"/>
+                    <a:field name="employee_id"/>
+                    <a:field name="employee_name" lovGridHeight="200" lovHeight="350" lovService="eam.eam0810.eam0810_employee_lv" lovWidth="450" prompt="EAM_ASSET_INSURE_STTLMNT_DTLS.EMPLOYEE_ID" title="EXP_EMPLOYEES.QUERY">
+                        <a:mapping>
+                            <a:map from="id" to="employee_id"/>
+                            <a:map from="code_name" to="employee_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="amount" required="true"/>
+                    <a:field name="contactor"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:grid bindTarget="eam0810_eam_asset_insure_sttlmnt_dtls_result_ds" height="440" navBar="true" width="630">
+                <a:toolBar>
+                    <a:button type="add"/>
+                    <a:button type="save"/>
+                    <a:button type="clear"/>
+                </a:toolBar>
+                <a:columns>
+                    <a:column name="settelement_date" align="left" editor="eam0810_insure_date_dp" renderer="Aurora.formatDate" width="90"/>
+                    <a:column name="description" align="left" editor="eam0810_sett_description_tf" width="210"/>
+                    <a:column name="employee_name" align="right" editor="eam0810_sett_employee_name_lv" width="100"/>
+                    <a:column name="amount" align="right" editor="eam0810_sett_amount_nf" width="80"/>
+                    <a:column name="contactor" align="left" editor="eam0810_sett_contactor_tf" width="100"/>
+                </a:columns>
+                <a:editors>
+                    <a:textField id="eam0810_settelement_date_tf"/>
+                    <a:textField id="eam0810_sett_description_tf"/>
+                    <a:textField id="eam0810_sett_contactor_tf"/>
+                    <a:lov id="eam0810_sett_employee_name_lv"/>
+                    <a:numberField id="eam0810_sett_amount_nf" allowDecimals="true" allowNegative="false" decimalPrecision="2"/>
+                </a:editors>
+            </a:grid>
+        </a:screenBody>
+    </a:view>
+</a:screen>

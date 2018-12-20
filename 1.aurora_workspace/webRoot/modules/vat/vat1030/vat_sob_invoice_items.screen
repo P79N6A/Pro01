@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <a:init-procedure>
+        <a:model-query defaultWhereClause="enabled_flag=&apos;Y&apos;" fetchAll="true" model="vat.vat1030.setbookslist_query" rootPath="setbookslist"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="vat_sob_invoice_items_link" url="${/request/@context_path}/modules/vat/vat1030/vat_invoice_items.screen"/>
+        <script><![CDATA[
+            function confirm() {
+                var set_of_books_id = $("vat_sob_invoice_items").getAt(0).get("return_value");
+                if (!set_of_books_id) {
+                    $("vat_sob_invoice_items").validate();
+                    return;
+                }
+            
+                window.location.href = $('vat_sob_invoice_items_link').getUrl() + '?set_of_books_id=' + set_of_books_id;
+            
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="vat_sob_invoice_items_select">
+                <a:datas dataSource="/model/setbookslist"/>
+            </a:dataSet>
+            <a:dataSet id="vat_sob_invoice_items" autoCreate="true">
+                <a:fields>
+                    <a:field name="set_of_books_id" displayField="value_name" options="vat_sob_invoice_items_select" required="true" returnField="return_value" valueField="value"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="confirm" text="HAP_CONFIRM" width="80"/>
+            </a:screenTopToolbar>
+            <a:form id="vat_sob_invoice_items_gird" column="1" title="VAT_SOB_INVOICE_ITEMS.PLEASE_SELECT_SET_OF_BOOK_ID">
+                <a:comboBox name="set_of_books_id" bindTarget="vat_sob_invoice_items" prompt="VAT_SOB_INVOICE_ITEMS.SET_OF_BOOKS_ID"/>
+            </a:form>
+        </a:screenBody>
+        <script purpose="auto_resize"><![CDATA[
+            function vat_sob_invoice_items_info_infoInitSize() {
+                //描述宽度
+                var labelWidth = 75;
+                //标签宽度,5 = 3padding + 2border-spacing
+                var tagWidth = 150 + 5;
+                //页面宽度、高度
+                var vw = $A.getViewportWidth();
+                var vh = $A.getViewportHeight();
+                //留白宽度
+                var marginWidth = 35;
+                //自适应宽度
+                var autoWidth = vw - marginWidth;
+                //设置组件的自适应宽度
+                Ext.get('vat_sob_invoice_items_gird').setWidth(autoWidth + 4);
+            }
+            //Ext.fly(window).on('resize', vat_sob_invoice_items_info_infoInitSize);
+            vat_sob_invoice_items_info_infoInitSize();
+        ]]></script>
+    </a:view>
+</a:screen>

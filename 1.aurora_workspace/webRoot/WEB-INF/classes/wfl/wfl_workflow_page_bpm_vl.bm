@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Zealot  
+    $Date: 2014-5-27 上午11:05:39  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm" xmlns:f="aurora.database.features" alias="t1" baseTable="WFL_WORKFLOW_PAGE_BPM_VL" needAccessControl="false">
+    <bm:fields>
+        <bm:field name="service_name" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="SERVICE_NAME" prompt="WFL_WORKFLOW_PAGE_BPM_VL.SERVICE_NAME"/>
+        <bm:field name="group_type" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="GROUP_TYPE" prompt="WFL_WORKFLOW_PAGE_BPM_VL.GROUP_TYPE"/>
+        <bm:field name="group_type_desc" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="GROUP_TYPE_DESC" prompt="BPM_PAGE_GROUPS.GRUOP_TYPE"/>
+        <bm:field name="group_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="GROUP_CODE" prompt="WFL_WORKFLOW_PAGE_BPM_VL.GROUP_CODE"/>
+        <bm:field name="group_desc" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="GROUP_DESC" prompt="BPM_PAGE_GROUPS.GRUOP_DESC"/>
+        <bm:field name="page_type" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="PAGE_TYPE" prompt="WFL_WORKFLOW_PAGE_BPM_VL.PAGE_TYPE"/>
+        <bm:field name="page_type_desc" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="PAGE_TYPE_DESC" prompt="BPM_PAGES.PAGE_TYPE"/>
+        <bm:field name="page_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="PAGE_CODE" prompt="WFL_WORKFLOW_PAGE_BPM_VL.PAGE_CODE"/>
+        <bm:field name="service_display" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="SERVICE_DISPLAY" prompt="BPM_PAGES.PAGE_DESC"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DESCRIPTION" prompt="WFL_WORKFLOW_PAGE_BPM_VL.DESCRIPTION"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field field="group_type_desc" queryExpression=" t1.group_type_desc like &apos;%&apos;||${@group_type_desc}||&apos;%&apos;"/>
+        <bm:query-field field="group_desc" queryExpression=" t1.group_desc like &apos;%&apos;||${@group_desc}||&apos;%&apos;"/>
+        <bm:query-field field="page_type_desc" queryExpression=" t1.page_type_desc like &apos;%&apos;||${@page_type_desc}||&apos;%&apos;"/>
+        <bm:query-field field="service_display" queryExpression=" t1.service_display like &apos;%&apos;||${@service_display}||&apos;%&apos;"/>
+    </bm:query-fields>
+</bm:model>

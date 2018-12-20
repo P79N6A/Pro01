@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:service xmlns:at="aurora.plugin.script" xmlns:a="http://www.aurora-framework.org/application" xmlns:p="uncertain.proc" trace="true">
+    <a:init-procedure>
+        <p:echo/>
+        <at:server-script><![CDATA[
+            //引入uncertain.composite包
+            importPackage(Packages.uncertain.composite);
+            
+            function addChild(parentNode, childNodeName, childNodeText) {
+                var childNode = new CompositeMap(childNodeName).getData();
+                childNode.setText(childNodeText);
+                parentNode.addChild(childNode);
+            }
+            
+            function main() {
+                //获取上下文，并设置当前的soap为全手动设置
+                var context = $ctx.getData();
+                var paramData = context.getObject('/parameter');
+                //将NodeText展开为Attribute
+                CompositeUtil.collapse(paramData);
+            
+                context.putString('soapResponseFullControl', 'Y');
+                var envelope = new CompositeMap('soapenv', 'http://schemas.xmlsoap.org/soap/envelope/', 'Envelope').getData();
+                var envBody = new CompositeMap('soapenv', 'http://schemas.xmlsoap.org/soap/envelope/', 'Body').getData();
+                var soapResponse = new CompositeMap('soapenv', 'http://schemas.xmlsoap.org/soap/envelope/', 'soapResponse').getData();
+                context.addChild(envelope);
+                envelope.addChild(envBody);
+                envBody.addChild(soapResponse);
+            
+                try {
+                    //调用存储过程，修改单据的影像状态
+                    $bm('ws.IMG.update_image_status').execute();
+                    addChild(soapResponse, 'status', 'success');
+                    addChild(soapResponse, 'message', 'Invoke Success');
+                    addChild(soapResponse, 'result', '');
+                } catch (e) {
+                    addChild(soapResponse, 'status', 'error');
+                    addChild(soapResponse, 'message', e.message);
+                    addChild(soapResponse, 'result', '');
+                }
+            }
+            
+            main();
+        ]]></at:server-script>
+    </a:init-procedure>
+    <!-- 指定输出内容的节点 -->
+    <a:service-output output="/Envelope"/>
+</a:service>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: ldd  
+    $Date: 2012-2-7 下午05:24:09  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+            select * from (
+            select fc.company_id, fc.company_code, fc.company_short_name
+  from fnd_companies_vl fc, gld_set_of_books_vl sob
+ where (fc.end_date_active is null or
+       sysdate between fc.start_date_active and fc.end_date_active)
+   and fc.set_of_books_id = ${/parameter/@set_of_books_id}
+   and sob.set_of_books_id = fc.set_of_books_id
+   and sob.enabled_flag = 'Y'
+   and fc.COMPANY_ID not in
+       (select t2.company_id
+          from (select ert.company_id,
+                       t.transaction_category,
+                       t.workflow_code
+                  from WFL_WORKFLOW_TRANSACTION t, EXP_EXPENSE_REQ_TYPES ert
+                 where t.transaction_type_id =
+                       ert.expense_requisition_type_id
+                union
+                select eert.company_id,
+                       t.transaction_category,
+                       t.workflow_code
+                  from WFL_WORKFLOW_TRANSACTION t,
+                       EXP_EXPENSE_REPort_TYPES eert
+                 where t.transaction_type_id = eert.expense_report_type_id
+                union
+                select bcrt.company_id,
+                       t.transaction_category,
+                       t.workflow_code
+                  from WFL_WORKFLOW_TRANSACTION t, BGT_CHANGE_REQ_TYPES bcrt
+                 where t.transaction_type_id = bcrt.bgt_change_req_type_id
+                union
+                select cprt.company_id,
+                       t.transaction_category,
+                       t.workflow_code
+                  from WFL_WORKFLOW_TRANSACTION t, csh_pay_req_types cprt
+                 where t.transaction_type_id = cprt.type_id
+                union
+                select bit.company_id,
+                       t.transaction_category,
+                       t.workflow_code
+                  from WFL_WORKFLOW_TRANSACTION t, bgt_import_type bit
+                 where t.transaction_type_id = bit.bgt_import_type_id
+                union
+                select bvt.company_id,
+                       t.transaction_category,
+                       t.workflow_code
+                  from WFL_WORKFLOW_TRANSACTION t, bgt_ver_types bvt
+                 where t.transaction_type_id = bvt.bgt_ver_type_id) t2
+         where t2.transaction_category = ${/parameter/@transaction_category}
+           and t2.workflow_code = ${/parameter/@workflow_code})
+) v
+               #WHERE_CLAUSE#
+               order by v.company_code
+               ]]></bm:query-sql>
+            <bm:parameters>
+                <bm:parameter inputPath="/parameter/@set_of_books_id"/>
+            </bm:parameters>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="company_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="COMPANY_ID"/>
+        <bm:field name="company_code" databaseType="VARCHAR2" datatype="java.lang.String" displayWidth="230" forDisplay="true" forQuery="true" physicalName="COMPANY_CODE" prompt="COMPANY_CODE"/>
+        <bm:field name="company_short_name" databaseType="VARCHAR2" datatype="java.lang.String" displayWidth="230" forDisplay="true" forQuery="true" physicalName="COMPANY_SHORT_NAME" prompt="FND_COMPANIES.COMPANY_DISPLAY"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field name="company_code_from" queryExpression="v.COMPANY_CODE &gt;= ${@company_code_from}"/>
+        <bm:query-field name="company_code_to" queryExpression="v.COMPANY_CODE &lt;= ${@company_code_to}"/>
+    </bm:query-fields>
+</bm:model>

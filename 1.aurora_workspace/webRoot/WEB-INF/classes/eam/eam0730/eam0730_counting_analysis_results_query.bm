@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893
+    $Date: 2013-4-23 下午4:19:20  
+    $Revision: 1.0  
+    $Purpose: 盘点计划明细页面 –差异分析查询
+-->
+<ns1:model xmlns:ns1="http://www.aurora-framework.org/schema/bm" alias="t1" extend="eam.eam_counting_analysis_results" extendMode="reference">
+    <ns1:fields>
+        <ns1:field name="counting_plan_header_id"/>
+        <ns1:field name="analysis_result_id"/>
+        <ns1:field name="asset_id"/>
+        <ns1:field name="asset_code"/>
+        <ns1:field name="asset_name" expression="(select h.asset_name from eam_asset_headers_vl h where h.asset_id = t1.asset_id)" prompt="EAM_COUNTING_ANALYSIS_RESULTS.ASSET_NAME"/>
+        <ns1:field name="current_location_id"/>
+        <ns1:field name="current_location_code"/>
+        <ns1:field name="current_location_name" expression="(select v.description from eam_locations_vl v where v.location_id = t1.current_location_id)" prompt="EAM_COUNTING_ANALYSIS_RESULTS.CURRENT_LOCATION_NAME"/>
+        <ns1:field name="current_quantity"/>
+        <ns1:field name="counted_tag_number"/>
+        <ns1:field name="act_location_code"/>
+        <ns1:field name="act_location_name"/>
+        <ns1:field name="act_quantity"/>
+        <ns1:field name="diff_flag"/>
+        <ns1:field name="diff_type"/>
+        <ns1:field name="diff_type_name" expression="(SELECT v.code_value_name   FROM sys_service_lookup_v v  WHERE v.enabled_flag = &apos;Y&apos;    AND V.code_value = t1.diff_type    AND code = &apos;EAM_COUNTING_DIFF_TYPE&apos;    and language = ${/session/@lang})" prompt="EAM_COUNTING_ANALYSIS_RESULTS.DIFF_TYPE"/>
+        <ns1:field name="result_status"/>
+        <ns1:field name="asset_location_name" expression="(select l.description from eam_asset_headers h,eam_locations_vl l where h.asset_id = t1.asset_id and l.location_id = h.location_id)" prompt="EAM_COUNTING_ANALYSIS_RESULTS.ASSET_LOCATION_NAME"/>
+        <ns1:field name="asset_quantity" expression="(select h.quantity from eam_asset_headers h where h.asset_id = t1.asset_id)" prompt="EAM_COUNTING_ANALYSIS_RESULTS.ASSET_QUANTITY"/>
+        <ns1:field name="description"/>
+        <ns1:field name="line_number"/>
+    </ns1:fields>
+    <ns1:query-fields>
+        <ns1:query-field field="counting_plan_header_id" queryOperator="="/>
+    </ns1:query-fields>
+</ns1:model>

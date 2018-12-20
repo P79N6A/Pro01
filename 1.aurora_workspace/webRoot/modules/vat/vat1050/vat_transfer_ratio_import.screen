@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure/>
+    <a:view>
+        <a:link id="vat_transfer_ratio_load_link" url="${/request/@context_path}/modules/vat/vat1050/vat_transfer_ratio_load.screen"/>
+        <script><![CDATA[
+            function resetquery() {
+                $('vat_transfer_ratio_query_ds').reset();
+            }
+            
+            function load() {
+                new Aurora.Window({
+                    url: $("vat_transfer_ratio_load_link").getUrl(),
+                    fullScreen: true
+                });
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="vat_transfer_ratio_query_ds">
+                <a:fields>
+                    <a:field name="period_name" lovGridHeight="300" lovHeight="460" lovService="bgt.bgt_periods_detail_lov" lovWidth="500" prompt="VAT_TAX_TRANSFER_RATIO.PERIOD_NAME" title="VAT_TAX_TRANSFER_RATIO.PERIOD_NAME">
+                        <a:mapping>
+                            <a:map from="period_name" to="period_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="company_id"/>
+                    <a:field name="company_code"/>
+                    <a:field name="company_short_name" autoComplete="true" autoCompleteField="company_short_name" lovGridHeight="320" lovHeight="460" lovWidth="500" lovservice="fnd.fnd_companies_lov" prompt="VAT_TAX_TRANSFER_RATIO.COMPANY_SHORT_NAME" title="VAT_TAX_TRANSFER_RATIO.COMPANY_SHORT_NAME">
+                        <a:mapping>
+                            <a:map from="company_id" to="company_id"/>
+                            <a:map from="company_code" to="company_code"/>
+                            <a:map from="company_short_name" to="company_short_name"/>
+                        </a:mapping>
+                    </a:field>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="vat_transfer_ratio_result_ds" autoQuery="true" fetchAll="false" model="vat.vat1050.vat_transfer_ratio" queryDataSet="vat_transfer_ratio_query_ds" selectable="true">
+                <a:fields>
+                    <a:field name="period_name" lovGridHeight="300" lovHeight="460" lovService="bgt.bgt_periods_detail_lov" lovWidth="500" prompt="VAT_TAX_TRANSFER_RATIO.PERIOD_NAME" required="true" title="VAT_TAX_TRANSFER_RATIO.PERIOD_NAME">
+                        <a:mapping>
+                            <a:map from="period_name" to="period_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="company_id"/>
+                    <a:field name="company_code"/>
+                    <a:field name="company_short_name" autoComplete="true" autoCompleteField="company_short_name" lovGridHeight="320" lovHeight="460" lovWidth="500" lovservice="fnd.fnd_companies_lov" prompt="VAT_TAX_TRANSFER_RATIO.COMPANY_SHORT_NAME" required="true" title="VAT_TAX_TRANSFER_RATIO.COMPANY_SHORT_NAME">
+                        <a:mapping>
+                            <a:map from="company_id" to="company_id"/>
+                            <a:map from="company_code" to="company_code"/>
+                            <a:map from="company_short_name" to="company_short_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="transfer_ratio" required="true"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="resetquery" text="HAP_RESET" width="80"/>
+                <a:gridButton bind="vat_transfer_ratio_gird" type="add" width="80"/>
+                <a:gridButton bind="vat_transfer_ratio_gird" type="delete" width="80"/>
+                <a:gridButton bind="vat_transfer_ratio_gird" type="clear" width="80"/>
+                <a:gridButton bind="vat_transfer_ratio_gird" type="save" width="80"/>
+                <a:gridButton bind="vat_transfer_ratio_gird" click="load" text="PROMPT.LOAD" width="80"/>
+            </a:screenTopToolbar>
+            <a:queryForm bindTarget="vat_transfer_ratio_query_ds" resultTarget="vat_transfer_ratio_result_ds" style="width:100%;border:none">
+                <a:formToolBar>
+                    <a:lov name="period_name" bindtarget="vat_transfer_ratio_query_ds"/>
+                    <a:lov name="company_short_name" bindtarget="vat_transfer_ratio_query_ds"/>
+                </a:formToolBar>
+            </a:queryForm>
+            <a:grid id="vat_transfer_ratio_gird" bindTarget="vat_transfer_ratio_result_ds" marginHeight="121" navBar="true">
+                <a:columns>
+                    <a:column name="period_name" align="center" editor="Vatlov" width="100"/>
+                    <a:column name="company_short_name" align="left" editor="Vatlov" width="200"/>
+                    <a:column name="transfer_ratio" align="right" editor="VatnumberField" width="100"/>
+                </a:columns>
+                <a:editors>
+                    <a:numberField id="VatnumberField" allowNegative="false" decimalPrecision="4"/>
+                    <a:lov id="Vatlov"/>
+                </a:editors>
+            </a:grid>
+        </a:screenBody>
+        <script purpose="auto_resize"><![CDATA[
+            function vat_transfer_ratio_info_infoInitSize() {
+                //页面宽度、高度
+                var vw = $A.getViewportWidth();
+                //留白宽度
+                var marginWidth = 35;
+                //自适应宽度
+                var autoWidth = vw - marginWidth;
+                //设置组件的自适应宽度
+                $('vat_transfer_ratio_gird').setWidth(autoWidth);
+                //设置TextArea的自适应宽度
+            }
+            vat_transfer_ratio_info_infoInitSize();
+        ]]></script>
+    </a:view>
+</a:screen>

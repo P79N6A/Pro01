@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: wangguangfan  
+    $Date: 2013-1-7 下午03:42:15  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[select t.unit_code, t.description
+  from Exp_Org_Unit_Vl t
+  where t.ENABLED_FLAG = 'Y'
+  #WHERE_CLAUSE#
+ order by t.unit_code
+]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="unit_code" forDisplay="true" forQuery="true" prompt="SYS_PARAMETER.PARAMETER_CODE"/>
+        <bm:field name="description" forDisplay="true" forQuery="true" prompt="SYS_REPORTS.PARAM_NAME"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field field="unit_code" queryOperator="like"/>
+        <bm:query-field field="description" queryOperator="like"/>
+    </bm:query-fields>
+</bm:model>

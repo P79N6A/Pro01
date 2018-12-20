@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>事件管理页面</title>
+    <link type="text/css" rel="stylesheet" href="css/index.css">
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/js/myItemCRUDOption.js"></script>
+    <script type="text/javascript" src="/js/myJsAllItemInfo.js"></script>
+</head>
+<body>
+<!-----------------------------------待定------------------------------------>
+<button id="firstItem" onclick="clickItemFirst()">首页</button>
+<button id="preItem" onclick="clickItemPre()">上一页</button>
+<button id="nextItem" onclick="clickItemNext()">下一页</button>
+<button id="endItem" onclick="clickItemEnd()">末页</button>
+<div id="div3_Item">
+    <table class="indexTable1">
+        <thead>
+        <tr align="center">
+            <th width="50" class="td2">事件id</th>
+            <th width="50" class="td2">用户id</th>
+            <th width="50" class="td2">标题</th>
+            <th width="50" class="td2">内容</th>
+            <th width="50" class="td2">优先级</th>
+            <th width="50" class="td2">创建日期</th>
+            <th width="50" class="td2">更新日期</th>
+            <th width="100" class="td2">创建日期</th>
+            <th width="50" class="td2">描述</th>
+        </tr>
+        </thead>
+        <tbody class="tbody3_Item" align="center">
+        </tbody>
+    </table>
+</div>
+<!------------------------------------------------------------------->
+<table>
+    <!--<tr><td><button id="selectAll">查询所有人信息</button></td></tr>-->
+    <tr><td><button id="selectItem" onclick="selectItemFun()">根据Id查询Item信息</button></td></tr>
+    <tr><td><button id="insertItem" onclick="insertItemFun()">增加一个Item</button></td></tr>
+    <tr><td><button id="deleteItem" onclick="deleteItemFun()">根据Id删除Item</button></td></tr>
+    <tr><td><button id="updateItem" onclick="updateItemFun()">根据Id更新Item</button></td></tr>
+    <tr> <td><input type="text" id="textItem1" placeholder="事件Id"></td></tr>
+    <tr> <td><input type="text" id="textItem2" placeholder="用户Id"></td></tr>
+    <tr> <td><input type="text" id="textItem3" placeholder="标题"></td></tr>
+    <tr> <td><input type="text" id="textItem4" placeholder="内容"></td></tr>
+    <tr> <td><input type="text" id="textItem5" placeholder="优先级"></td></tr>
+    <tr><td><input type="text" id="textItem6" placeholder="创建时间"></td> </tr>
+    <tr><td><input type="text" id="textItem7" placeholder="修改日期"></td> </tr>
+    <tr><td><input type="text" id="textItem8" placeholder="附加描述"></td></tr>
+</table>
+
+</body>
+
+</html>

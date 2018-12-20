@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893
+    $Date: 2013-4-7 上午10:50:34  
+    $Revision: 1.0  
+    $Purpose: 资产lov
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[select * from (select h.asset_id,
+       h.asset_code,
+       f.description_text,
+       l.location_id,
+       l.description,
+       erl.partner_name,
+       erl.contract_id,
+       (select h.contract_number from con_contract_headers h where h.contract_header_id=erl.contract_id) as contract_name,
+       to_char(erl.start_date,'yyyy-mm-dd') as start_date,
+       to_char(erl.end_date,'yyyy-mm-dd') as end_date,
+       erl.pl_amount
+  from eam_asset_headers h, fnd_descriptions f, eam_locations_vl l,eam_requisition_lines erl,eam_asset_rent_his earh
+ where h.description_id = f.description_id
+   and f.language = ${/session/@lang}
+   and erl.asset_id = h.asset_id
+   and erl.to_location_id = l.location_id
+   and h.lock_flag = 'N'
+   and h.status = 'RENTED'
+   and earh.asset_id = h.asset_id
+   and earh.rent_document_line_id = erl.requisition_line_id
+   and earh.back_flag = 'N'
+   and exists
+ (select 1
+          from eam_requisition_types t, eam_req_type_ref_asset_types rt
+         where rt.ast_requisition_type_id = t.ast_requisition_type_id
+           and t.ast_requisition_type_id = ${@ast_requisition_type_id}
+           and rt.entity_class_id = h.entity_class_id))v
+           #WHERE_CLAUSE#
+   ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="asset_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="ASSET_ID"/>
+        <bm:field name="asset_code" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="ASSET_CODE" prompt="EAM_ASSET_HEADERS.ASSET_CODE"/>
+        <bm:field name="description_text" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="DESCRIPTION_TEXT" prompt="EAM_ASSET_HEADERS.DESCRIPTION"/>
+        <bm:field name="location_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="LOCATION_ID"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DESCRIPTION" prompt="EAM_LOCATIONS.DESCRIPTION"/>
+        <bm:field name="partner_name"/>
+        <bm:field name="contract_id"/>
+        <bm:field name="contract_name"/>
+        <bm:field name="start_date"/>
+        <bm:field name="end_date"/>
+        <bm:field name="pl_amount"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field name="asset_id" queryOperator="="/>
+        <bm:query-field name="asset_code" datatype="java.lang.String" queryexpression="upper(v.asset_code) like &apos;%&apos;||upper(${@asset_code})||&apos;%&apos;"/>
+        <bm:query-field name="description_text" datatype="java.lang.String" queryexpression="upper(v.description_text) like &apos;%&apos;||upper(${@description_text})||&apos;%&apos;"/>
+    </bm:query-fields>
+</bm:model>

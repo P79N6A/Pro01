@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893
+    $Date: 2013-3-5 下午4:07:46  
+    $Revision: 1.0  
+    $Purpose: 资产特性参数查询
+-->
+<ns1:model xmlns:ns1="http://www.aurora-framework.org/schema/bm" needAccessControl="false">
+    <ns1:operations>
+        <ns1:operation name="query">
+            <ns1:query-sql><![CDATA[
+    		SELECT
+    		    t1.CHARACTER_VALUE_ID,
+			    t1.ASSET_ID,
+			    t1.CHARACTER_ID,
+			    (select c.data_type from eam_asset_entity_class_chrcts c where c.character_id = t1.character_id) as data_type,
+			    (select c.required_flag from eam_asset_entity_class_chrcts c where c.character_id = t1.character_id) as required_flag,
+			    (SELECT
+			        f.description_text
+			    FROM
+			        eam_asset_entity_class_chrcts c,
+			        fnd_descriptions f
+			    WHERE
+			        c.character_id   = t1.character_id AND
+			        c.description_id = f.description_id AND
+			        f.language       = ${/session/@lang}
+			    ) AS character_desc,
+			    (DECODE(t1.VALUE,NULL,
+			    (SELECT
+			        c.default_value
+			    FROM
+			        eam_asset_entity_class_chrcts c
+			    WHERE
+			        c.character_id = t1.character_id
+			    ),t1.VALUE)) AS value
+			FROM
+			    EAM_ASSET_CHARACTER_VALUES t1
+			    where t1.ASSET_ID = ${@asset_id}
+			union 
+			select 
+			    null as character_value_id,
+			    h.ASSET_ID,
+			    c.character_id,
+			    c.data_type,
+			    c.required_flag,
+			    (SELECT
+			        f.description_text
+			    FROM
+			        eam_asset_entity_class_chrcts e,
+			        fnd_descriptions f
+			    WHERE
+			        e.character_id   = c.character_id AND
+			        c.description_id = f.description_id AND
+			        f.language       = ${/session/@lang}
+			    ) AS character_desc,
+		       c.default_value AS value
+		  from eam_asset_entity_class_chrcts c, eam_asset_headers h
+		 where h.asset_id = ${@asset_id}
+		   and h.entity_class_id = c.class_id 
+		   and not exists (select 1 from EAM_ASSET_CHARACTER_VALUES v where v.character_id = c.character_id
+		    and h.asset_id = v.asset_id)   
+    		]]></ns1:query-sql>
+        </ns1:operation>
+    </ns1:operations>
+    <ns1:fields>
+        <ns1:field name="character_value_id"/>
+        <ns1:field name="asset_id"/>
+        <ns1:field name="character_id"/>
+        <ns1:field name="data_type"/>
+        <ns1:field name="required_flag"/>
+        <ns1:field name="character_desc"/>
+        <ns1:field name="value"/>
+    </ns1:fields>
+</ns1:model>

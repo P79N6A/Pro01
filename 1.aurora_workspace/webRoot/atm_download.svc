@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:service xmlns:s="aurora.plugin.script" xmlns:a="http://www.aurora-framework.org/application" xmlns:p="uncertain.proc" trace="true">
+    <a:access-check name="atmDownloadCheck"/>
+    <a:init-procedure>
+        <s:server-script><![CDATA[
+            var attachment_id = $ctx.parameter.attachment_id;
+            var imageMap = $bm('ptl.ptl_announcement_atm_download_query').queryAsMap();
+            var imageArr = imageMap.getChildren();
+            if (imageArr.length != 0) {
+                //print(imageArr[0].table_name);
+                if (imageArr[0].table_name == 'PTL_ANNOUNCEMENTS_ATM') {
+                    //print(imageArr[0].atm_flag);
+                    $ctx.parameter.atm_flag = imageArr[0].atm_flag;
+                } else {
+                    $ctx.parameter.atm_flag = 'Y';
+                }
+            } else {
+                $ctx.parameter.atm_flag = 'N';
+            }
+            
+            if ($ctx.parameter.atm_flag == 'N') {
+                var resp = $ctx.getData().get('_instance.javax.servlet.http.HttpServletResponse');
+                resp.setCharacterEncoding("GBK");
+                resp.getWriter().println('您没有权限下载！');
+                resp.getWriter().close();
+            }
+        ]]></s:server-script>
+        <p:switch test="/parameter/@atm_flag">
+            <p:case value="Y">
+                <a:atm-manager actionType="download"/>
+            </p:case>
+        </p:switch>
+    </a:init-procedure>
+</a:service>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893  
+    $Date: 2013-2-20 上午9:31:41  
+    $Revision: 1.0  
+    $Purpose: 当前登录用户的角色所在账套对应的资产账簿
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[SELECT A.ASSET_BOOK_ID, A.ASSET_BOOK_CODE, A.DESCRIPTION ASSET_BOOK_DESC
+  FROM EAM_ASSET_BOOKS_VL A, FND_COMPANIES F
+ WHERE F.COMPANY_ID = ${/session/@company_id}
+   AND F.SET_OF_BOOKS_ID = A.SET_OF_BOOK_ID
+]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="asset_book_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="ASSET_BOOK_ID" required="true"/>
+        <bm:field name="asset_book_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ASSET_BOOK_CODE" required="true"/>
+        <bm:field name="asset_book_desc" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DESCRIPTION"/>
+    </bm:fields>
+</bm:model>

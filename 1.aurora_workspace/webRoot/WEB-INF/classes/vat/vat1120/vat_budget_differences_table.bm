@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-7-20 下午5:51:33  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        t.period_name,
+                        t.company_id,
+                        (SELECT
+                            fc.company_short_name
+                        FROM
+                            fnd_companies_vl fc
+                        WHERE
+                            fc.company_id = t.company_id
+                        ) company_name,
+                        t.responsibility_center_id,
+                        (SELECT
+                            frcv.responsibility_center_name
+                        FROM
+                            fnd_responsibility_centers_vl frcv
+                        WHERE
+                            frcv.responsibility_center_id = t.responsibility_center_id
+                        ) responsibility_center_name,
+                        vir.invoice_code,
+                        vir.invoice_number,
+                        vir.document_id,
+                        (SELECT
+                            h.exp_report_number
+                        FROM
+                            exp_report_headers h
+                        WHERE
+                            h.exp_report_header_id = vir.document_id
+                        )document_number,
+                        (SELECT
+                            l.line_number
+                        FROM
+                            exp_report_lines l
+                        WHERE
+                            l.exp_report_line_id = vir.document_line_id
+                        ) document_line_number,
+                        t.budget_item_id,
+                        (SELECT
+                            bbiv.budget_item_code
+                            || '-'
+                            || bbiv.description
+                        FROM
+                            bgt_budget_items_vl bbiv
+                        WHERE
+                            bbiv.budget_item_id = t.budget_item_id
+                        ) budget_item_desc,
+                        (SELECT
+                            gav.account_code
+                            || '-'
+                            ||gav.description
+                        FROM
+                            exp_report_accounts a,
+                            gld_accounts_vl gav
+                        WHERE
+                            a.account_id          = gav.account_id AND
+                            a.exp_report_dists_id = vir.document_dist_id AND
+                            a.usage_code          = 'EMPLOYEE_EXPENSE'
+                        )account_desc,
+                        t.amount,
+                        t.source_type,
+                        DECODE(t.source_type, 'VAT_TAX', '进项税抵扣', 'TRANSFER', '进项税转出','AS_SALES', '视同销售处理') source_type_desc,
+                        t.dimension1_id e1,
+                        t.dimension2_id e2,
+                        t.dimension3_id e3,
+                        t.dimension4_id e4,
+                        t.dimension5_id e5,
+                        t.dimension6_id e6,
+                        t.dimension7_id e7,
+                        t.dimension8_id e8,
+                        t.dimension9_id e9,
+                        t.dimension10_id e10,
+                        (SELECT
+                            fdv.description
+                        FROM
+                            fnd_dimension_values_vl fdv
+                        WHERE
+                            fdv.dimension_value_id=t.dimension1_id
+                        )d1,
+                        (SELECT
+                            fdv.description
+                        FROM
+                            fnd_dimension_values_vl fdv
+                        WHERE
+                            fdv.dimension_value_id=t.dimension2_id
+                        )d2,
+                        (SELECT
+                            fdv.description
+                        FROM
+                            fnd_dimension_values_vl fdv
+                        WHERE
+                            fdv.dimension_value_id=t.dimension3_id
+                        )d3,
+                        (SELECT
+                            fdv.description
+                        FROM
+                            fnd_dimension_values_vl fdv
+                        WHERE
+                            fdv.dimension_value_id=t.dimension4_id
+                        )d4,
+                        (SELECT
+                            fdv.description
+                        FROM
+                            fnd_dimension_values_vl fdv
+                        WHERE
+                            fdv.dimension_value_id=t.dimension5_id
+                        )d5,
+                        (SELECT
+                            fdv.description
+                        FROM
+                            fnd_dimension_values_vl fdv
+                        WHERE
+                            fdv.dimension_value_id=t.dimension6_id
+                        )d6,
+                        (SELECT
+                            fdv.description
+                        FROM
+                            fnd_dimension_values_vl fdv
+                        WHERE
+                            fdv.dimension_value_id=t.dimension7_id
+                        )d7,
+                        (SELECT
+                            fdv.description
+                        FROM
+                            fnd_dimension_values_vl fdv
+                        WHERE
+                            fdv.dimension_value_id=t.dimension8_id
+                        )d8,
+                        (SELECT
+                            fdv.description
+                        FROM
+                            fnd_dimension_values_vl fdv
+                        WHERE
+                            fdv.dimension_value_id=t.dimension9_id
+                        )d9,
+                        (SELECT
+                            fdv.description
+                        FROM
+                            fnd_dimension_values_vl fdv
+                        WHERE
+                            fdv.dimension_value_id=t.dimension10_id
+                        )d10
+                    FROM
+                        vat_bgt_budget_reserves t,
+                        vat_invoice_relation vir
+                    WHERE
+                        vir.document_type    = 'EXP_REPORT' AND
+                        vir.document_id      = t.document_id AND
+                        vir.document_dist_id = t.document_line_id AND
+                        t.company_id        IN
+                        (SELECT
+                            fc.company_id
+                        FROM
+                            fnd_companies_vl fc
+                        WHERE
+                            fc.set_of_books_id =
+                            (SELECT
+                                fc.set_of_books_id
+                            FROM
+                                fnd_companies fc
+                            WHERE
+                                fc.company_id = ${/session/@company_id}
+                            )
+                        )
+                    ) v #WHERE_CLAUSE#
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="company_id" databaseType="NUMBER" datatype="java.lang.Double"/>
+        <bm:field name="company_name" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_BGT_BUDGET_RESERVES.COMPANY_NAME"/>
+        <bm:field name="period_name" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_BGT_BUDGET_RESERVES.PERIOD_NAME"/>
+        <bm:field name="responsibility_center_name" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_BGT_BUDGET_RESERVES.RESPONSIBILITY_CENTER_NAME"/>
+        <bm:field name="invoice_code" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_BGT_BUDGET_RESERVES.INVOICE_CODE"/>
+        <bm:field name="invoice_number" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_BGT_BUDGET_RESERVES.INVOICE_NUMBER"/>
+        <bm:field name="document_id" databaseType="NUMBER" datatype="java.lang.Double"/>
+        <bm:field name="document_number" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_BGT_BUDGET_RESERVES.DOCUMENT_NUMBER"/>
+        <bm:field name="document_line_number" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_BGT_BUDGET_RESERVES.DOCUMENT_LINE_NUMBER"/>
+        <bm:field name="budget_item_desc" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_BGT_BUDGET_RESERVES.BUDGET_ITEM_DESC"/>
+        <bm:field name="account_desc" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_BGT_BUDGET_RESERVES.ACCOUNT_DESC"/>
+        <bm:field name="amount" databaseType="NUMBER" datatype="java.lang.Double" prompt="VAT_BGT_BUDGET_RESERVES.AMOUNT"/>
+        <bm:field name="source_type" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="source_type_desc" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_BGT_BUDGET_RESERVES.SOURCE_TYPE_DESC"/>
+        <bm:field name="e1" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="e2" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="e3" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="e4" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="e5" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="e6" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="e7" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="e8" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="e9" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="e10" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="d1" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="d2" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="d3" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="d4" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="d5" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="d6" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="d7" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="d8" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="d9" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="d10" databaseType="VARCHAR2" datatype="java.lang.String"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field name="document_number" queryExpression="v.document_number like &apos;%&apos;||${@document_number}||&apos;%&apos;"/>
+        <bm:query-field name="company_name" queryExpression="v.company_name = ${@company_name}"/>
+        <bm:query-field name="period_name" queryExpression="v.period_name = ${@period_name}"/>
+        <bm:query-field name="responsibility_center_name" queryExpression="v.responsibility_center_name = ${@responsibility_center_name}"/>
+        <bm:query-field name="source_type" queryExpression="v.source_type = ${@source_type}"/>
+    </bm:query-fields>
+</bm:model>

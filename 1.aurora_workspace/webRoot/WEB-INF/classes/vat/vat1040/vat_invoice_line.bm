@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-7-17 上午11:24:10  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        l.exp_report_header_id,
+                        l.exp_report_line_id,
+                        l.line_number,
+                        l.invoice_type,
+                        l.invoice_category,
+                        (SELECT
+                            vic.description
+                        FROM
+                            vat_invoice_category_vl vic
+                        WHERE
+                            vic.invoice_category_code = l.invoice_category
+                        ) invoice_category_name,
+                        t.invoice_code,
+                        t.invoice_number,
+                        (SELECT
+                            u.description
+                        FROM
+                            vat_invoice_usedes_vl u
+                        WHERE
+                            u.invoice_usede_id = t.invoice_usede_id
+                        ) invoice_usede_desc,
+                        (SELECT
+                            i.description
+                        FROM
+                            vat_invoice_items_vl i
+                        WHERE
+                            i.invoice_item_id = t.invoice_item_id
+                        ) invoice_item_desc,
+                        t.tax_type_rate,
+                        t.tax_amount,
+                        t.functional_tax_amount,
+                        TO_CHAR(t.invoice_date, 'yyyy-mm-dd') invoice_date,
+                        (l.report_amount - t.tax_amount) AS not_tax_amount,
+                        t.authenticating_status,
+                        (SELECT
+                            scv.code_value_name
+                        FROM
+                            sys_code_values_v scv
+                        WHERE
+                            scv.code       = 'VAT_CERTIFICATION_STATUS' AND
+                            scv.code_value = t.authenticating_status
+                        ) AS authenticating_status_desc,
+                        TO_CHAR(t.authenticating_date, 'yyyy-mm-dd') AS authenticating_date
+                    FROM
+                        exp_report_lines l,
+                        vat_invoice_relation t
+                    WHERE
+                        l.exp_report_header_id   = ${@exp_report_header_id} AND
+                        t.document_type (+)      = 'EXP_REPORT' AND
+                        t.document_id (+)        = l.exp_report_header_id AND
+                        t.document_line_id (+)   = l.exp_report_line_id AND
+                        t.authenticating_status IN ('N', 'Y', 'F')
+                    ) v
+                ORDER BY
+                    v.exp_report_header_id DESC,
+                    v.line_number
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

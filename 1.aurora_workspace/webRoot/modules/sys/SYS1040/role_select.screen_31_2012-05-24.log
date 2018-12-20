@@ -1,0 +1,99 @@
+2012-05-24 16:58:31.715 [aurora.application.session_check] [CONFIG] Session data copied to context
+2012-05-24 16:58:31.716 [uncertain.proc] [INFO] <context _instance.uncertain.logging.BasicFileHandler="uncertain.logging.BasicFileHandler@a88251" __configuration__="uncertain.event.Configuration@103c049" _instance.aurora.service.IService="aurora.service.http.HttpServiceInstance@145222c" service_name="role_select.screen" _instance.javax.servlet.http.HttpServletResponse="weblogic.servlet.internal.ServletResponseImpl@1c69e55[
+HTTP/1.1 200 OK
+Cache-Control: : no-cache
+Pragma: : no-cache
+Expires: : 0
+X-Powered-By: Servlet/2.5 JSP/2.1
+]" _instance.uncertain.proc.trace.StackTraceManager="uncertain.proc.trace.StackTraceManager@c51adb" SERVICE_LOGGING_FILE="/u02/COSCO/web/CSCAPP/logs/role_select.screen_31_2012-05-24.log" __procedure_name__="aurora.service.controller.RunScreen" _instance.javax.servlet.http.HttpServletRequest="weblogic.servlet.internal.ServletRequestImpl@17e49ce[
+GET /web/role_select.screen HTTP/1.1
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Referer: http://192.168.74.129:7004/web/login.screen
+Cookie: USERNAME=admin; LANG=ZHS; ISTIMEOUT=false; vh=627; vw=1041; TARGETURL=modules/sys/reload.screen; JSID=01DD869B59779533; JSESSIONID=0nl2P92cvYswMbLM9MCX2F8lzt6XkRWpqQvSJ61dx9GqHPLb6nRv!46000262
+Cache-Control: max-age=0
+
+]" success="true" _instance.uncertain.logging.ILoggerProvider="uncertain.logging.LoggerProvider@1f8bbe">
+    <request Cookie="USERNAME=admin; LANG=ZHS; ISTIMEOUT=false; vh=627; vw=1041; TARGETURL=modules/sys/reload.screen; JSID=01DD869B59779533; JSESSIONID=0nl2P92cvYswMbLM9MCX2F8lzt6XkRWpqQvSJ61dx9GqHPLb6nRv!46000262" Host="192.168.74.129:7004" User-Agent="Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0" Connection="keep-alive" server_port="7005" url="/web/role_select.screen" Cache-Control="max-age=0" server_name="192.168.74.129" Accept-Language="zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3" request_id="a7ae62bd-119c-4e47-b29a-915c6d98ccef" address="192.168.74.1" context_path="/web" Referer="http://192.168.74.129:7004/web/login.screen" Accept-Encoding="gzip, deflate" Accept="text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"/>
+    <cookie TARGETURL="{maxage=-1, secure=false, name=TARGETURL, path=null, domain=null, value=modules/sys/reload.screen}" JSESSIONID="{maxage=-1, secure=false, name=JSESSIONID, path=null, domain=null, value=0nl2P92cvYswMbLM9MCX2F8lzt6XkRWpqQvSJ61dx9GqHPLb6nRv!46000262}" JSID="{maxage=-1, secure=false, name=JSID, path=null, domain=null, value=01DD869B59779533}" vh="{maxage=-1, secure=false, name=vh, path=null, domain=null, value=627}" ISTIMEOUT="{maxage=-1, secure=false, name=ISTIMEOUT, path=null, domain=null, value=false}" vw="{maxage=-1, secure=false, name=vw, path=null, domain=null, value=1041}" USERNAME="{maxage=-1, secure=false, name=USERNAME, path=null, domain=null, value=admin}" LANG="{maxage=-1, secure=false, name=LANG, path=null, domain=null, value=ZHS}"/>
+    <parameter/>
+    <session session_id="31" role_id="1" lang="ZHS" is_ipad="N" user_id="1"/>
+</context>
+
+2012-05-24 16:58:31.716 [aurora.application.session_check] [CONFIG] Access check result for role_select.screen => success
+2012-05-24 16:58:31.751 [uncertain.proc] [CONFIG] [action] DecideStatement
+2012-05-24 16:58:31.753 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2012-05-24 16:58:31.754 [uncertain.proc] [FINE] aurora.database.service.BusinessModelService.onDecideSqlGenerationMode
+2012-05-24 16:58:31.754 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2012-05-24 16:58:31.754 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2012-05-24 16:58:31.754 [uncertain.proc] [FINE] aurora.database.features.OrderByClauseCreator.onPopulateOperationSql
+2012-05-24 16:58:31.754 [uncertain.proc] [FINE] aurora.database.features.WhereClauseCreator.onPopulateOperationSql
+2012-05-24 16:58:31.754 [uncertain.proc] [CONFIG] [action] CreateSqlRunner
+2012-05-24 16:58:31.754 [uncertain.proc] [FINE] aurora.database.service.BusinessModelService.onCreateSqlRunner
+2012-05-24 16:58:31.754 [uncertain.proc] [CONFIG] [action] ExecuteDmlStatement
+2012-05-24 16:58:31.754 [uncertain.proc] [FINE] aurora.database.service.BusinessModelService.onExecuteDmlStatement
+2012-05-24 16:58:31.755 [aurora.database] [CONFIG] 
+============= BEGIN [execute] SQL Statement execution dump ============
+
+            begin 
+				sys_nls_language_pkg.set_nls_language(p_nls_language => 'zhs');
+			end;
+			
+---------------------Binding info---------------------
+null
+=============== END [execute] SQL Statement execution dump ============
+
+2012-05-24 16:58:31.791 [uncertain.proc] [CONFIG] [action] InitService
+2012-05-24 16:58:31.792 [uncertain.proc] [CONFIG] [action] ParseParameter
+2012-05-24 16:58:31.792 [uncertain.proc] [CONFIG] [action] CreateModel
+2012-05-24 16:58:31.792 [aurora.database] [CONFIG] ===================================== prepare to run model-query sys.sys_user_role_groups==============================
+2012-05-24 16:58:31.797 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2012-05-24 16:58:31.797 [uncertain.proc] [FINE] aurora.database.service.BusinessModelService.onDecideSqlGenerationMode
+2012-05-24 16:58:31.797 [uncertain.proc] [CONFIG] [action] CreatequeryStatement
+2012-05-24 16:58:31.797 [uncertain.proc] [FINE] aurora.bm.QuerySqlCreator.onCreateQueryStatement
+2012-05-24 16:58:31.803 [uncertain.proc] [CONFIG] [action] PopulatequeryStatement
+2012-05-24 16:58:31.804 [uncertain.proc] [FINE] aurora.database.features.OrderByClauseCreator.onPopulateQueryStatement
+2012-05-24 16:58:31.804 [uncertain.proc] [FINE] aurora.database.features.WhereClauseCreator.onPopulateQueryStatement
+2012-05-24 16:58:31.804 [uncertain.proc] [CONFIG] [action] CreatequerySql
+2012-05-24 16:58:31.804 [uncertain.proc] [FINE] aurora.bm.QuerySqlCreator.onCreateQuerySql
+2012-05-24 16:58:31.804 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2012-05-24 16:58:31.804 [uncertain.proc] [FINE] aurora.bm.QuerySqlCreator.onExecuteQuery
+2012-05-24 16:58:31.806 [uncertain.proc] [CONFIG] [action] QueryFinish
+2012-05-24 16:58:31.807 [uncertain.proc] [FINE] aurora.database.features.AutoQueryCounter.onQueryFinish
+2012-05-24 16:58:31.807 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2012-05-24 16:58:31.807 [uncertain.proc] [FINE] aurora.database.features.LookUpField.postFetchResultSet
+2012-05-24 16:58:31.807 [aurora.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+SELECT r.user_role_group_id,r.user_id,r.role_id,r.company_id,r.role_id || '_' || r.company_id AS role_company,(select DESCRIPTION_TEXT from fnd_descriptions where DESCRIPTION_ID=fc.company_short_name_id and Language=?) AS company_short_name,(select DESCRIPTION_TEXT from fnd_descriptions where DESCRIPTION_ID=ro.description_id and Language=?) AS role_description,fc.company_code,fc.company_short_name_id,ro.role_code,ro.description_id
+FROM sys_user_role_groups r
+	LEFT OUTER JOIN fnd_companies fc ON r.company_id = fc.company_id
+	INNER JOIN sys_role ro ON r.role_id = ro.role_id
+WHERE r.user_id = ? AND (r.end_date is null or r.end_date >= sysdate)
+---------------------Binding info---------------------
+No.1	Access path:/session/@lang	Data type of passed value :java.lang.String	Value:ZHS	Output:false	Database Type:null	
+No.2	Access path:/session/@lang	Data type of passed value :java.lang.String	Value:ZHS	Output:false	Database Type:null	
+No.3	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2012-05-24 16:58:31.807 [uncertain.proc] [CONFIG] [action] CreateView
+2012-05-24 16:58:31.807 [uncertain.proc] [CONFIG] [action] BuildOutputContent
+2012-05-24 16:58:31.807 [aurora.presentation.buildsession] [CONFIG] Start build session
+2012-05-24 16:58:31.807 [aurora.presentation.buildsession] [CONFIG] building view: <html-page> -> aurora.presentation.component.HtmlPage@ccc170
+2012-05-24 16:58:31.808 [aurora.presentation.buildsession] [CONFIG] building view: <style> -> aurora.presentation.DefaultViewBuilder@afd5d0
+2012-05-24 16:58:31.810 [aurora.presentation.buildsession] [CONFIG] building view: <script> -> aurora.presentation.DefaultViewBuilder@afd5d0
+2012-05-24 16:58:31.811 [aurora.presentation.buildsession] [CONFIG] building view: <dataSets> -> aurora.application.features.DataSetInit@13cab44
+2012-05-24 16:58:31.811 [aurora.presentation.buildsession] [CONFIG] building view: <dataSet> -> aurora.presentation.TemplateBasedView@2de1be
+2012-05-24 16:58:31.811 [aurora.presentation.buildsession] [CONFIG] building view: <vBox> -> aurora.presentation.component.std.VBox@146f4f4
+2012-05-24 16:58:31.811 [aurora.presentation.buildsession] [CONFIG] building view: <form> -> aurora.presentation.component.std.Form@183f0f1
+2012-05-24 16:58:31.811 [aurora.presentation.buildsession] [CONFIG] building view: <img> -> aurora.presentation.DefaultViewBuilder@afd5d0
+2012-05-24 16:58:31.812 [aurora.presentation.buildsession] [CONFIG] building view: <radio> -> aurora.presentation.TemplateBasedView@2de1be
+2012-05-24 16:58:31.812 [aurora.presentation.buildsession] [CONFIG] building view: <center> -> aurora.presentation.DefaultViewBuilder@afd5d0
+2012-05-24 16:58:31.812 [aurora.presentation.buildsession] [CONFIG] building view: <hBox> -> aurora.presentation.component.std.HBox@18f2876
+2012-05-24 16:58:31.812 [aurora.presentation.buildsession] [CONFIG] building view: <button> -> aurora.presentation.TemplateBasedView@2de1be
+2012-05-24 16:58:31.813 [aurora.presentation.buildsession] [CONFIG] building view: <button> -> aurora.presentation.TemplateBasedView@2de1be
+2012-05-24 16:58:31.813 [aurora.presentation.buildsession] [CONFIG] building view: <script> -> aurora.presentation.DefaultViewBuilder@afd5d0
+2012-05-24 16:58:31.813 [aurora.presentation.buildsession] [CONFIG] End build session

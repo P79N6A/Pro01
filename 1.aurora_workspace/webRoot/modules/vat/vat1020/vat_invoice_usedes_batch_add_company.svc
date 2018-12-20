@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure>
+        <a:batch-apply sourcePath="/parameter">
+            <a:batch-apply sourcePath="@current_parameter/details">
+                <a:model-execute model="vat.vat1020.vat_invoice_usedes_assign_company_lov"/>
+            </a:batch-apply>
+        </a:batch-apply>
+    </a:init-procedure>
+</a:screen>

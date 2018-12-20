@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    d.hec_batch_num AS batch_order_no,
+                    TO_CHAR(d.itf_pay_date,'YYYYMMDD') AS pay_date
+                FROM
+                    csh_transaction_details d
+                WHERE
+                    d.payment_status = 'PAY_SENT' AND
+                    d.payment_method =
+                    (SELECT
+                        payment_method_id
+                    FROM
+                        csh_payment_methods m
+                    WHERE
+                        m.payment_method_code = 'WB'
+                    )
+                GROUP BY
+                    d.hec_batch_num,
+                    TO_CHAR(d.itf_pay_date,'YYYYMMDD')
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="batch_order_no"/>
+        <bm:field name="pay_date"/>
+    </bm:fields>
+</bm:model>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: xin.J  
+    $Date: 2017-8-10 下午11:57:41  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:f="aurora.database.features" xmlns:bm="http://www.aurora-framework.org/schema/bm" alias="t1" baseTable="GLD_VOUCHER_LINES">
+    <bm:fields>
+        <bm:field name="gld_voucher_header_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="GLD_VOUCHER_HEADER_ID" prompt="GLD_VOUCHER_LINES.GLD_VOUCHER_HEADER_ID"/>
+        <bm:field name="gld_voucher_line_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="GLD_VOUCHER_LINE_ID" prompt="GLD_VOUCHER_LINES.GLD_VOUCHER_LINE_ID"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DESCRIPTION" prompt="GLD_VOUCHER_LINES.DESCRIPTION"/>
+        <bm:field name="account_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="ACCOUNT_ID" prompt="GLD_VOUCHER_LINES.ACCOUNT_ID"/>
+        <bm:field name="debit_amount" databaseType="NUMBER" datatype="java.lang.Long" physicalName="DEBIT_AMOUNT" prompt="GLD_VOUCHER_LINES.DEBIT_AMOUNT"/>
+        <bm:field name="credit_amount" databaseType="NUMBER" datatype="java.lang.Long" physicalName="CREDIT_AMOUNT" prompt="GLD_VOUCHER_LINES.CREDIT_AMOUNT"/>
+        <bm:field name="debit_functional_amount" databaseType="NUMBER" datatype="java.lang.Long" physicalName="DEBIT_FUNCTIONAL_AMOUNT" prompt="GLD_VOUCHER_LINES.DEBIT_FUNCTIONAL_AMOUNT"/>
+        <bm:field name="credit_functional_amount" databaseType="NUMBER" datatype="java.lang.Long" physicalName="CREDIT_FUNCTIONAL_AMOUNT" prompt="GLD_VOUCHER_LINES.CREDIT_FUNCTIONAL_AMOUNT"/>
+    </bm:fields>
+    <bm:features>
+        <f:standard-who/>
+    </bm:features>
+    <bm:primary-key>
+        <bm:pk-field name="gld_voucher_line_id"/>
+    </bm:primary-key>
+    <bm:operations>
+        <bm:operation name="insert">
+            <bm:update-sql><![CDATA[
+            begin
+            gld_account_voucher_pkg.insert_gld_voucher_lines(
+				               p_gld_voucher_header_id		=>    ${../../@gld_voucher_header_id},
+				               p_gld_voucher_line_id			=>    ${@gld_voucher_line_id},
+				               p_description						=>    ${@description},
+				               p_account_id						=>    ${@account_id},
+				               p_debit_amount					=>    ${@debit_amount},
+				               p_credit_amount					=>    ${@credit_amount},
+				               p_debit_functional_amount	=>    ${@debit_functional_amount},
+				               p_credit_functional_amount	=>    ${@credit_functional_amount},
+				               p_user_id							=>    ${/session/@user_id});
+            end;]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="update">
+            <bm:update-sql><![CDATA[
+            begin
+            gld_account_voucher_pkg.update_gld_voucher_lines(
+                               p_gld_voucher_header_id		=>    ${../../@gld_voucher_header_id},
+				               p_gld_voucher_line_id			=>    ${@gld_voucher_line_id},
+				               p_description						=>    ${@description},
+				               p_account_id						=>    ${@account_id},
+				               p_debit_amount					=>    ${@debit_amount},
+				               p_credit_amount					=>    ${@credit_amount},
+				               p_debit_functional_amount	=>    ${@debit_functional_amount},
+				               p_credit_functional_amount	=>    ${@credit_functional_amount},
+				               p_user_id							=>    ${/session/@user_id});
+            end;]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

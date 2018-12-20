@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-7-2 上午11:14:57  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:ns2="aurora.database.local.oracle" xmlns:f="aurora.database.features" xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        t.*,
+                        (SELECT
+                            c.description
+                        FROM
+                            vat_invoice_category_vl c
+                        WHERE
+                            c.invoice_category_id = t.invoice_category_id
+                        )invoice_category_name,
+                        t.description invoice_item_desc
+                    FROM
+                        vat_invoice_items_vl t
+                    WHERE
+                        t.set_of_books_id = ${@set_of_books_id}
+                    ORDER BY
+                        t.invoice_item_code
+                    )v #WHERE_CLAUSE# #ORDER_BY_CLAUSE#
+            ]]></bm:query-sql>
+        </bm:operation>
+        <bm:operation name="insert">
+            <bm:update-sql><![CDATA[
+				
+	   				begin
+	   					vat_invoice_items_pkg.insert_vat_invoice_items(p_set_of_books_id      => ${@set_of_books_id},
+	   					                                               p_invoice_item_code    => ${@invoice_item_code},
+														   			   p_description          => ${@invoice_item_desc},
+														   			   p_invoice_category_id  => ${@invoice_category_id},
+														   			   p_tax_type_rate        => ${@tax_type_rate}, 
+														   			   p_enabled_flag         => ${@enabled_flag},
+														   			   p_user_id              => ${/session/@user_id});
+	   				end;
+	   			   			
+   			]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="update">
+            <bm:update-sql><![CDATA[
+				
+	   				begin
+	   					vat_invoice_items_pkg.update_vat_invoice_items(p_invoice_item_id       => ${@invoice_item_id},
+	   					                                               p_invoice_item_code     => ${@invoice_item_code},
+														   			   p_description           => ${@invoice_item_desc},
+														   			   p_invoice_category_id   => ${@invoice_category_id},
+														   			   p_tax_type_rate         => ${@tax_type_rate},
+														   			   p_enabled_flag          => ${@enabled_flag},
+														   			   p_user_id               => ${/session/@user_id});
+	   				end;
+	   			   			
+   			]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="delete">
+            <bm:update-sql><![CDATA[
+				
+	   				begin
+	   					vat_invoice_items_pkg.delete_vat_invoice_items(p_invoice_item_id         => ${@invoice_item_id},
+										   					           p_user_id                 => ${/session/@user_id});
+	   				end;
+	   			   			
+   			]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="set_of_books_id" databaseType="NUMBER" datatype="java.lang.Double"/>
+        <bm:field name="invoice_item_id" databaseType="NUMBER" datatype="java.lang.Double"/>
+        <bm:field name="invoice_item_code" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_INVOICE_ITEMS.INVOICE_ITEM_CODE"/>
+        <bm:field name="invoice_item_desc" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_INVOICE_ITEMS.INVOICE_ITEM_DESC"/>
+        <bm:field name="invoice_category_id" databaseType="NUMBER" datatype="java.lang.Double"/>
+        <bm:field name="invoice_category_name" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_INVOICE_ITEMS.INVOICE_CATEGORY_NAME"/>
+        <bm:field name="tax_type_rate" databaseType="NUMBER" datatype="java.lang.Double" prompt="VAT_INVOICE_ITEMS.TAX_TYPE_RATE"/>
+        <bm:field name="enabled_flag" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_INVOICE_ITEMS.ENABLED_FLAG"/>
+    </bm:fields>
+    <bm:primary-key>
+        <bm:pk-field name="invoice_item_id"/>
+    </bm:primary-key>
+    <bm:features>
+        <ns2:sequence-pk/>
+        <f:standard-who/>
+    </bm:features>
+    <bm:query-fields>
+        <bm:query-field name="invoice_item_code" queryExpression="invoice_item_code like &apos;%&apos;||${@invoice_item_code}||&apos;%&apos;"/>
+        <bm:query-field name="invoice_item_desc" queryExpression="invoice_item_desc like &apos;%&apos;||${@invoice_item_desc}||&apos;%&apos;"/>
+        <bm:query-field name="invoice_category_id" queryExpression="invoice_category_id = ${@invoice_category_id}"/>
+        <bm:query-field name="tax_type_rate" queryExpression="tax_type_rate = ${@tax_type_rate} "/>
+    </bm:query-fields>
+</bm:model>

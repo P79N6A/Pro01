@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.springboot01.mapper.ItemsDTOMapper">
+
+<!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.example.springboot01.dto.ItemsDTO">
+        <result column="todo_item_id" property="todoItemId"/>
+        <result column="user_id" property="userId"/>
+        <result column="todo_item_title" property="todoItemTitle"/>
+        <result column="todo_item_content" property="todoItemContent"/>
+        <result column="priority" property="priority"/>
+        <result column="creation_date" property="creationDate"/>
+        <result column="last_update_date" property="lastUpdateDate"/>
+        <result column="comments" property="comments"/>
+    </resultMap>
+
+<!--auto generated Code-->
+    <sql id="all_column">
+        todo_item_id,
+        user_id,
+        todo_item_title,
+        todo_item_content,
+        priority,
+        creation_date,
+        last_update_date,
+        comments
+    </sql>
+
+<!--auto generated Code-->
+    <insert id="insert">
+        INSERT INTO cux_todo_items
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.todoItemId != null"> todo_item_id, </if>
+            <if test="pojo.userId != null"> user_id, </if>
+            <if test="pojo.todoItemTitle != null"> todo_item_title, </if>
+            <if test="pojo.todoItemContent != null"> todo_item_content, </if>
+            <if test="pojo.priority != null"> priority, </if>
+            <if test="pojo.creationDate != null"> creation_date, </if>
+            <if test="pojo.lastUpdateDate != null"> last_update_date, </if>
+            <if test="pojo.comments != null"> comments, </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.todoItemId != null"> #{pojo.todoItemId}, </if>
+            <if test="pojo.userId != null"> #{pojo.userId}, </if>
+            <if test="pojo.todoItemTitle != null"> #{pojo.todoItemTitle}, </if>
+            <if test="pojo.todoItemContent != null"> #{pojo.todoItemContent}, </if>
+            <if test="pojo.priority != null"> #{pojo.priority}, </if>
+            <if test="pojo.creationDate != null"> #{pojo.creationDate}, </if>
+            <if test="pojo.lastUpdateDate != null"> #{pojo.lastUpdateDate}, </if>
+            <if test="pojo.comments != null"> #{pojo.comments}, </if>
+        </trim>
+    </insert>
+
+<!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO cux_todo_items(
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.todoItemId},
+            #{pojo.userId},
+            #{pojo.todoItemTitle},
+            #{pojo.todoItemContent},
+            #{pojo.priority},
+            #{pojo.creationDate},
+            #{pojo.lastUpdateDate},
+            #{pojo.comments}
+            )
+        </foreach>
+    </insert>
+
+<!--auto generated Code-->
+    <update id="update">
+        UPDATE cux_todo_items
+        <set>
+            <if test="pojo.todoItemId != null"> todo_item_id = #{pojo.todoItemId}, </if>
+            <if test="pojo.userId != null"> user_id = #{pojo.userId}, </if>
+            <if test="pojo.todoItemTitle != null"> todo_item_title = #{pojo.todoItemTitle}, </if>
+            <if test="pojo.todoItemContent != null"> todo_item_content = #{pojo.todoItemContent}, </if>
+            <if test="pojo.priority != null"> priority = #{pojo.priority}, </if>
+            <if test="pojo.creationDate != null"> creation_date = #{pojo.creationDate}, </if>
+            <if test="pojo.comments != null"> comments = #{pojo.comments}, </if>
+        </set>
+         WHERE todo_item_id = #{pojo.todoItemId}
+    </update>
+
+<!--auto generated Code-->
+    <select id="select" resultMap="AllColumnMap">
+        SELECT <include refid="all_column"/>
+        FROM cux_todo_items
+        <where>
+            <if test="pojo.todoItemId != null"> AND todo_item_id = #{pojo.todoItemId} </if>
+            <if test="pojo.userId != null"> AND user_id = #{pojo.userId} </if>
+            <if test="pojo.todoItemTitle != null"> AND todo_item_title = #{pojo.todoItemTitle} </if>
+            <if test="pojo.todoItemContent != null"> AND todo_item_content = #{pojo.todoItemContent} </if>
+            <if test="pojo.priority != null"> AND priority = #{pojo.priority} </if>
+            <if test="pojo.creationDate != null"> AND creation_date = #{pojo.creationDate} </if>
+            <if test="pojo.lastUpdateDate != null"> AND last_update_date = #{pojo.lastUpdateDate} </if>
+            <if test="pojo.comments != null"> AND comments = #{pojo.comments} </if>
+        </where>
+        LIMIT 1000 
+    </select>
+
+<!--auto generated Code-->
+    <delete id="delete">
+        DELETE FROM cux_todo_items where todo_item_id = #{pojo.todoItemId}
+    </delete>
+</mapper>

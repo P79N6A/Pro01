@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-7-2 上午11:14:57  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:ns2="aurora.database.local.oracle" xmlns:f="aurora.database.features" xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        t.*,
+                        (SELECT
+                            b.code_value_name
+                        FROM
+                            sys_code_values_vl b,
+                            sys_codes a
+                        WHERE
+                            b.code_id           = a.code_id AND
+                            a.code              = 'VAT_BUSINESS_TYPE' AND
+                            t.vat_business_type = b.code_value
+                        )vat_business_type_desc,
+                        (SELECT
+                            b.code_value_name
+                        FROM
+                            sys_code_values_vl b,
+                            sys_codes a
+                        WHERE
+                            b.code_id           = a.code_id AND
+                            a.code              = 'VAT_TRANSFER_MODE' AND
+                            t.vat_transfer_type = b.code_value
+                        )vat_transfer_type_desc,
+                        t.description invoice_usede_desc
+                    FROM
+                        vat_invoice_usedes_vl t
+                    WHERE
+                        t.set_of_books_id = ${@set_of_books_id}
+                    )v #WHERE_CLAUSE# #ORDER_BY_CLAUSE#
+            ]]></bm:query-sql>
+        </bm:operation>
+        <bm:operation name="insert">
+            <bm:update-sql><![CDATA[
+				
+	   				begin
+	   					vat_invoice_usedes_pkg.insert_vat_invoice_usedes(p_invoice_usede_code   => ${@invoice_usede_code},
+														   			     p_description          => ${@invoice_usede_desc},
+														   		         p_vat_business_type    => ${@vat_business_type},
+														   			     p_vat_transfer_type    => ${@vat_transfer_type},
+														   			     p_set_of_books_id      => ${@set_of_books_id},
+														   			     p_enabled_flag         => ${@enabled_flag},
+														   			     p_user_id              => ${/session/@user_id});
+	   				end; 
+	   			   			
+   			]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="update">
+            <bm:update-sql><![CDATA[
+				
+	   				begin
+	   					vat_invoice_usedes_pkg.update_vat_invoice_usedes(p_invoice_usede_id      => ${@invoice_usede_id},
+	   					                                                 p_invoice_usede_code    => ${@invoice_usede_code},
+														   			     p_description           => ${@invoice_usede_desc},
+														   			     p_vat_business_type     => ${@vat_business_type},
+														   			     p_vat_transfer_type     => ${@vat_transfer_type},
+														   			     p_enabled_flag          => ${@enabled_flag},
+														   			     p_user_id               => ${/session/@user_id});
+	   				end;
+	   			   			
+   			]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="delete">
+            <bm:update-sql><![CDATA[
+				
+	   				begin
+	   					vat_invoice_usedes_pkg.delete_vat_invoice_usedes(p_invoice_usede_id        => ${@invoice_usede_id},
+										   					             p_user_id                 => ${/session/@user_id});
+	   				end;
+	   			   			
+   			]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="set_of_books_id" databaseType="NUMBER" datatype="java.lang.Double"/>
+        <bm:field name="invoice_usede_id" databaseType="NUMBER" datatype="java.lang.Double"/>
+        <bm:field name="invoice_usede_code" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_INVOICE_USEDES.INVOICE_USEDE_CODE"/>
+        <bm:field name="invoice_usede_desc" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_INVOICE_USEDES.INVOICE_USEDE_DESC"/>
+        <bm:field name="vat_business_type" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="vat_business_type_desc" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_INVOICE_USEDES.VAT_BUSINESS_TYPE_DESC"/>
+        <bm:field name="vat_transfer_type" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="vat_transfer_type_desc" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_INVOICE_USEDES.VAT_TRANSFER_TYPE_DESC"/>
+        <bm:field name="enabled_flag" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_INVOICE_USEDES.ENABLED_FLAG"/>
+    </bm:fields>
+    <bm:primary-key>
+        <bm:pk-field name="invoice_usede_id"/>
+    </bm:primary-key>
+    <bm:features>
+        <ns2:sequence-pk/>
+        <f:standard-who/>
+    </bm:features>
+    <bm:query-fields>
+        <bm:query-field name="invoice_usede_code" queryExpression="invoice_usede_code like &apos;%&apos;||${@invoice_usede_code}||&apos;%&apos;"/>
+        <bm:query-field name="invoice_usede_desc" queryExpression="invoice_usede_desc like &apos;%&apos;||${@invoice_usede_desc}||&apos;%&apos;"/>
+        <bm:query-field name="vat_business_type" queryExpression="vat_business_type = ${@vat_business_type}"/>
+        <bm:query-field name="vat_transfer_type" queryExpression="vat_transfer_type = ${@vat_transfer_type} "/>
+    </bm:query-fields>
+</bm:model>

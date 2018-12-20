@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: xin.J  
+    $Date: 2017-8-10 下午11:17:46  
+    $Revision: 1.0  
+    $Purpose: 总账凭证信息录入
+-->
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure><![CDATA[
+    ]]></a:init-procedure>
+    <a:view>
+        <div/>
+        <a:link id="GLD5010_account_vouche_submit_link" model="train.GLD5010.gld_account_vouche_submit" modelaction="execute"/>
+        <a:script><![CDATA[
+             var saveFlag = false;  //保存标志，用于判断是否可提交 true:可提交 false:请先保存再进行提交
+             
+            //新增行按钮点击事件
+            
+            function GLD5010_createLineRecord() {
+                var ds = $('GLD5010_account_voucher_lines_ds');
+                var lineRecord = ds.getSelected();
+                if (lineRecord.length == 0) {
+                    //当未勾选行时
+                    ds.create();
+                } else {
+                    //复制当前勾选的行记录
+                    for (i = 0;i < lineRecord.length;i++) {
+                        var data = lineRecord[i].data;
+                        var newdata = {};
+                        var len = ds.getAll().length;
+                        for (var name in data) {
+                            newdata[name] = data[name];
+                        }
+                        var record = new Aurora.Record(newdata);
+                        record.isNew = 'true';
+                        record.dirty = 'false';
+            
+                        ds.add(record);
+                        var lineAtRecord = ds.getAt(len);
+                        lineAtRecord.set('gld_voucher_line_id', '');
+                    }
+                }
+            }
+            //行新增事件：当行新增时触发该操作
+            
+            function GLD5010_lineAdd(ds, record, index) {
+                var headDesc = $('GLD5010_account_voucher_headers_ds').getAt(0).get('description');
+                record.set('description', headDesc);
+            }
+            
+            //行创建前事件：当行新增之前时触发该操作 - 凭证行信息记录
+            
+            function GLD5010_lineBeforeCreate() {
+                if ($('GLD5010_account_voucher_lines_ds').getAll().length == 0 && $('GLD5010_account_voucher_headers_ds').validate()) {
+                    var t = $('GLD5010_account_voucher_headers_ds').getAt(0);
+                    var r = t.getMeta();
+                    //新增行记录将头字段设为只读状态
+                    r.getField('voucher_number').setReadOnly(true);
+                    r.getField('voucher_create_date').setReadOnly(true);
+                    r.getField('period_name').setReadOnly(true);
+                    r.getField('attachment').setReadOnly(true);
+                    r.getField('currency_name').setReadOnly(true);
+                    r.getField('exchange_rate_type_name').setReadOnly(true);
+                    r.getField('exchange_rate').setReadOnly(true);
+                    r.getField('description').setReadOnly(true);
+                    return true;
+                } else if ($('GLD5010_account_voucher_lines_ds').getAll().length != 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+                return true;
+            }
+            
+            //行更新事件：当头行字段发生修改时触发该操作
+            
+            function GLD5010_lineUpdate(ds, record, name, value, oldvalue) {
+                var headerRecord = $('GLD5010_account_voucher_headers_ds').getAt(0);
+                if (name == 'debit_amount') {
+                    record.set('debit_functional_amount', headerRecord.get('exchange_rate') * record.get('debit_amount'));
+                    record.getMeta().getField('debit_functional_amount').setReadOnly(true);
+                } else if (name == 'credit_amount') {
+                    record.set('credit_functional_amount', headerRecord.get('exchange_rate') * record.get('credit_amount'));
+                    record.getMeta().getField('credit_functional_amount').setReadOnly(true);
+                }
+            }
+            //保存
+            
+            function GLD5010_saveVoucher() {
+            
+                var d1 = $('GLD5010_account_voucher_headers_ds');
+                var d2 = $('GLD5010_account_voucher_lines_ds');
+            
+                if (!d1.validate()) {
+                    return;
+                }
+                if (!d2.validate()) {
+                    return;
+                }
+            
+                if (d2.getAll().length == 0) {
+                    Aurora.showInfoMessage('${l:PROMPT}', '${l:PLEASE_INSERT_LINE_DATA}', null, 250, 100);
+                    return;
+                }
+                //数据提交
+                $('GLD5010_account_voucher_headers_ds').setSubmitUrl("${/request/@context_path}/modules/train/GLD5010/gld_account_voucher_save.svc");
+                $('GLD5010_account_voucher_headers_ds').submit();
+                
+                saveFlag = true;
+            }
+            
+            //数据保存成功执行该操作
+            
+            function GLD5010_headerSubmitSuccess(ds, res) {
+                //提交按钮显示
+                $('GLD5010_voucher_submit_btn').enable();
+                ds.query();
+            }
+            
+            function GLD5010_submitVoucher(){
+                if(!saveFlag){
+                    Aurora.showInfoMessage('${l:PROMPT}', '请先点击保存，再提交', null, 250, 100);
+                }else{
+                    
+                    var headerId = $('GLD5010_account_voucher_headers_ds').getAt(0).get('gld_voucher_header_id');
+                     Aurora.request({
+                    lockMessage: '${l:HAP_WAITING}',
+                    lockMessage: '${l:HAP_WAITING}',
+                    url: $('GLD5010_account_vouche_submit_link').getUrl(),
+                    para: {
+                        gld_voucher_header_id: headerId
+                    },
+                    success: function(res) {
+                        alert('已提交成功！');
+                    },
+                    scope: this
+                });
+                }
+            }
+        ]]></a:script>
+        <a:dataSets>
+            <a:dataSet id="GLD5010_currencyListDs" loadData="true" model="train.GLD5010.gld_currency"/>
+            <a:dataSet id="GLD5010_exchangeRateTypeDs" loadData="true" model="train.GLD5010.gld_exchangerate_types"/>
+            <a:dataSet id="GLD5010_periodNameDs" loadData="true" model="train.GLD5010.gld_period_name"/>
+            <a:dataSet id="GLD5010_account_voucher_headers_ds" autoCreate="true">
+                <a:fields>
+                    <a:field name="gld_voucher_header_id"/>
+                    <a:field name="voucher_number" readOnly="true"/>
+                    <a:field name="voucher_create_date" required="true"/>
+                    <a:field name="period_name" displayField="period_name" options="GLD5010_periodNameDs" required="true" returnField="period_name" valueField="period_name"/>
+                    <a:field name="attachment" required="true"/>
+                    <a:field name="currency_code"/>
+                    <a:field name="currency_name" displayField="currency_desc" options="GLD5010_currencyListDs" required="true" returnField="currency_code" valueField="currency_code"/>
+                    <a:field name="exchange_rate_type"/>
+                    <a:field name="exchange_rate_type_name" displayField="type_name" options="GLD5010_exchangeRateTypeDs" required="true" returnField="exchange_rate_type" valueField="type_code"/>
+                    <a:field name="exchange_rate"/>
+                    <a:field name="description"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="submitsuccess" handler="GLD5010_headerSubmitSuccess"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="GLD5010_account_voucher_lines_ds" bindName="lines" bindTarget="GLD5010_account_voucher_headers_ds" fetchAll="true" model="train.GLD5010.gld_voucher_lines" pageSize="100" selectable="true">
+                <a:fields>
+                    <a:field name="gld_voucher_header_id"/>
+                    <a:field name="gld_voucher_line_id"/>
+                    <a:field name="description"/>
+                    <a:field name="debit_amount"/>
+                    <a:field name="credit_amount"/>
+                    <a:field name="debit_functional_amount"/>
+                    <a:field name="credit_functional_amount"/>
+                    <a:field name="account_id"/>
+                    <a:field name="account_name" lovGridHeight="300" lovHeight="460" lovService="train.GLD5010.gld_accounts_lov" lovWidth="600" required="true" title="会计科目查询">
+                        <a:mapping>
+                            <a:map from="account_id" to="account_id"/>
+                            <a:map from="account_name" to="account_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="description"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="beforecreate" handler="GLD5010_lineBeforeCreate"/>
+                    <a:event name="add" handler="GLD5010_lineAdd"/>
+                    <a:event name="update" handler="GLD5010_lineUpdate"/>
+                </a:events>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="GLD5010_saveVoucher" text="HAP_SAVE" width="80"/>
+                <a:toolbarButton id="GLD5010_voucher_submit_btn" click="GLD5010_submitVoucher" disabled="true" text="HAP_SUBMIT" width="80"/>
+            </a:screenTopToolbar>
+            <div>
+                <table border="0" heigth="100" width="100%">
+                    <tr>
+                        <!-- <td style="width:25%">
+                            <img id="cat" src="${/request/@context_path}/images/hand_logo.png"/>
+                        </td> -->
+                        <td style="text-align:center;width:50%;font-size:20px;">
+                            <p style="line-height:1px;">
+                                <b><![CDATA[ 凭证信息录入]]></b>
+                            </p>
+                            <p style="line-height:7px;">
+                                <b><![CDATA[非常规考核事项、特殊预算事项录入]]></b>
+                            </p>
+                        </td>
+                        <td align="right" style="width:25%;vertical-align:bottom;font-size:14px;">
+                            <a:box>
+                                <a:label name="voucher_number" bindTarget="GLD5010_account_voucher_headers_ds" prompt="凭证编号" style="width:170px"/>
+                            </a:box>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <a:form id="GLD5010_account_voucher_form" title="创建总账凭证">
+                <a:box id="GLD5010_account_voucher_box" column="4" style="width:100%">
+                    <a:textField name="voucher_number" bindtarget="GLD5010_account_voucher_headers_ds" prompt="凭证编号"/>
+                    <a:datePicker name="voucher_create_date" bindtarget="GLD5010_account_voucher_headers_ds" prompt="日期"/>
+                    <a:comboBox name="period_name" bindTarget="GLD5010_account_voucher_headers_ds" prompt="期间"/>
+                    <a:numberField name="attachment" bindtarget="GLD5010_account_voucher_headers_ds" prompt="附件"/>
+                    <a:comboBox name="currency_name" bindtarget="GLD5010_account_voucher_headers_ds" prompt="币种"/>
+                    <a:comboBox name="exchange_rate_type_name" bindtarget="GLD5010_account_voucher_headers_ds" prompt="汇率类型"/>
+                    <a:numberField name="exchange_rate" bindtarget="GLD5010_account_voucher_headers_ds" prompt="汇率"/>
+                </a:box>
+                <a:box id="GLD5010_account_voucher_ta" style="width:100%">
+                    <a:textArea name="description" id="gld_account_voucher_ta" bindtarget="GLD5010_account_voucher_headers_ds" emptyText="这是一个textArea" prompt="备注" width="850"/>
+                </a:box>
+            </a:form>
+            <a:grid id="GLD5010_account_voucher_grid" bindTarget="GLD5010_account_voucher_lines_ds" marginHeight="121" marginWidth="45" navBar="true">
+                <a:toolBar>
+                    <a:button click="GLD5010_createLineRecord" icon="${/request/@context_path}/images/add.gif" text="HAP_NEW"/>
+                    <a:button text="删除" type="delete"/>
+                </a:toolBar>
+                <a:columns>
+                    <a:column name="description" editor="GLD5010_account_voucher_tf" prompt="摘要"/>
+                    <a:column name="account_name" editor="GLD5010_account_voucher_lv" prompt="会计科目"/>
+                    <a:column name="debit_amount" editor="GLD5010_account_voucher_nf" prompt="借方（原币）"/>
+                    <a:column name="credit_amount" editor="GLD5010_account_voucher_nf" prompt="贷方（原币）"/>
+                    <a:column name="debit_functional_amount" editor="GLD5010_account_voucher_nf" prompt="借方（本币）"/>
+                    <a:column name="credit_functional_amount" editor="GLD5010_account_voucher_nf" prompt="贷方（本币）"/>
+                </a:columns>
+                <a:editors>
+                    <a:textField id="GLD5010_account_voucher_tf"/>
+                    <a:numberField id="GLD5010_account_voucher_nf"/>
+                    <a:lov id="GLD5010_account_voucher_lv"/>
+                </a:editors>
+            </a:grid>
+        </a:screenBody>
+    </a:view>
+</a:screen>

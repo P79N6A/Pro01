@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Tank
+    $Date: 2017-3-02 上午
+    $Revision: 1.0  
+    $Purpose: 技术培训-单据头数据保存bm
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="update">
+            <bm:update-sql><![CDATA[
+            
+            begin
+				tra_report_pkg.tra_report_header_save (p_tra_report_header_id       =>${@tra_report_header_id},
+															               p_tra_report_number          =>${@tra_report_number},
+															               p_company_id                    =>${/session/@company_id},
+															               p_tra_report_barcode         =>null,
+															               p_employee_id                   =>${@employee_id},
+															               p_position_id                      =>${@position_id},
+															               p_payee_category               =>${@payee_category},
+															               p_payee_id                         =>${@payee_id},
+															               p_tra_report_type_id            =>${@tra_report_type_id},     
+															               p_expense_user_group_id    =>null,  
+															               p_currency_code                 =>${@currency_code},
+															               p_exchange_rate_type          =>null,
+															               p_exchange_rate_quotation  =>null,
+															               p_exchange_rate                 =>${@rate},   
+															               p_report_date                     =>to_date(${@tra_report_date},'yyyy-mm-dd'),
+															               p_period_name					=>${@period_name},
+															               p_report_status					=>'GENERATE',  
+															               p_gld_interface_flag				=>'N',
+															               p_attachment_num				=>${@attach_id},         
+															               p_description						=>${@description},
+															               p_write_off_status				=>'N',
+															               p_write_off_completed_date =>null,
+															               p_reversed_flag					=>null,
+															               p_source_tra_rep_header_id	=>null,
+															               p_created_by						=>${/session/@user_id},
+															               p_operation_date				=>null, 
+															               p_source_type						=>'MANUAL',
+															               p_payment_method_id			=>${@payment_method_id},
+															               p_contract_header_id			=>null,
+															               p_eam_asset_id					=>${@eam_asset_id},
+															               p_invoice_flag						=>${@invoice_flag});       
+             end;
+        ]]></bm:update-sql>
+            <bm:parameters>
+                <bm:parameter name="tra_report_header_id" dataType="java.lang.Long" input="true" inputPath="@tra_report_header_id" output="true" outputPath="@tra_report_header_id"/>
+                <bm:parameter name="tra_report_number" inputPath="@tra_report_number" output="true" outputPath="@tra_report_number"/>
+            </bm:parameters>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

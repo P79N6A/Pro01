@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure>
+        <a:model-query model="bgt.bgt_get_sys_import_head_id" rootPath="header"/>
+        <a:import-excel header_id="${/model/header/record/@header_id}" separator="," status_field="/parameter/@ImportSuccess" template_code="${/parameter/@template_code}" user_id="${/session/@user_id}"/>
+        <a:model-query defaultWhereClause="header_id=${/model/header/record/@header_id} and TEMPLATE_CODE = ${/parameter/@template_code}" model="fnd.FND2430.fnd_vender_import_get_status" rootPath="status"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="fnd_vender_import_link" url="${/request/@context_path}/modules/fnd/FND2430/fnd_vender_load.screen"/>
+        <script><![CDATA[
+            function loadComplete() {
+                if ('${/model/status/record/@status}' == 'NEW') {
+                      window.location.href =  $('fnd_vender_import_link').getUrl() + '?header_id= ${/model/header/record/@header_id}';                              
+                } else {
+                    Aurora.showInfoMessage('${l:PROMPT}', 'System load excel error!,Please contact with the system administrator !', null, 250, 100);
+                   window.location.href =  $('fnd_vender_import_link').getUrl() + '?header_id= ${/model/header/record/@header_id}';
+                }
+            }
+        ]]></script>
+        <script><![CDATA[
+	  		loadComplete();
+	  	]]></script>
+    </a:view>
+</a:screen>

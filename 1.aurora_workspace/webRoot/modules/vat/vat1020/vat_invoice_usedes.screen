@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure/>
+    <a:view>
+        <a:link id="vat_invoice_usedes_assign_com_link" url="${/request/@context_path}/modules/vat/vat1020/vat_invoice_usedes_assign_company.screen"/>
+        <a:link id="vat_invoice_usedes_assign_com_all_link" url="${/request/@context_path}/modules/vat/vat1020/vat_invoice_usedes_assign_company_all.screen"/>
+        <script><![CDATA[
+            function query() {
+                $('vat_invoice_usedes_result_ds').query();
+            }
+            
+            function resetquery() {
+                $('vat_invoice_usedes_query_ds').reset();
+            }
+            
+            function IsNew(record, name) {
+                if (record.isNew) {
+                    return 'VatTextField';
+                } else {
+                    return '';
+                }
+            }
+            
+            function assignCompany(value, record, name) {
+                if (record.isNew) {
+                    return '';
+                }
+                return '<a href="javascript:AssignCompany(\'' + record.get('invoice_usede_id') + '\',\'' + record.get('invoice_usede_code') + '\',\'' + record.get('invoice_usede_desc') + '\',\'' + '\')">${l:VAT_INVOICE_CATEGORY.COMPANY_ASSIGN}</>';
+            }
+            
+            function AssignCompany(invoice_usede_id, invoice_usede_code, invoice_usede_desc) {
+                new Aurora.Window({
+                    id: 'vat_invoice_usedes_assign_com',
+                    url: $('vat_invoice_usedes_assign_com_link').getUrl() + '?set_of_books_id=' + '${/parameter/@set_of_books_id}' + '&invoice_usede_id=' + invoice_usede_id + '&invoice_usede_code=' + invoice_usede_code + '&invoice_usede_desc=' + encodeURIComponent(invoice_usede_desc),
+                    title: '${l:VAT_INVOICE_CATEGORY.COMPANY_ASSIGN}',
+                    fullScreen: true
+                });
+            }
+            
+            function batchAssignCompany() {
+                var records = $('vat_invoice_usedes_result_ds').getJsonData(true);
+            
+                if (records.length == 0) {
+                    Aurora.showInfoMessage('${l:PROMPT}', '${l:PROMPT.PLEASE_SELECT}', null, 250, 100);
+                    return;
+                }
+            
+                new Aurora.Window({
+                    id: 'vat_invoice_usedes_assign_com_all_id',
+                    url: $('vat_invoice_usedes_assign_com_all_link').getUrl() + '?set_of_books_id=' + '${/parameter/@set_of_books_id}',
+                    title: '${l:PROMPT.BATCH_ADD}',
+                    fullScreen: true
+                });
+            }
+            
+            function returnBack() {
+                history.go(-1);
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="vat_business_type_ds" lookupCode="VAT_BUSINESS_TYPE"/>
+            <a:dataSet id="vat_transfer_type_ds" lookupCode="VAT_TRANSFER_MODE"/>
+            <a:dataSet id="vat_invoice_usedes_query_ds" model="vat.vat1020.vat_invoice_usedes">
+                <a:fields>
+                    <a:field name="set_of_books_id" defaultValue="${/parameter/@set_of_books_id}"/>
+                    <a:field name="invoice_usede_code"/>
+                    <a:field name="invoice_usede_desc"/>
+                    <a:field name="vat_business_type"/>
+                    <a:field name="vat_business_type_desc" displayField="code_value_name" options="vat_business_type_ds" returnField="vat_business_type" valueField="code_value"/>
+                    <a:field name="vat_transfer_type"/>
+                    <a:field name="vat_transfer_type_desc" displayField="code_value_name" options="vat_transfer_type_ds" returnField="vat_transfer_type" valueField="code_value"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="vat_invoice_usedes_result_ds" autoCount="true" autoQuery="true" fetchAll="false" model="vat.vat1020.vat_invoice_usedes" queryDataSet="vat_invoice_usedes_query_ds" selectable="true">
+                <a:fields>
+                    <a:field name="set_of_books_id" defaultValue="${/parameter/@set_of_books_id}"/>
+                    <a:field name="invoice_usedes_id"/>
+                    <a:field name="invoice_usede_code" required="true"/>
+                    <a:field name="invoice_usede_desc" required="true"/>
+                    <a:field name="vat_business_type"/>
+                    <a:field name="vat_business_type_desc" displayField="code_value_name" options="vat_business_type_ds" required="true" returnField="vat_business_type" valueField="code_value"/>
+                    <a:field name="vat_transfer_type"/>
+                    <a:field name="vat_transfer_type_desc" displayField="code_value_name" options="vat_transfer_type_ds" required="true" returnField="vat_transfer_type" valueField="code_value"/>
+                    <a:field name="enabled_flag" checkedValue="Y" defaultValue="Y" uncheckedValue="N"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="resetquery" text="HAP_RESET" width="80"/>
+                <a:toolbarButton click="returnBack" text="HAP_BACK" width="80"/>
+                <a:gridButton bind="vat_invoice_usedes_gird" type="add" width="80"/>
+                <a:gridButton bind="vat_invoice_usedes_gird" type="clear" width="80"/>
+                <a:gridButton bind="vat_invoice_usedes_gird" type="save" width="80"/>
+                <!-- <a:toolbarButton click="batchAssignCompany" text="PROMPT.BATCH_DISP_COMPANY" width="100"/> -->
+            </a:screenTopToolbar>
+            <a:queryForm bindTarget="vat_invoice_usedes_query_ds" resultTarget="vat_invoice_usedes_result_ds" style="width:100%;border:none">
+                <a:formToolBar>
+                    <a:textField name="invoice_usede_code" bindTarget="vat_invoice_usedes_query_ds" typeCase="upper">
+                        <a:events>
+                            <a:event name="enterdown" handler="query"/>
+                        </a:events>
+                    </a:textField>
+                    <a:textField name="invoice_usede_desc" bindTarget="vat_invoice_usedes_query_ds">
+                        <a:events>
+                            <a:event name="enterdown" handler="query"/>
+                        </a:events>
+                    </a:textField>
+                    <a:comboBox name="vat_business_type_desc" bindTarget="vat_invoice_usedes_query_ds">
+                        <a:events>
+                            <a:event name="enterdown" handler="query"/>
+                        </a:events>
+                    </a:comboBox>
+                    <a:comboBox name="vat_transfer_type_desc" bindTarget="vat_invoice_usedes_query_ds">
+                        <a:events>
+                            <a:event name="enterdown" handler="query"/>
+                        </a:events>
+                    </a:comboBox>
+                </a:formToolBar>
+            </a:queryForm>
+            <a:grid id="vat_invoice_usedes_gird" bindTarget="vat_invoice_usedes_result_ds" marginHeight="121" marginWidth="42" navBar="true">
+                <a:columns>
+                    <a:column name="invoice_usede_code" align="center" editorFunction="IsNew" sortable="true" width="200"/>
+                    <a:column name="invoice_usede_desc" align="left" editor="VatTextFieldDesc" width="200"/>
+                    <a:column name="vat_business_type_desc" editor="VatcomboBox"/>
+                    <a:column name="vat_transfer_type_desc" editor="VatcomboBox"/>
+                    <a:column name="enabled_flag" editor="VatcheckBox"/>
+                    <!-- <a:column name="assignCompany" align="center" prompt="VAT_INVOICE_CATEGORY.COMPANY_ASSIGN" renderer="assignCompany" width="80"/> -->
+                </a:columns>
+                <a:editors>
+                    <a:textField id="VatTextField" typecase="upper"/>
+                    <a:textField id="VatTextFieldDesc"/>
+                    <a:comboBox id="VatcomboBox"/>
+                    <a:checkBox id="VatcheckBox"/>
+                </a:editors>
+            </a:grid>
+        </a:screenBody>
+        <script purpose="auto_resize"><![CDATA[
+            function vat_invoice_usedes_info_infoInitSize() {
+                //描述宽度
+                var labelWidth = 75;
+                //标签宽度,5 = 3padding + 2border-spacing
+                var tagWidth = 150 + 5;
+                //页面宽度、高度
+                var vw = $A.getViewportWidth();
+                var vh = $A.getViewportHeight();
+                //留白宽度
+                var marginWidth = 35;
+                //自适应宽度
+                var autoWidth = vw - marginWidth;
+                //Form内部宽度，-2border
+                var formInnerWidth = autoWidth - 2;
+                //所占列数
+                var colSpan = 4;
+                //设置组件的自适应宽度
+                $('vat_invoice_usedes_gird').setWidth(autoWidth);
+                //设置TextArea的自适应宽度
+            }
+            //Ext.fly(window).on('resize', vat_invoice_usedes_info_infoInitSize);
+            vat_invoice_usedes_info_infoInitSize();
+        ]]></script>
+    </a:view>
+</a:screen>

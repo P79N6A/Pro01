@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-7-18 上午9:59:01  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    t.*
+                FROM
+                    (SELECT
+                        t.exp_report_dists_id,
+                        t.exp_report_je_line_id,
+                        t.description,
+                        TO_CHAR(t.journal_date,'yyyy-mm-dd')journal_date,
+                        t.period_name,
+                        t.company_id,
+                        fc.company_short_name,
+                        frc.responsibility_center_name,
+                        t.account_id,
+                        ga.account_code,
+                        ga.description account_desc,
+                        t.entered_amount_dr,
+                        t.entered_amount_cr,
+                        t.functional_amount_dr,
+                        t.functional_amount_cr
+                    FROM
+                        exp_report_accounts t,
+                        gld_accounts_vl ga,
+                        fnd_responsibility_centers_vl frc,
+                        fnd_companies_vl fc
+                    WHERE
+                        t.account_id               = ga.account_id(+) AND
+                        t.responsibility_center_id = frc.responsibility_center_id(+) AND
+                        t.company_id               = fc.company_id(+) AND
+                        t.exp_report_header_id     =${@exp_report_header_id}
+                    ) t
+                ORDER BY
+                    exp_report_dists_id,
+                    company_id,
+                    exp_report_je_line_id
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

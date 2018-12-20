@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <a:init-procedure/>
+    <a:view>
+        <script><![CDATA[
+            function back() {
+                $('error_window').close();
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="reuslt_ds" autoQuery="true" model="vat.vat1050.vat_transfer_ratio_import_error" queryUrl="${/request/@context_path}/autocrud/vat.vat1050.vat_transfer_ratio_import_error/query?batch_id=${/parameter/@batch_id}">
+                <a:fields>
+                    <a:field name="line_number"/>
+                    <a:field name="message"/>
+                    <a:field name="message_date"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle title="VAT_TAX_TRANSFER_INTERFACE.ERROR_INFO"/>
+                <a:gridButton click="back" text="HAP_BACK" width="80"/>
+            </a:screenTopToolbar>
+            <a:grid bindTarget="reuslt_ds" marginHeight="121" marginWidth="30" navBar="true">
+                <a:columns>
+                    <a:column name="line_number" width="60"/>
+                    <a:column name="message" width="500"/>
+                    <a:column name="message_date" renderer="Aurora.formatDate" width="80"/>
+                </a:columns>
+            </a:grid>
+        </a:screenBody>
+    </a:view>
+</a:screen>

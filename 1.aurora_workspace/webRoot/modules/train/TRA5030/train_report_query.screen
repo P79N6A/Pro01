@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Tank  
+    $Date: 2017-3-7 上午09:31:22  
+    $Revision: 1.0  
+    $Purpose:单据汇总查询界面
+-->
+<a:screen xmlns:c="aurora.application.action" xmlns:p="uncertain.proc" xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure>
+        <a:model-query autoCount="false" fetchAll="true" model="expm.exp_report_employeelist" rootPath="employee_list"/>
+        <a:model-query autoCount="false" defaultwhereclause="code=&apos;PAYMENT_OBJECT&apos;  and  language=${/session/@lang}" fetchAll="true" model="sys.sys_service_lookup_v" rootPath="payee_category_list"/>
+    </a:init-procedure>
+    <a:view>
+        <script><![CDATA[
+            function headCommitPayee(lov, r1, r2) {
+               
+                var payee_category = r1.get('payee_category');
+                if (payee_category == null || payee_category == undefined || payee_category == '') {
+                    return;
+                } else if (payee_category == 'EMPLOYEE') {
+                    r1.set('payee_id', r2.get('employee_id'));
+                } else if (payee_category == 'VENDER') {
+                    r1.set('payee_id', r2.get('vender_id'));
+                } else {
+                    r1.set('payee_id', r2.get('customer_id'));
+                }
+            }
+             
+            function headerUpdate(ds, record, name, value, oldvalue) {
+                if (name == 'payee_category') {
+                    record.set('payee_code', '');
+                    record.set('payee_id', '');
+                    var payee_category = value;
+            
+                    var f1 = record.getField('payee_code');
+                    if (payee_category == null || payee_category == undefined || payee_category == '') {
+                        f1.setLovService('');
+                        f1.setReadOnly(true);
+                    } else if (payee_category == 'EMPLOYEE') {
+                        title = '${l:EXP_EMPLOYEES.QUERY}';
+                        f1.setLovService('expm.exp_employee_req_lov');
+                        f1.setReadOnly(false);
+                    } else if (payee_category == 'VENDER') {
+                        title = '${l:CUSTOMER_QUERY}';
+                        f1.setLovService('expm.exp_vender_req_lov');
+                        f1.setReadOnly(false);
+                    } else {
+                        title = '${l:VENDER_SEARCH}';
+                        f1.setLovService('expm.exp_customer_req_lov');
+                        f1.setReadOnly(false);
+                    }
+                    f1.setTitle(title);
+                } else if (name == 'payee_code') {
+                    if (value == '') {
+                        record.set('payee_id', '');
+                    }
+                }
+            }
+            function query() {
+                $('tra_report_query_result_ds').query();
+            }
+            
+            function reset() {
+                $('tra_report_query_ds').getCurrentRecord().getField('payee_code').setReadOnly(true);
+                $('tra_report_query_ds').reset();
+            }
+            
+            function traReportDetail(value, record, name) {
+                var head_id = record.get('tra_report_header_id');
+                var tra_report_type_id =  record.get('tra_report_type_id');
+                return '<a href="javascript:openDetail(' + head_id +',' + tra_report_type_id + ',\'' + record.get('page_name') + '\')">' + value + '</a>';
+            }
+            
+            function openDetail(id,type_id, pageName) {
+                url = '${/request/@context_path}/' + pageName + '?tra_report_header_id=' + id +'&tra_report_type_id=' +type_id;
+                new Aurora.Window({
+                    id: 'new_report_detail_window',
+                    fullScreen: true,
+                    url: url
+                });
+            
+            }
+            
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="tra_employee_ds">
+                <a:datas dataSource="/model/employee_list"/>
+            </a:dataSet>
+            <a:dataSet id="tra_payee_category_ds">
+                <a:datas dataSource="/model/payee_category_list"/>
+            </a:dataSet>
+            <a:dataSet id="tra_currency_ds" loadData="true" model="gld.gld_currency_vl"/>
+            <a:dataSet id="tra_report_query_ds" autoCreate="true">
+                <a:fields>
+                    <a:field name="employee_name" displayField="employeename" options="tra_employee_ds" returnField="employee_id" valueField="employee_id"/>
+                    <a:field name="tra_reprot_type_name" autoComplete="true" autoCompleteField="code_name" lovGridHeight="320" lovHeight="450" lovService="train.TRA5030.tra_report_typelist" lovWidth="500" title="EXP_REPORT_HEADERS.EXP_REPORT_TYPE_ID">
+                        <a:mapping>
+                            <a:map from="expense_report_type_id" to="tra_report_type_id"/>
+                            <a:map from="description" to="tra_reprot_type_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="tra_report_type_id"/>
+                    <a:field name="payee_category_name" displayField="code_value_name" options="tra_payee_category_ds" returnField="payee_category" valueField="code_value"/>
+                    <a:field name="payee_category"/>
+                    <a:field name="payee_code" autoComplete="true" autoCompleteField="code_name" lovGridHeight="320" lovHeight="450" lovWidth="500" readOnly="true">
+                        <a:mapping>
+                            <a:map from="code_name" to="payee_code"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="payee_id"/>
+                    <a:field name="currency_name" displayField="currency_name" options="tra_currency_ds" returnField="currency" valueField="currency_code"/>
+                    <a:field name="currency"/>
+                    <a:field name="description"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="update" handler="headerUpdate"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="tra_report_query_result_ds" autoCount="true" autoPageSize="true" autoQuery="true" fetchAll="false" model="train.TRA5030.tra_report_query_result" pageSize="20" queryDataSet="tra_report_query_ds" selectable="true"/>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="reset" text="HAP_RESET" width="80"/>
+                <a:gridButton bind="tra_rep_query_result_grid" text="HAP_EXPORT" type="excel"/>
+            </a:screenTopToolbar>
+            <a:queryForm bindTarget="tra_report_query_ds" resultTarget="tra_report_query_result_ds" style="width:100%;border:none">
+                <a:formToolBar>
+                    <a:textField name="tra_report_number" bindTarget="tra_report_query_ds" prompt="单据编号"/>
+                    <a:datePicker name="tra_report_date_from" bindTarget="tra_report_query_ds" prompt="报销日期从"/>
+                    <a:datePicker name="tra_report_date_to" bindTarget="tra_report_query_ds" prompt="报销日期至"/>
+                </a:formToolBar>
+                <a:formBody column="4">
+                    <a:lov name="tra_reprot_type_name" bindTarget="tra_report_query_ds" prompt="单据类型"/>
+                    <a:comboBox name="employee_name" bindTarget="tra_report_query_ds" prompt="报销人"/>
+                    <a:comboBox name="currency_name" bindTarget="tra_report_query_ds" prompt="币种"/>
+                    <a:comboBox name="payee_category_name" bindTarget="tra_report_query_ds" prompt="收款对象"/>
+                    <a:lov name="payee_code" bindTarget="tra_report_query_ds" prompt="收款方">
+                        <a:events>
+                            <a:event name="commit" handler="headCommitPayee"/>
+                        </a:events>
+                    </a:lov>
+                    <a:numberField name="amount_from" bindTarget="tra_report_query_ds" prompt="报销金额从"/>
+                    <a:numberField name="amount_to" bindTarget="tra_report_query_ds" prompt="报销金额到"/>
+                    <a:datePicker name="created_date_from" bindTarget="tra_report_query_ds" prompt="创建日期从"/>
+                    <a:datePicker name="created_date_to" bindTarget="tra_report_query_ds" prompt="创建日期到"/>
+                    <a:textField name="description" bindtarget="tra_report_query_ds" prompt="描述"/>
+                </a:formBody>
+            </a:queryForm>
+            <a:grid id="tra_rep_query_result_grid" bindTarget="tra_report_query_result_ds" marginHeight="121" marginWidth="37" navBar="true">
+                <a:columns>
+                    <a:column name="tra_report_number" align="center" prompt="单据编号" renderer="traReportDetail" width="120"/>
+                    <a:column name="type_description" align="center" prompt="单据类型" width="100"/>
+                    <a:column name="report_date" align="center" prompt="报销日期" width="80"/>
+                    <a:column name="currency_name" align="center" prompt="币种" width="60"/>
+                    <a:column name="quarter_num" align="right" prompt="报销金额" renderer="Aurora.formatMoney" width="100"/>
+                    <a:column name="quarter_num_fun" align="right" prompt="本币报销金额" renderer="Aurora.formatMoney" width="100"/>
+                    <a:column name="employee_name" align="center" prompt="报销人" width="80"/>
+                    <a:column name="payee_category_name" align="center" prompt="收款对象" width="80"/>
+                    <a:column name="payee_name" align="center" prompt="收款方" width="100"/>
+                    <a:column name="report_status" align="center" prompt="状态" width="60"/>
+                    <a:column name="description" align="left" prompt="描述" width="120"/>
+                    <a:column name="creation_date1" align="center" prompt="创建时间" width="80"/>
+                </a:columns>
+            </a:grid>
+        </a:screenBody>
+    </a:view>
+</a:screen>

@@ -1,0 +1,16 @@
+以下命令在root用户下操作
+
+1.ifconfig      查看虚拟机IP地址。  
+2.cd /etc       进入硬件目录
+3.vi hosts      编辑hosts文件，将hosts文件里面ip地址改为虚拟机的ip地址（见步骤1）
+
+4. a:esc 
+   b:shift + ;   =======> :
+   c：wq       退出文本编辑器
+   
+5.cd           切换到根目录下面去
+6. ./startdb.sh      运行数据库脚本
+
+
+
+剩下的工作就是配置tnsnames.ora文件了,主要是修改文件里面的ip地址，将host地址改为虚拟机主机地址。

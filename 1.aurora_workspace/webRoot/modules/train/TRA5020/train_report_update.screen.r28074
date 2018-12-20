@@ -1,0 +1,2116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: zhoutong  
+    $Date: 2017-3-3 上午09:31:22  
+    $Revision: 1.0  
+    $Purpose:单据维护明细界面
+-->
+<a:screen xmlns:c="aurora.application.action" xmlns:a="http://www.aurora-framework.org/application" xmlns:p="uncertain.proc" tag="exp_report" trace="true">
+    <a:init-procedure>
+        <a:model-query autoCount="false" fetchAll="true" model="train.TRA5020.tra_report_head_show" rootPath="head_data"/>
+        <a:model-query defaultWhereClause="expense_report_type_id=nvl(${/model/head_data/record/@tra_report_type_id},(select hh.tra_report_type_id from tra_report_headers hh where hh.tra_report_header_id=${/parameter/@tra_report_header_id}))" fetchAll="true" model="train.public.tra_expense_report_types_vl" rootPath="budget_control"/>
+        <a:model-query autoCount="false" defaultWhereClause="currency_code=${/model/head_data/record/@currency_code}" fetchAll="true" model="gld.gld_currency_vl" rootPath="precision"/>
+        <a:model-query autocount="false" fetchall="true" model="csh.csh_payment_methods_list" rootpath="payment_method_list"/>
+        <a:model-query autocount="false" defaultwhereclause="exists (select 1 from exp_employee_assigns eea         where eea.position_id=op.position_id    and eea.enabled_flag = &apos;Y&apos;   and   eea.employee_id= nvl(${/parameter/@employee_id},${/model/head_data/record/@employee_id}))  and company_id = ${/session/@company_id}" fetchall="true" model="exp.exp_org_position" rootpath="position_list"/>
+        <a:model-query autocount="false" fetchall="true" model="train.public.tra_report_head_dimension" rootpath="head_dimension"/>
+        <a:model-query autocount="false" fetchall="true" model="train.public.tra_report_head_object" rootpath="head_object"/>
+        <a:model-query autocount="false" fetchall="true" model="train.public.tra_report_line_dimension" rootpath="line_dimension"/>
+        <a:model-query autocount="false" fetchall="true" model="train.public.tra_report_line_object" rootpath="line_object"/>
+        <a:model-query fetchAll="true" model="expm.expm_get_policy_enabled" rootpath="policy_enabled"/>
+        <a:model-query autoCount="false" fetchAll="true" model="expm.exp_requisition_exchange_type_init" rootPath="exchange_type"/>
+        <a:model-query autoCount="false" model="expm.vat_invoice_info_show_or_hide" rootPath="vat_invoice_info"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="exp_report_line_assign_link" url="${/request/@context_path}/modules/expm/public/exp_report_line_assign.screen"/>
+        <a:link id="get_exchange_rate_link_16" model="expm.get_exchange_rate" modelaction="query"/>
+        <a:link id="get_exchange_rate_by_quotation_link" model="expm.get_exchange_rate_by_quotation" modelaction="query"/>
+        <a:link id="tra_report_delete_link_1" url="${/request/@context_path}/modules/train/public/tra_report_delete.svc"/>
+        <a:link id="tra_report_maintain_link" url="${/request/@context_path}/modules/train/TRA5020/train_report_maintain_query.screen"/>
+        <a:link id="exp_expense_policy_infoinit_link" model="expm.exp_expense_policy_infoinit" modelaction="update"/>
+        <a:link id="sys_fun_get_period_name_link_5" model="csh.sys_fun_get_period_name" modelaction="query"/>
+        <a:link id="sys_fun_get_period_name_link_6" model="csh.sys_fun_get_bgt_period_name" modelaction="query"/>
+        <a:link id="sys_fun_get_payment_date_link" model="db.exp_report_pkg.get_payment_schedule_date" modelaction="execute"/>
+        <a:link id="exp_bank_assign_link" url="${/request/@context_path}/modules/exp/EXP1050/exp_bank_assign_pmt_schedule.screen"/>
+        <a:link id="tra_report_submit_link" model="train.public.tra_report_submit" modelaction="execute"/>
+        <style><![CDATA[
+            .accordion-box td{
+                vertical-align:top;
+            }
+        ]]></style>
+        <script><![CDATA[
+            var lineNum = 0;
+            var submitFlag = 0;
+            var saveFlag = true; //保存标志(用在动态列)，默认当加载页面后是true（及保存状态）。当对页面上的东西进行改动后，保存标志变为false。此时必须要保存后才能提交。
+            
+            var pmt_schedule_due_date;
+            var index = 1;
+            var initLineIndex = 0;
+            var tra_report_header_id_bak = '${/parameter/@tra_report_header_id}';
+            var canSave;
+            var removeFlag = false;
+            
+            function loadComplete() {
+            
+                if ('${/model/vat_invoice_info/record/@taxpayer_type}' == 'GENERAL_TAXPAYER') {
+                    $('grid').showColumn('invoice_category_name');
+                    $('grid').showColumn('invoice_code');
+                    $('grid').showColumn('invoice_number');
+                    $('grid').showColumn('invoice_usede_desc');
+                    $('grid').showColumn('tax_type_rate');
+                    $('grid').showColumn('tax_amount');
+                    $('grid').showColumn('invoice_item_desc');
+                    $('grid').showColumn('invoice_date');
+                    $('grid').showColumn('not_tax_amount');
+                    lineFields = $('tra_report_lines').fields;
+                    lineFields['invoice_category_name'].pro.required = true;
+                } else {
+                    $('grid').hideColumn('invoice_category_name');
+                    $('grid').hideColumn('invoice_code');
+                    $('grid').hideColumn('invoice_number');
+                    $('grid').hideColumn('invoice_usede_desc');
+                    $('grid').hideColumn('tax_type_rate');
+                    $('grid').hideColumn('tax_amount');
+                    $('grid').hideColumn('invoice_item_desc');
+                    $('grid').hideColumn('invoice_date');
+                    $('grid').hideColumn('not_tax_amount');
+                }
+            }
+            
+            function sumRenderer(records, name) {
+                var sum = 0;
+                for (var i = 0;i < records.length;i++) {
+                    var r = records[i].get(name);
+                    var n = parseFloat(r);
+                    if (!isNaN(n)) {
+                        sum += n;
+                    }
+                }
+                sum = Math.round(sum * 100) / 100;
+                return '<font><label style="color:red">' + sum + '</label></font>';
+            }
+            
+            function pmtGridcellclick(grid, row, name, record) {
+            
+                var metadata = record.getMeta();
+                if (name == 'payee_partner_name') {
+                    var f1 = metadata.getField('payee_partner_name');
+                    var payee_category = record.get('payee_type_value');
+                    if (payee_category == null || payee_category == undefined || payee_category == '') {
+                        f1.setLovService('');
+                    } else if (payee_category == 'EMPLOYEE') {
+                        f1.setLovService('csh.csh_pay_req_emp_lov');
+            
+                    } else if (payee_category == 'VENDER') {
+            
+                        f1.setLovService('csh.csh_pay_req_ven_lov');
+                    } else {
+            
+                        f1.setLovService('csh.csh_pay_req_cus_lov');
+                    }
+                }
+            
+            
+                if (name == 'account_number') {
+            
+                    var r = record.getMeta();
+                    f1 = r.getField('account_number');
+                    payee_category = record.get('payee_type_value');
+                    if (payee_category == null || payee_category == undefined || payee_category == '') {
+                        f1.setLovService('');
+                    } else if (payee_category == 'EMPLOYEE') {
+                        f1.setLovService('expm.exp_employee_accounts');
+                        record.getMeta().getField('account_number').setLovPara('employee_id', record.get('payee_id'));
+                    } else if (payee_category == 'VENDER') {
+                        f1.setLovService('expm.pur_vender_accounts');
+                        record.getMeta().getField('account_number').setLovPara('vender_id', record.get('payee_id'));
+                    } else {
+                        f1.setLovService('expm.ord_customer_accounts');
+                        record.getMeta().getField('account_number').setLovPara('customer_id', record.get('payee_id'));
+                    }
+                }
+            }
+            
+            function gridcellclick(grid, row, name, record) {
+            
+                var metadata = record.getMeta();
+            
+                if (name == 'expense_type_name') {
+                    $('tra_expense_type_ds').setQueryParameter('company_id', record.get('company_id'));
+                    $('tra_expense_type_ds').query();
+                }
+                if (name == 'tra_req_item_name') {
+                    $('tra_expense_item_ds').setQueryParameter('company_id', record.get('company_id'));
+                    $('tra_expense_item_ds').setQueryParameter('expense_type_id', record.get('expense_type_id'));
+                    $('tra_expense_item_ds').setQueryParameter('tra_report_type_id', '${/model/head_data/record/@tra_report_type_id}');
+                    $('tra_expense_item_ds').query();
+                }
+                if (name == 'unit_name') {
+                    var r = record.getMeta();
+                    var f1 = r.getField('unit_name');
+                    f1.setLovPara('company_id', record.get('company_id'));
+                }
+                if (name == 'responsibility_center_name') {
+                    r = record.getMeta();
+                    f1 = r.getField('responsibility_center_name');
+                    f1.setLovPara('company_id', record.get('company_id'));
+                }
+                if (name == 'employee_name') {
+                    r = record.getMeta();
+                    f1 = r.getField('employee_name');
+                    var ds = $('tra_report_head');
+                    var rd = ds.getAt(0);
+                    f1.setLovPara('company_id', record.get('company_id'));
+                    f1.setLovPara('employee_id', rd.get('employee_id'));
+                }
+                if (name == 'position_name') {
+                    $('position_ds').setQueryParameter('company_id', record.get('company_id'));
+                    $('position_ds').setQueryParameter('employee_id', record.get('employee_id'));
+                    $('position_ds').query();
+                }
+            
+            
+                if (name == 'period_name') {
+                    meta = record.getMeta();
+                    field = meta.getField('period_name');
+                    if ('${/model/budget_control/record/@budget_control_enabled}' == 'N') {
+                        field.setLovService('bgt.bgt_periods_detail_lov');
+                    } else {
+                        field.setLovService('expm.bgt_periods_detail_lov');
+                    }
+                } else {
+                    record.getMeta().getField('d1').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d2').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d3').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d4').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d5').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d6').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d7').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d8').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d9').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d10').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d11').setLovPara('company_id', record.get('company_id'));
+            
+                }
+            
+                if (name == 'invoice_item_desc') {
+            
+                    $('invoice_items_ds').setQueryParameter('invoice_category_code', record.get('invoice_category'));
+                    $('invoice_items_ds').setQueryParameter('tax_type_rate', record.get('tax_type_rate'));
+                    $('invoice_items_ds').query();
+                }
+            
+                if (name == 'invoice_code') {
+                    meta = record.getMeta();
+                    field = meta.getField('invoice_code');
+                    field.setLovPara('header_company_id', $('tra_report_head').getAt(0).get('company_id'));
+                    field.setLovPara('line_company_id', record.get('company_id'));
+                }
+            }
+            
+            function headcommitpayee(lov, r1, r2) {
+            
+                payee_category = r1.get('payee_category');
+                if (payee_category == null || payee_category == undefined || payee_category == '') {
+                    return;
+                } else if (payee_category == 'EMPLOYEE') {
+                    r1.set('payee_id', r2.get('employee_id'));
+                } else if (payee_category == 'VENDER') {
+                    r1.set('payee_id', r2.get('vender_id'));
+                } else {
+                    r1.set('payee_id', r2.get('customer_id'));
+                }
+            }
+            
+            
+            
+            function pmtlineupdate(dataSet, record, name, value, oldvalue) {
+                save = false;
+                if (name == 'payee_type') {
+                    record.set('payee_partner_name', '');
+                    record.set('payee_id', '');
+                    record.set('account_number', '');
+                    record.set('account_name', '');
+                    record.set('bank_code', '');
+                    record.set('bank_name', '');
+                    record.set('bank_location_code', '');
+                    record.set('bank_location_name', '');
+                    record.set('province_code', '');
+                    record.set('province_name', '');
+                    record.set('city_code', '');
+                    record.set('city_name', '');
+                } else if (name == 'payee_partner_name') {
+                    if (value == '') {
+                        record.set('payee_id', '');
+                    }
+                }
+            
+            }
+            
+            
+            function lineupdate(dataSet, record, name, value, oldvalue) {
+                save = false;
+            
+                if (name == 'company_name') {
+                    record.set('unit_id', '');
+                    record.set('unit_name', '');
+                    record.set('responsibility_center_id', '');
+                    record.set('responsibility_center_name', '');
+                    record.set('position_id', '');
+                    record.set('position_name', '');
+                    record.set('employee_id', '');
+                    record.set('employee_name', '');
+                    record.set('expense_item_id', '');
+                    record.set('tra_req_item_name', '');
+                    record.set('expense_type_name', '');
+                    record.set('expense_type_id', '');
+                    if (record.get('flag') == 1) {
+                        record.set('d1', '');
+                        record.set('d2', '');
+                        record.set('d3', '');
+                        record.set('d4', '');
+                        record.set('d5', '');
+                        record.set('d6', '');
+                        record.set('d7', '');
+                        record.set('d8', '');
+                        record.set('d9', '');
+                        record.set('d10', '');
+                        record.set('d11', '');
+                    }
+                    record.set('flag', 1);
+                    return;
+                } else if (name == 'expense_type_name') {
+                    record.set('tra_req_item_name', '');
+                    record.set('expense_item_id', '');
+                } else if (name == 'employee_name' || name == 'employee_id') {
+                    record.set('position_id', '');
+                    record.set('position_name', '');
+                    return;
+                } else if (name == 'primary_quantity' || name == 'price') {
+                    var quotation = $('tra_report_head').getAt(0).get('rate_quotation');
+                    var a = record.get('primary_quantity');
+            
+                    var b = record.get('price');
+                    var tax_type_rate = record.get('tax_type_rate');
+                    if (quotation == 'DIRECT QUOTATION') {
+                        record.set('report_amount', isNaN(a * b) ? '' : (a * b).toFixed('${/model/precision/record/@precision}'));
+                    } else {
+                        record.set('report_amount', isNaN(a / b) ? '' : (a * b).toFixed('${/model/precision/record/@precision}'));
+                    }
+                    headAmountChanged();
+                    var report_amount = record.get('report_amount');
+                    record.set('tax_amount', isNaN(report_amount * tax_type_rate) ? '' : (report_amount * tax_type_rate / (1 + tax_type_rate)).toFixed('${/model/precision/record/@precision}'));
+                    var tax_amount = record.get('tax_amount');
+                    record.set('not_tax_amount', isNaN(report_amount - tax_amount) ? '' : ((report_amount - tax_amount).toFixed('${/model/precision/record/@precision}')));
+                    return;
+            
+                } else if (name == 'date_from' || name == 'date_to') {
+                    record.validate((name == 'date_from') ? 'date_to' : 'date_from');
+                }
+            
+            
+                if (name == 'city' || name == 'place_type_id' || name == 'place_id' || name == 'exp_req_item_id' || name == 'position_id') {
+                    lineInfoInit(record);
+                }
+            
+                if (name == 'tax_type_rate') {
+                    report_amount = record.get('report_amount');
+                    tax_type_rate = record.get('tax_type_rate');
+                    if (tax_type_rate && report_amount) {
+                        record.set('tax_amount', isNaN(report_amount * tax_type_rate) ? '' : (report_amount * tax_type_rate / (1 + tax_type_rate)).toFixed('${/model/precision/record/@precision}'));
+                        tax_amount = record.get('tax_amount');
+                        record.set('not_tax_amount', isNaN(report_amount - tax_amount) ? '' : ((report_amount - tax_amount).toFixed('${/model/precision/record/@precision}')));
+                    }
+                    record.set('invoice_item_id', '');
+                    record.set('invoice_item_desc', '');
+                }
+            
+                if (name == 'tax_amount') {
+                    report_amount = record.get('report_amount');
+                    tax_amount = record.get('tax_amount');
+                    record.set('not_tax_amount', isNaN(report_amount - tax_amount) ? '' : ((report_amount - tax_amount).toFixed('${/model/precision/record/@precision}')));
+                }
+            
+                if (record.get('invoice_type') == 'OTHER') {
+                    record.getMeta().getField("invoice_code").setRequired(false);
+                    record.getMeta().getField("invoice_number").setRequired(false);
+                    record.getMeta().getField("tax_type_rate").setRequired(false);
+                    record.getMeta().getField("tax_amount").setRequired(false);
+                    record.getMeta().getField("invoice_date").setRequired(false);
+                }
+                if (record.get('invoice_type') == 'VAT-SPECIAL' && record.get('source_type') == 'VAT') {
+                    record.getMeta().getField("invoice_code").setRequired(true);
+                    record.getMeta().getField("invoice_number").setRequired(false);
+                    record.getMeta().getField("tax_type_rate").setRequired(true);
+                    record.getMeta().getField("tax_amount").setRequired(true);
+                    record.getMeta().getField("invoice_date").setRequired(false);
+                }
+                if (record.get('invoice_type') == 'VAT-SPECIAL' && record.get('source_type') == 'M') {
+            
+                    if (record.get('authenticating_flag') == 'Y') {
+                        record.getMeta().getField("invoice_code").setRequired(true);
+                        record.getMeta().getField("invoice_number").setRequired(true);
+                        record.getMeta().getField("tax_type_rate").setRequired(true);
+                        record.getMeta().getField("tax_amount").setRequired(true);
+                        record.getMeta().getField("invoice_date").setRequired(true);
+                    } else {
+                        record.getMeta().getField("invoice_code").setRequired(false);
+                        record.getMeta().getField("invoice_number").setRequired(false);
+                        record.getMeta().getField("tax_type_rate").setRequired(true);
+                        record.getMeta().getField("tax_amount").setRequired(true);
+                        record.getMeta().getField("invoice_date").setRequired(false);
+                    }
+                }
+            
+                if (name == 'invoice_category_name') {
+                    record.set('invoice_item_id', '');
+                    record.set('invoice_item_desc', '');
+                }
+            
+            
+            }
+            
+            function headAmountChanged() {
+                var records = $('tra_report_lines').getAll();
+                var lineAmount = 0;
+                for (var i = 0;i < records.length;i++) {
+                    if (isNaN(records[i].get('report_amount'))) {
+                        records[i].set('report_amount', '0');
+                    }
+                    var req_amount = parseFloat(records[i].get('report_amount'));
+                    lineAmount += req_amount;
+                }
+                $('tra_report_head').getAt(0).set('sum_amount', lineAmount);
+            
+            }
+            
+            function removeLine() {
+                headAmountChanged();
+                index = index - 1;
+            }
+            
+            function lineInfoInit(record) {
+                if (record.get('employee_id')) {
+                    record.set('p_rep_date', $('tra_report_head').getAt(0).get('tra_report_date'), true);
+                    record.set('expense_item_id', record.get('expense_item_id'), true);
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: $('exp_expense_policy_infoinit_link').getUrl(),
+                        para: record.data,
+                        success: function(res) {
+                            var lineinfo = res.result;
+                            record.set('p_upper_limit', lineinfo['p_upper_limit'], true);
+                            record.set('p_lower_limit', lineinfo['p_lower_limit'], true);
+                            if (lineinfo['p_count'] == 1) {
+                                record.set('p_event_name', lineinfo['p_event_name'], true);
+                                record.set('p_commit_flag', lineinfo['p_commit_flag'], true);
+                                record.set('p_changeable_flag', lineinfo['p_changeable_flag'], true);
+                                record.set('p_id', lineinfo['p_id'], true);
+                                if (lineinfo['p_default_flag'] == 'Y' && record.isNew) {
+                                    record.set('price', lineinfo['p_expense_standard'], true);
+                                }
+                            } else {
+                                record.set('p_changeable_flag', lineinfo['p_changeable_flag'], true);
+                            }
+                            if (record.get('p_changeable_flag') && record.get('p_changeable_flag') == 'N') {
+                                record.getMeta().getField('price').setReadOnly(true);
+                            } else {
+                                record.getMeta().getField('price').setReadOnly(false);
+                            }
+                        },
+                        scope: this
+                    });
+                }
+            }
+            
+            function createLineRecord() {
+                var ds = $('tra_report_lines');
+                var linerecord = ds.getSelected();
+                var lineIndex = index + initLineIndex;
+                if (linerecord.length == 0) {
+                    ds.create();
+            
+                    var records = ds.getAll();
+            
+                    for (i = 0;i < records.length - 1;i++) {
+                        records[i].set('flag', 1);
+                    }
+                    var lrecord = ds.getAt(lineIndex - 1);
+                    setinitdata(ds, lrecord, lineIndex);
+                } else {
+                    for (i = 0;i < linerecord.length;i++) {
+                        var data = linerecord[i].data;
+                        var newdata = {};
+                        var len = ds.getAll().length;
+                        for (var name in data) {
+                            newdata[name] = data[name];
+                        }
+                        var record = new Aurora.Record(newdata);
+                        record.isNew = 'true';
+                        record.dirty = 'false';
+                        var reportAmount = record.data['report_amount'];
+                        record.data['report_amount'] = 0;
+                        ds.add(record);
+                        record.set('report_amount', reportAmount);
+                        lineNum = (index + initLineIndex) * 10;
+                        var lineRecord = ds.getAt(len);
+                        lineRecord.set('line_number', lineNum);
+                        lineRecord.set('tra_report_line_id', '');
+                        index = index + 1;
+                    }
+                }
+                headAmountChanged();
+            }
+            
+            function setpmtinitdata(ds, record, index) {
+            
+                var header = $('tra_report_head').getAt(0);
+                var payee_category = header.get('payee_category');
+                record.set('currency', header.get('currency_code'));
+                record.set('schedule_start_date', header.get('tra_report_date'));
+                record.set('schedule_due_date', pmt_schedule_due_date);
+                record.set('currency_name', header.get('tra_report_currency_name'));
+                record.set('tra_report_header_id', header.get('tra_report_header_id'));
+                record.set('usedes', header.get('usedes'));
+                record.set('usedes_name', header.get('usedes_name'));
+                record.set('payee_type', header.get('payee_category_name'));
+                record.set('payee_type_value', header.get('payee_category'));
+                record.set('payee_partner_name', header.get('payee_name'));
+                record.set('payee_id', header.get('payee_id'));
+                record.set('account_number', header.get('account_number'));
+                record.set('account_name', header.get('account_name'));
+                record.set('bank_code', header.get('bank_code'));
+                record.set('bank_name', header.get('bank_name'));
+                record.set('bank_location_code', header.get('bank_location_code'));
+                record.set('bank_location_name', header.get('bank_location'));
+                record.set('province_code', header.get('province_code'));
+                record.set('province_name', header.get('province_name'));
+                record.set('city_code', header.get('city_code'));
+                record.set('city_name', header.get('city_name'));
+            
+                record.set('payment_method', header.get('tra_report_payment_method'));
+                record.set('payment_type_id', header.get('payment_method_id'));
+            }
+            
+            function setinitdata(dataSet, record, lineIndex) {
+            
+                var header = $('tra_report_head').getAt(0);
+                var selectedLines = $('tra_report_lines').getSelected();
+                var payee_category = header.get('payee_category');
+                var records = $('tra_report_head').getAll();
+                if ($('tra_report_lines').getAll().length != 0) {
+                    lineNum = lineIndex * 10;
+                    record.set('line_number', lineNum);
+                    index = index + 1;
+                }
+                record.set('primary_quantity', 1);
+                record.set('company_id', header.get('company_id'));
+                record.set('company_name', header.get('company_name'));
+                record.set('unit_id', header.get('unit_id'));
+                record.set('unit_name', header.get('unit_name'));
+                record.set('employee_id', header.get('employee_id'));
+                record.set('employee_name', header.get('employee_name'));
+                record.set('position_id', header.get('position_id'));
+                record.set('position_name', header.get('position_name'));
+                record.set('responsibility_center_name', header.get('responsibility_center_name'));
+                record.set('responsibility_center_id', header.get('responsibility_center_id'));
+                record.set('payee_category_name', header.get('payee_category_name'));
+                record.set('payee_category', header.get('payee_category'));
+                record.set('payee_name', header.get('payee_name'));
+                record.set('payee_id', header.get('payee_id'));
+                record.set('payment_flag', header.get('payment_flag'));
+                record.set('currency_code', header.get('currency_code'));
+                record.set('exchange_rate', header.get('rate'));
+                record.set('period_name', header.get('period_name'));
+                record.set('exchange_rate_type', header.get('rate_type'));
+                record.set('exchange_rate_quotation', header.get('rate_quotation'));
+            
+                record.set('account_number', header.get('account_number'));
+                record.set('account_name', header.get('account_name'));
+            
+                record.set('payment_type', header.get('tra_report_payment_method'));
+                record.set('payment_type_id', header.get('payment_method_id'));
+            
+                record.set('expense_type_id', '${/model/budget_control/record/@default_expense_type}');
+                record.set('expense_type_name', '${/model/budget_control/record/@default_expense_type_desc}');
+            
+            
+                var saveFlag = true;
+            }
+            
+            //循环校验每行计划付款行付款日期是否小于报销日期
+            
+            function pmtDateValidator() {
+            
+                var expDate = Aurora.formatDate($('tra_report_head').getAt(0).get('tra_report_date'));
+                var pmt_ds = $('pmtplan_schedules_ds');
+                var pmt_line_records = pmt_ds.getAll();
+                var tmp = 0;
+                if (pmt_line_records.length == 0) {
+                    canSave = true;
+                }
+                if (pmt_line_records.length != 0) {
+                    for (var t = 0;t < pmt_line_records.length;t++) {
+                        var scheduleDueDate = Aurora.formatDate(pmt_line_records[t].get('schedule_due_date'));
+                        if (expDate > scheduleDueDate) {
+                            tmp++;
+                        }
+                    }
+                }
+                if (tmp != 0) {
+                    canSave = false;
+                }
+                if (tmp == 0) {
+                    canSave = true;
+                }
+            }
+            
+            function saveReport() {
+                //添加费用政策地点定义检查
+            
+                var records = $('tra_report_lines').getAll();
+                var len = records.length;
+                for (var i = 0;i < len;i++) {
+                    lineInfoInit(records[i]);
+                }
+                pmtDateValidator();
+                if (!canSave) {
+                    Aurora.showInfoMessage('${l:PROMPT}', '计划付款日期不能小于报销日期', null, 250, 100);
+                    return;
+                }
+                var d1 = $('tra_report_head_dimension');
+                var d2 = $('tra_report_head_object');
+                var rec = d2.getAt(0).data;
+            
+                if (!d1.validate()) {
+                    return;
+                }
+                if (!d2.validate()) {
+                    return;
+                }
+            
+                if (!$('tra_report_head').validate()) {
+                    return;
+                }
+                if (!$('tra_report_lines').validate()) {
+                    return;
+                }
+                if (!$('pmtplan_schedules_ds').validate()) {
+                    return;
+                }
+                if (!$('tra_report_object_head').validate()) {
+                    return;
+                }
+                if ($('tra_report_lines').getAll().length == 0) {
+                    Aurora.showInfoMessage('${l:PROMPT}', '${l:PLEASE_INSERT_LINE_DATA}', null, 250, 100);
+                    return;
+                }
+            
+                for (var p in rec) {
+                    if (p.substring(0, 1) == '#') {
+                        var records = $('tra_report_object_head').getAll();
+                        var record = null;
+                        for (var i = 0;i < records.length;i++) {
+                            var tempRecord = records[i];
+                            if (tempRecord.get('expense_object_type_id') == p.substring(1, p.length)) {
+                                record = tempRecord;
+                                break;
+                            }
+                        }
+            
+                        if (!record) {
+                            record = new Aurora.Record({});
+                            $('tra_report_object_head').add(record);
+                        }
+            
+                        record.data['expense_object_type_id'] = p.substring(1, p.length);
+                        record.data['expense_object_id'] = rec[p];
+                        record.data['expense_object_desc'] = rec['^' + p];
+            
+                        record.isNew = false;
+                        record.dirty = true;
+            
+                    }
+                }
+            
+                var recd = d1.getAt(0).data;
+                for (var p in recd) {
+                    if (p.substring(0, 1) == 'e') {
+                        var lines = $('tra_report_lines').getAll();
+                        for (var i = 0,
+                            l = lines.length;i < l;i++) {
+                            lines[i].set(p, recd[p]);
+                        }
+                    }
+                }
+            
+            
+                var d3 = $('tra_report_lines');
+                var linerecords = d3.getAll();
+                for (var t = 0;t < linerecords.length;t++) {
+                    var los = [];
+                    var recp = linerecords[t].data
+                    for (var q in recp) {
+                        var llo = {};
+                        if (q.substring(0, 1) == '^') {
+            
+                            llo['expense_object_type_id'] = q.substring(2, q.length);
+                            llo['expense_object_id'] = recp[q.replace('^', '')];
+                            llo['expense_object_desc'] = recp[q];
+            
+                            if (linerecords[t].isNew) {
+                                llo['_status'] = 'insert';
+                            } else {
+                                llo['_status'] = 'update';
+                                llo['tra_report_line_id'] = linerecords[t].get('tra_report_line_id');
+                            }
+                            los.push(llo);
+                        }
+                    }
+                    linerecords[t].data['details'] = los;
+                }
+            
+                //add 2013/1/7 wgf
+                if (removeFlag) {
+                    $('tra_report_head').getCurrentRecord().dirty = true;
+                }
+                var heade_datas = $('tra_report_head').getAll();
+                console.log(heade_datas[0].data.lines);
+                console.log(heade_datas[0].data.lines.data[0].data.company_name);
+                $('tra_report_head').setSubmitUrl("${/request/@context_path}/modules/train/public/tra_report_save.svc");
+                $('tra_report_head').submit();
+                saveFlag = true; //保存成功后，保存标志变为true
+            
+            }
+            
+            function setfunctionamount(value, record, name) {
+                var quotation = $('tra_report_head').getAt(0).get('rate_quotation');
+                var a = record.get('report_amount');
+                var b = $('tra_report_head').getAt(0).get('rate');
+                if (quotation == 'DIRECT QUOTATION') {
+                    record.data['report_functional_amount'] = isNaN(a * b) ? '' : (a * b).toFixed('${/model/precision/record/@precision}');
+                    return isNaN(a * b) ? '' : Aurora.formatMoney((a * b).toFixed('${/model/precision/record/@precision}'));
+                } else {
+                    record.data['report_functional_amount'] = isNaN(a / b) ? '' : (a / b).toFixed('${/model/precision/record/@precision}');
+                    return isNaN(a / b) ? '' : Aurora.formatMoney((a / b).toFixed('${/model/precision/record/@precision}'));
+                }
+            }
+            
+            function getpmtdate() {
+                var period_name = $('tra_report_head').getAt(0).get('period_name');
+                Aurora.request({
+                    lockMessage: '${l:HAP_WAITING}',
+                    lockMessage: '${l:HAP_WAITING}',
+                    url: /*${/request/@context_path}/autocrud/csh.sys_fun_get_period_name/query*/
+                    $('sys_fun_get_payment_date_link').getUrl() + '?_ban_remind=Y',
+                    para: {
+                        period_name: period_name
+                    },
+                    success: pmtdate,
+                    scope: this
+                });
+            }
+            
+            
+            //原点击保存后触发的操作
+            
+            function reloadres(ds, res) {
+                saveFlag = true;
+                //submitFlag具体作用不明，注释掉
+                //if (submitFlag == 0) {
+                var t = tra_report_header_id_bak;
+            
+            
+                $('tra_report_head').setQueryParameter('tra_report_header_id', t);
+                index = 1;
+                $('tra_report_lines').setQueryParameter('tra_report_header_id', t);
+                $('tra_report_lines').query();
+                $('pmtplan_schedules_ds').setQueryParameter('tra_report_header_id', t);
+                $('pmtplan_schedules_ds').query();
+            
+                tra_report_header_id_bak = t;
+                //修改头维度DataSet和头费用对象DataSet的数据为dirty=false,isNew=false
+                $('tra_report_head_dimension').getAt(0).dirty = false;
+                $('tra_report_head_dimension').getAt(0).isNew = false;
+            
+                $('tra_report_head_object').getAt(0).dirty = false;
+                $('tra_report_head_object').getAt(0).isNew = false;
+            
+                init_bak();
+            }
+            
+            function deletereport() {
+                Aurora.showConfirm('${l:EXP_REPORT_CREATE.DELETE}', '${l:EXP_REPORT_CREATE.DELETE}', function(cmp) {
+            
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: /*exp_report_delete.svc*/
+                        $('tra_report_delete_link_1').getUrl(),
+                        para: {
+                            tra_report_header_id: tra_report_header_id_bak
+                        },
+                        success: function() {
+                            if (!opener) {
+                                window.location.href = $('tra_report_maintain_link').getUrl()
+                            } else {
+                                opener.query();
+                                window.close();
+                            }
+                        },
+                        scope: this
+                    });
+            
+            
+                }, null, null, 85);
+            
+            }
+            
+            function header_ds_update(ds, record, name, value, oldvalue) {
+                if (name == 'tra_report_date') {
+                    showPeriod(record);
+                }
+                if (name == 'rate_method_code') {
+                    record.set('rate_quotation_name', '');
+                    record.set('rate_quotation', '');
+                    record.set('rate', '');
+                    var meta = record.getMeta();
+                    if (value == 'DAILY' || value == 'FIXED') {
+                        meta.getField('rate_quotation_name').setReadOnly(true);
+                        meta.getField('rate_quotation_name').setRequired(false);
+                        meta.getField('rate').setReadOnly(true);
+                        record.set('rate', '');
+            
+                        getExchangeRate({
+                            fromCur: record.get('functional_currency_code'),
+                            toCur: record.get('currency_code'),
+                            exchangeRateType: record.get('rate_type'),
+                            exchangeDate: record.get('tra_report_date'),
+                            periodName: record.get('period_name')
+                        });
+                    } else if (value == 'PERIOD' || value == 'MANUAL') {
+                        if (record.get('currency_code') != record.get('functional_currency_code')) {
+                            meta.getField('rate_quotation_name').setReadOnly(false);
+                            meta.getField('rate').setReadOnly(false);
+                            meta.getField('rate_quotation_name').setRequired(false);
+                            meta.getField('rate').setRequired(true);
+                            record.set('rate_quotation_name', '');
+                            record.set('rate', '');
+                        }
+                    } else {
+            
+                       }
+                }
+            
+                if (name == 'rate_quotation_name' || name == 'rate_quotation') {
+                    if (record.get('rate_type') == null || record.get('rate_type') == '') {
+                        Aurora.showMessage('提示', '汇率类型不能为空');
+                        return;
+                    } else {
+                        getExchangeRateByQuo({
+                            fromCur: record.get('functional_currency_code'),
+                            toCur: record.get('currency_code'),
+                            exchangeRateType: record.get('rate_type'),
+                            exchangeDate: record.get('tra_report_date'),
+                            periodName: record.get('period_name'),
+                            exchangeRateQuo: record.get('rate_quotation')
+                        });
+                    }
+            
+                }
+            
+                if (name == 'payee_category') {
+                    record.set('payee_name', '');
+                    record.set('payee_id', '');
+                    var payee_category = value;
+                    var f1 = record.getField('payee_name');
+                    if (payee_category == null || payee_category == undefined || payee_category == '') {
+                        f1.setReadOnly(true);
+                        f1.setLovService('');
+                    } else if (payee_category == 'EMPLOYEE') {
+                        f1.setReadOnly(false);
+                        f1.setLovService('expm.exp_employee_req_lov');
+                        f1.setTitle('${l:EXP_EMPLOYEES.QUERY}');
+                    } else if (payee_category == 'VENDER') {
+                        f1.setReadOnly(false);
+                        f1.setTitle('${l:VENDER_SEARCH}');
+                        f1.setLovService('expm.exp_vender_req_lov');
+                    } else {
+                        f1.setReadOnly(false);
+                        f1.setTitle('${l:EXP_EMPLOYEES.QUERY}');
+                        f1.setLovService('expm.exp_customer_req_lov');
+                    }
+            
+                }
+            
+                if (record.get('invoice_flag') == 'Y') {
+                    $('grid').showColumn('invoice_category_name');
+                    $('grid').showColumn('invoice_code');
+                    $('grid').showColumn('invoice_number');
+                    $('grid').showColumn('invoice_usede_desc');
+                    $('grid').showColumn('tax_type_rate');
+                    $('grid').showColumn('tax_amount');
+                    $('grid').showColumn('invoice_item_desc');
+                    $('grid').showColumn('invoice_date');
+                    $('grid').showColumn('not_tax_amount');
+                } else {
+                    $('grid').hideColumn('invoice_category_name');
+                    $('grid').hideColumn('invoice_code');
+                    $('grid').hideColumn('invoice_number');
+                    $('grid').hideColumn('invoice_usede_desc');
+                    $('grid').hideColumn('tax_type_rate');
+                    $('grid').hideColumn('tax_amount');
+                    $('grid').hideColumn('invoice_item_desc');
+                    $('grid').hideColumn('invoice_date');
+                    $('grid').hideColumn('not_tax_amount');
+                }
+            
+            }
+            
+            function getExchangeRate(param) {
+                Aurora.request({
+                    lockMessage: '${l:HAP_WAITING}',
+                    lockMessage: '${l:HAP_WAITING}',
+                    url: /*${/request/@context_path}/autocrud/expm.get_exchange_rate/query*/
+                    $('get_exchange_rate_link_16').getUrl(),
+                    para: {
+                        from_currency: param.fromCur,
+                        to_currency: param.toCur,
+                        exchange_date: param.exchangeDate,
+                        exchange_period_name: param.periodName,
+                        exchange_rate_type: param.exchangeRateType
+                    },
+                    success: setRateAndQuotation,
+                    scope: this
+                });
+            }
+            
+            function getExchangeRateByQuo(param) {
+                Aurora.request({
+                    lockMessage: '${l:HAP_WAITING}',
+                    lockMessage: '${l:HAP_WAITING}',
+                    url: $('get_exchange_rate_by_quotation_link').getUrl(),
+                    para: {
+                        from_currency: param.fromCur,
+                        to_currency: param.toCur,
+                        exchange_date: param.exchangeDate,
+                        exchange_period_name: param.periodName,
+                        exchange_rate_type: param.exchangeRateType,
+                        exchange_rate_quo: param.exchangeRateQuo
+                    },
+                    success: setRate,
+                    scope: this
+                });
+            }
+            
+            function setRate(res) {
+                var record = $('exp_report_head').getAt(0);
+                record.set('rate', res.result.record.exchange_rate);
+            }
+            
+            function setRateAndQuotation(res) {
+                var record = $('exp_report_head').getAt(0);
+                record.set('rate', res.result.record.exchange_rate);
+                record.set('rate_quotation_name', getDisplayByValue(res.result.record.exchange_rate_quotation, 'code_value', 'code_value_name', 'quotation'));
+                record.set('rate_quotation', res.result.record.exchange_rate_quotation);
+            }
+            
+            function getDisplayByValue(value, valueName, displayName, dsName) {
+                var dataSet = $(dsName);
+                var records = dataSet.getAll();
+                for (var i = 0;i < records.length;i++) {
+                    if (records[i].get(valueName) == value) {
+                        return records[i].get(displayName);
+                    }
+                }
+            }
+            
+            function showPeriod(record) {
+                var r_date = Aurora.formatDate(record.get('tra_report_date'));
+                if ($('tra_report_head').getAt(0).get('budget_control_enabled') == 'N') {
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: /*${/request/@context_path}/autocrud/csh.sys_fun_get_period_name/query*/
+                        $('sys_fun_get_period_name_link_5').getUrl(),
+                        para: {
+                            p_date: r_date
+                        },
+                        success: periodname,
+                        scope: this
+                    });
+                } else {
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: $('sys_fun_get_period_name_link_6').getUrl(),
+                        para: {
+                            p_date: r_date
+                        },
+                        success: periodname,
+                        scope: this
+                    });
+                }
+            }
+            
+            function periodname(res) {
+                if (res) {
+                    var pluscols = res.result.record.period_name;
+                    if (pluscols) {
+                        $('exp_report_head').getAt(0).set('period_name', pluscols);
+                    } else {
+                        $('exp_report_head').getAt(0).set('period_name', '');
+                    }
+                }
+                getpmtdate();
+            }
+            
+            function pmtdate(res) {
+                var pluscols = res.result.schedule_due_date;
+                if (pluscols) {
+                    pmt_schedule_due_date = pluscols;
+                } else {
+                    pmt_schedule_due_date = '';
+                }
+            }
+            
+            function datapickerselect(dp, date) {
+                var rd = Aurora.formatDate(date);
+                $('exp_report_period_ds').setQueryParameter('company_id', '${/session/@company_id}');
+                $('exp_report_period_ds').setQueryParameter('date', rd);
+                $('exp_report_period_ds').query();
+            
+            }
+            
+            function afterperiodds(ds) {
+                var record = ds.getAt(0);
+            
+                $('exp_report_head').getAt(0).set('period_name', record.get('period_name'));
+            }
+            
+            function afterrateds(ds) {
+                var record = ds.getAt(0);
+            
+                if (record) {
+                    $('exp_report_head').getAt(0).set('rate_quotation', record.get('exchange_rate_quotation'));
+                    $('exp_report_head').getAt(0).set('rate_quotation_name', record.get('quotation_display'));
+                    $('exp_report_head').getAt(0).set('rate', record.get('exchange_rate'));
+                }
+            }
+            
+            
+            
+            
+            
+            
+            function resetobjds(ds, res) {
+                $('tra_report_object_head').removeAll();
+            }
+            
+            
+            function assign() {
+                var grid = $('tra_report_lines');
+                records = grid.getSelected();
+            
+                if (records.length != 1) {
+                    Aurora.showWarningMessage('${l:PROMPT}', '${l:PROMPTS.PLEASE_SELECT_RIGHT_REP_LINES}');
+                    return false;
+                } else if (records[0].get('exp_report_line_id')) {
+                    new Aurora.Window({
+                        id: 'exp_report_line_assign_window',
+                        title: '${l:EXP_REPORT_LINE_ASSIGN.TITLE_MAIN}',
+                        url: $('exp_report_line_assign_link').getUrl() + '?line_id=' + records[0].get('exp_report_line_id') + '&budget_control_enabled=' + '${/model/budget_control/record/@budget_control_enabled}',
+                        fullScreen: true
+                    });
+                } else {
+                    Aurora.showWarningMessage('${l:PROMPT}', '${l:PROMPTS.PLEASE__ASSIGNMENT}');
+                    return false;
+                }
+            }
+            
+            
+            function dateValidate(record, name, value) {
+                if (name == 'date_from' || name == 'date_to') {
+                    var start_date = record.get('date_from');
+                    var end_date = record.get('date_to');
+                    if (typeof(end_date) != 'undefined' && !Ext.isEmpty(end_date)) {
+                        if (!compareDate(start_date, end_date)) {
+                            return '${l:EXP_REPORT_MAINTAIN.DATE_VALIDATE}';
+                        }
+                    }
+                    return true;
+                }
+            }
+            
+            function compareDate(start, end) {
+                if (start > end) {
+                    return false;
+                }
+                return true;
+            }
+            
+            
+            
+            
+            function lineLoadFunction(ds) {
+            
+                initLineIndex = $('tra_report_lines').getAll().length;
+                var record = $('tra_report_head').getCurrentRecord();
+                var value = record.get('payee_id');
+                var payee_category = record.get('payee_category');
+            
+                var records = $('tra_report_lines').getAll();
+                var len = records.length;
+                for (var i = 0;i < len;i++) {
+                    lineInfoInit(records[i]);
+                }
+                if (record.get('invoice_flag') == 'Y') {
+                    $('grid').showColumn('invoice_category_name');
+                    $('grid').showColumn('invoice_code');
+                    $('grid').showColumn('invoice_number');
+                    $('grid').showColumn('invoice_usede_desc');
+                    $('grid').showColumn('tax_type_rate');
+                    $('grid').showColumn('tax_amount');
+                    $('grid').showColumn('invoice_item_desc');
+                    $('grid').showColumn('invoice_date');
+                    $('grid').showColumn('not_tax_amount');
+                } else {
+                    $('grid').hideColumn('invoice_category_name');
+                    $('grid').hideColumn('invoice_code');
+                    $('grid').hideColumn('invoice_number');
+                    $('grid').hideColumn('invoice_usede_desc');
+                    $('grid').hideColumn('tax_type_rate');
+                    $('grid').hideColumn('tax_amount');
+                    $('grid').hideColumn('invoice_item_desc');
+                    $('grid').hideColumn('invoice_date');
+                    $('grid').hideColumn('not_tax_amount');
+                }
+            }
+            
+            function priceValidator(record, name, value) {
+                if (record.get('p_upper_limit')) {
+                    if (parseFloat(value) > parseFloat(record.get('p_upper_limit')) && record.get('p_commit_flag') && record.get('p_commit_flag') == 'N') {
+                        return '${l:EXP_REPORT_CREATE.CHECK1}';
+                    }
+                }
+            
+                if (record.get('p_lower_limit')) {
+                    if (parseFloat(value) < parseFloat(record.get('p_lower_limit')) && record.get('p_commit_flag') && record.get('p_commit_flag') == 'N') {
+                        return '${l:EXP_REPORT_CREATE.CHECK2}';
+                    }
+                }
+            
+                if (record.get('tax_amount')) {
+                    if (parseFloat(record.get('tax_amount')) > parseFloat(record.get('report_amount'))) {
+                        return '${l:EXP_REPORT_CREATE.CHECK3}';
+                    }
+                }
+            
+                return true;
+            }
+            //当修改动态列里面的数据后保存标志变为false
+            
+            function dynamicUpdate() {
+                saveFlag = false;
+            
+            }
+            
+            function line_number(value, record, name) {
+                return ($('pmtplan_schedules_ds').indexOf(record) + 1) * 10;
+            }
+            
+            function submit_success() {
+                $('pmtplan_schedules_ds').query();
+            }
+            
+            function init_bak() {
+                var t = $('tra_report_head').getAt(0);
+                var r = t.getMeta();
+                var f1 = r.getField('rate_type_name');
+                var f2 = r.getField('rate_quotation_name');
+                var f3 = r.getField('rate');
+            
+                if (t.get('currency_code') != t.get('functional_currency_code')) {} else {
+                    f1.setReadOnly(true);
+                    f2.setReadOnly(true);
+                    f3.setReadOnly(true);
+                    f3.setRequired(true);
+                    t.set('rate', 1);
+                }
+                if (tra_report_header_id_bak != '') {
+                    r.getField('tra_report_date').setReadOnly(true);
+                    r.getField('tra_report_payment_method').setReadOnly(true);
+                    r.getField('tra_report_position').setReadOnly(true);
+                    r.getField('payee_category_name').setReadOnly(true);
+                    r.getField('payee_name').setReadOnly(true);
+                    for (var fieldName in t.data) {
+                        if (fieldName != 'description' && fieldName != 'attach_id' && fieldName != 'invoice_flag') {
+                            r.getField(fieldName).setReadOnly(true);
+                        }
+                    }
+                    f1 = r.getField('payee_name');
+                    var payee_category = t.get('payee_category');
+                    if (payee_category == 'EMPLOYEE') {
+                        f1.setLovService('expm.exp_employee_req_lov');
+                    } else if (payee_category == 'VENDER') {
+                        f1.setLovService('expm.exp_vender_req_lov');
+                    } else {
+                        f1.setLovService('expm.exp_customer_req_lov');
+                    }
+                }
+            }
+            
+            function pmtQuery() {
+                $('pmtplan_schedules_ds').query();
+            }
+            
+            //计划付款行删除2013/1/7 wgf
+            
+            function remove_record(ds, record, index) {
+                removeFlag = true;
+            }
+            
+            //add 2013/1/11 wgf 收款对象修改
+            
+            function payee_name_lov_commit(lov, r1, r2) {
+                var payee_category = r1.get('payee_category');
+                if (payee_category == 'EMPLOYEE') {
+                    r1.set('payee_id', r2.get('employee_id'));
+                    r1.set("bank_code", r2.get("bank_code"));
+                    r1.set("bank_name", r2.get("bank_name"));
+                    r1.set("bank_location_code", r2.get("bank_location_code"));
+                    r1.set("bank_location", r2.get("bank_location"));
+                    r1.set("province_code", r2.get("province_code"));
+                    r1.set("province_name", r2.get("province_name"));
+                    r1.set("city_code", r2.get("city_code"));
+                    r1.set("city_name", r2.get("city_name"));
+                    r1.set("account_number", r2.get("account_number"));
+                    r1.set("account_name", r2.get("account_name"));
+                    r1.set("notes", r2.get("notes"));
+                } else if (payee_category == 'VENDER') {
+                    r1.set('payee_id', r2.get('vender_id'));
+                    r1.set("bank_code", r2.get("bank_code"));
+                    r1.set("bank_name", r2.get("bank_name"));
+                    r1.set("bank_location_code", r2.get("bank_location_code"));
+                    r1.set("bank_location", r2.get("bank_location"));
+                    r1.set("province_code", r2.get("province_code"));
+                    r1.set("province_name", r2.get("province_name"));
+                    r1.set("city_code", r2.get("city_code"));
+                    r1.set("city_name", r2.get("city_name"));
+                    r1.set("account_number", r2.get("account_number"));
+                    r1.set("account_name", r2.get("account_name"));
+                    r1.set("notes", r2.get("notes"));
+                } else {
+                    r1.set('payee_id', r2.get('customer_id'));
+                    r1.set("bank_code", r2.get("bank_code"));
+                    r1.set("bank_name", r2.get("bank_name"));
+                    r1.set("bank_location_code", r2.get("bank_location_code"));
+                    r1.set("bank_location", r2.get("bank_location"));
+                    r1.set("province_code", r2.get("province_code"));
+                    r1.set("province_name", r2.get("province_name"));
+                    r1.set("city_code", r2.get("city_code"));
+                    r1.set("city_name", r2.get("city_name"));
+                    r1.set("account_number", r2.get("account_number"));
+                    r1.set("account_name", r2.get("account_name"));
+                    r1.set("notes", r2.get("notes"));
+                }
+            }
+            
+            // modify 20130401 计划付款行添加 银行账号修改功能
+            
+            function bankAssign(value, record, name) {
+                var pmtLineIndex = $('pmtplan_schedules_ds').indexOf(record);
+                return '<a href="javascript:bankAssignInfo(' + pmtLineIndex + ')">${l:CSH_PAYMENT.BANK_ACCOUNT_CODE}</a>';
+            }
+            
+            function bankAssignInfo(pmtLineIndex) {
+                new Aurora.Window({
+                    id: 'exp_bank_assign_window',
+                    url: $('exp_bank_assign_link').getUrl() + '?line_index=' + pmtLineIndex + '&ds_name=pmtplan_schedules_ds',
+                    title: '${l:CSH_PAYMENT.BANK_ACCOUNT_CODE}',
+                    fullScreen: true
+                });
+            }
+            
+            function getRecordsFromBankCode(record) {
+                var pmt_line_index = record.get('line_index');
+                var pmtplan_schedules_record = $('pmtplan_schedules_ds').getAt(pmt_line_index);
+                pmtplan_schedules_record.set('account_number', record.get('account_number'));
+                pmtplan_schedules_record.set('account_name', record.get('account_name'));
+                pmtplan_schedules_record.set('bank_code', record.get('bank_code'));
+                pmtplan_schedules_record.set('bank_name', record.get('bank_name'));
+                pmtplan_schedules_record.set('bank_location_code', record.get('bank_location_code'));
+                pmtplan_schedules_record.set('bank_location_name', record.get('bank_location_name'));
+                pmtplan_schedules_record.set('province_code', record.get('province_code'));
+                pmtplan_schedules_record.set('province_name', record.get('province_name'));
+                pmtplan_schedules_record.set('city_code', record.get('city_code'));
+                pmtplan_schedules_record.set('city_name', record.get('city_name'));
+            }
+            
+            function invoiceTypeEditorFun(record, name) {
+                if (record.get('source_type') == 'VAT') {
+                    if (name == 'invoice_code') {
+                        return 'company_lov';
+                    }
+                    if (name == 'invoice_usede_desc') {
+                        return 'type_combox';
+                    }
+                    if (name == 'invoice_item_desc') {
+                        return 'type_combox';
+                    }
+                    if (name == 'tax_type_rate') {
+                        return 'type_combox';
+                    }
+                    if (name == 'tax_amount') {
+                        return 'tax_amount_nf';
+                    }
+                }
+            
+                if (record.get('source_type') == 'M') {
+                    if (name == 'invoice_code') {
+                        return 'description_grid_tf';
+                    }
+                    if (name == 'invoice_number') {
+                        return 'description_grid_tf';
+                    }
+                    if (name == 'invoice_item_desc') {
+                        return 'type_combox';
+                    }
+                    if (name == 'invoice_usede_desc') {
+                        return 'type_combox';
+                    }
+                    if (name == 'tax_type_rate') {
+                        return 'type_combox';
+                    }
+                    if (name == 'tax_amount') {
+                        return 'tax_amount_nf';
+                    }
+                    if (name == 'invoice_date') {
+                        return 'datapicker_grid_dp';
+                    }
+                }
+                return '';
+            }
+            
+            
+            function submitreport() {
+                submitFlag = true;
+                //必须在动态列和行都处于无脏数据的情况下才能进行保存。否则提示。
+                if (!saveFlag || $('tra_report_lines').isModified() || ($('tra_report_head').isModified()) || ($('pmtplan_schedules_ds').isModified())) {
+                    Aurora.showInfoMessage('${l:PROMPT}', '${l:PROMPT.SAVE_SUBMIT}', null, 250, 100);
+                    return;
+                }
+                if (!$('tra_report_lines').validate()) {
+                    return;
+                }
+                if (!$('pmtplan_schedules_ds').validate()) {
+                    return;
+                }
+            
+                Aurora.showConfirm('单据提交', '是否提交？', function(cmp) {
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: $('tra_report_submit_link').getUrl(),
+                        para: {
+                            tra_report_header_id: tra_report_header_id_bak
+                        },
+                        success: function(res) {
+                            window.location.href = $('tra_report_maintain_link').getUrl();
+                        },
+                        scope: this
+                    });
+            
+                }, null, null, 85);
+            }
+            
+         
+            function check_date(cell, date, text) {
+                var sysdate = Aurora.formatDate(new Date(), 'yyyy-mm-dd');
+                date = Aurora.formatDate(date, 'yyyy-mm-dd');
+                if (date < sysdate) {
+                    cell.disabled = true;
+                }
+                return text;
+            }
+            
+            function unselectFunction(ds, record) {
+                $('schedules_delete').disable();
+            }
+            
+            function selectFunction(ds, record) {
+            
+                $('schedules_delete').enable();
+            }
+            
+            function unselect_Function(ds, record) {
+                if (ds.getSelected().length == 0) {
+                    $('line_delete').disable();
+                }
+            
+            }
+            
+            function select_Function(ds, record) {
+            
+                $('line_delete').enable();
+            }
+            
+            function test_selectFunction(record) {
+            
+                if (record.get('unit_name') == '总经理') {
+                    return false;
+                }
+                return true;
+            
+            
+            
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="tra_exchange_rate_quta_ds" lookupCode="EXCHANGE_RATE_QUOTATION"/>
+            <a:dataSet id="payment_mehtod_ds">
+                <a:datas datasource="/model/payment_method_list"/>
+            </a:dataSet>
+            <a:dataSet id="tra_exchange_rate_ds" fetchAll="true" model="gld.gld_exchange_rates">
+                <a:events>
+                    <a:event name="load" handler="afterrateds"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="exp_report_period_ds" fetchAll="true" model="gld.gld_periods">
+                <a:events>
+                    <a:event name="load" handler="afterperiodds"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="positionlist_ds">
+                <a:datas datasource="/model/position_list"/>
+            </a:dataSet>
+            <a:dataSet id="tra_expense_type_ds" fetchAll="true" model="train.public.tra_expense_type_flag_filter" queryUrl="${/request/@context_path}/autocrud/train.public.tra_expense_type_flag_filter/query?tra_report_type_id=${/parameter/@tra_report_type_id}&amp;tra_report_header_id=${/parameter/@tra_report_header_id}&amp;report_flag=Y"/>
+            <a:dataSet id="tra_expense_item_ds" fetchAll="true" model="train.public.exp_expense_item"/>
+            <a:dataSet id="pay_category_ds" lookupcode="PAYMENT_OBJECT"/>
+            <a:dataSet id="quotation" lookupcode="EXCHANGE_RATE_QUOTATION"/>
+            <a:dataSet id="invoice_category_ds" loadData="true" model="vat.vat1010.vat_invoice_category_lov"/>
+            <a:dataSet id="invoice_usedes_ds" loadData="true" model="vat.vat1020.vat_invoice_usedes_lov"/>
+            <a:dataSet id="vat_tax_type_ds" loadData="true" model="vat.vat1000.vat_tax_rate_lov"/>
+            <a:dataSet id="invoice_items_ds" loadData="true" model="vat.vat1030.vat_invoice_items_lov"/>
+            <a:dataSet id="tra_report_head" model="train.TRA5020.tra_report_head_show">
+                <a:datas dataSource="/model/head_data"/>
+                <a:fields>
+                    <a:field name="tra_report_header_id"/>
+                    <a:field name="tra_report_type_name" readonly="true"/>
+                    <a:field name="tra_report_type_id"/>
+                    <a:field name="company_id"/>
+                    <a:field name="company_name"/>
+                    <a:field name="payment_flag"/>
+                    <a:field name="responsibility_center_name"/>
+                    <a:field name="responsibility_center_id"/>
+                    <a:field name="unit_id"/>
+                    <a:field name="unit_name"/>
+                    <a:field name="employee_id"/>
+                    <a:field name="employee_name"/>
+                    <a:field name="position_id"/>
+                    <a:field name="position_name"/>
+                    <a:field name="sum_amount" readOnly="true"/>
+                    <a:field name="tra_report_number" readonly="true"/>
+                    <a:field name="tra_report_date" required="true"/>
+                    <a:field name="tra_report_period"/>
+                    <a:field name="tra_report_employee_name" readonly="true"/>
+                    <a:field name="tra_report_payment_method" displayfield="description" options="payment_mehtod_ds" required="true" returnfield="payment_method_id" valuefield="payment_method_id"/>
+                    <a:field name="tra_report_position" displayfield="position_name" options="positionlist_ds" required="true" returnfield="position_id" valuefield="position_id"/>
+                    <a:field name="payee_category_name" displayField="code_value_name" options="pay_category_ds" required="true" returnField="payee_category" valueField="code_value"/>
+                    <a:field name="payee_category"/>
+                    <a:field name="payee_name" autoComplete="true" autoCompleteField="code_name" lovGridHeight="320" lovHeight="460" lovWidth="520" lovservice="expm.exp_employee_req_lov" readOnly="false" required="true">
+                        <a:mapping>
+                            <a:map from="code_name" to="payee_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="bank_code"/>
+                    <a:field name="bank_name"/>
+                    <a:field name="bank_location_code"/>
+                    <a:field name="bank_location"/>
+                    <a:field name="province_code"/>
+                    <a:field name="province_name"/>
+                    <a:field name="city_code"/>
+                    <a:field name="city_name"/>
+                    <a:field name="account_number"/>
+                    <a:field name="account_name"/>
+                    <a:field name="notes"/>
+                    <a:field name="payee_id"/>
+                    <a:field name="tra_report_currency_name" readonly="true"/>
+                    <a:field name="currency_code"/>
+                    <a:field name="rate" required="true"/>
+                    <a:field name="rate_type_name" autoComplete="true" autoCompleteField="type_name_code" fetchRemote="false" lovGridHeight="320" lovHeight="460" lovWidth="550" lovservice="gld.gld_exchangerate_type_lov" title="EXP_PRE_POST_RO.FEE_TYPE">
+                        <a:mapping>
+                            <a:map from="type_name" to="rate_type_name"/>
+                            <a:map from="type_code" to="rate_type"/>
+                            <a:map from="rate_method_code" to="rate_method_code"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="rate_method_code"/>
+                    <a:field name="functional_currency_code"/>
+                    <a:field name="rate_type"/>
+                    <a:field name="rate_quotation_name" displayField="code_value_name" options="tra_exchange_rate_quta_ds" returnField="rate_quotation" valueField="code_value"/>
+                    <a:field name="rate_quotation"/>
+                    <a:field name="description"/>
+                    <a:field name="attach_id"/>
+                    <a:field name="tra_report_status" readOnly="true"/>
+                    <a:field name="tra_report_create_by" readOnly="true"/>
+                    <a:field name="tra_report_audit_date" readOnly="true"/>
+                    <a:field name="payment_method_id"/>
+                    <a:field name="period_name" readOnly="true"/>
+                    <a:field name="schedule_due_date"/>
+                    <a:field name="budget_control_enabled"/>
+                    <a:field name="invoice_flag" checkedValue="Y" defaultValue="N" uncheckedValue="N"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="submitsuccess" handler="reloadres"/>
+                    <a:event name="update" handler="header_ds_update"/>
+                    <a:event name="submitfailed" handler="resetobjds"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="tra_report_head_dimension" autoCreate="true">
+                <a:fields>
+                    <a:placeHolder id="dynamicHeadFields"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="update" handler="dynamicUpdate"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="tra_report_head_object" autoCreate="true">
+                <a:fields>
+                    <a:placeHolder id="dynamicHeadObjects"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="update" handler="dynamicUpdate"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="position_ds" fetchAll="true" model="exp.exp_org_position"/>
+            <a:dataSet id="tra_report_object_head" bindName="objlines" bindTarget="tra_report_head"/>
+            <a:dataSet id="tra_report_lines" autoQuery="true" bindName="lines" bindTarget="tra_report_head" fetchAll="true" model="train.public.tra_report_lines" pageSize="1000" queryUrl="${/request/@context_path}/modules/train/public/tra_report_line_query.svc?tra_report_header_id=${/parameter/@tra_report_header_id}&amp;_ban_remind=Y" selectFunction="test_selectFunction" selectable="true" selectionModel="multiple">
+                <a:fields>
+                    <a:field name="tra_report_header_id"/>
+                    <a:field name="tra_report_line_id"/>
+                    <a:field name="company_id"/>
+                    <a:field name="company_name" autoComplete="true" autoCompleteField="company_code_name" lovGridHeight="320" lovHeight="460" lovWidth="500" lovservice="exp.exp_company_tree" required="true" title="EXP_REPORT_LINES.COMPANY_ID">
+                        <a:mapping>
+                            <a:map from="company_short_name" to="company_name"/>
+                            <a:map from="company_id" to="company_id"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="unit_id"/>
+                    <a:field name="unit_name" autoComplete="true" autoCompleteField="unit_code_name" lovGridHeight="320" lovHeight="460" lovWidth="500" lovservice="exp.exp_org_unit" required="true" title="EXP_REPORT_LINES.UNIT_ID">
+                        <a:mapping>
+                            <a:map from="org_unit_description" to="unit_name"/>
+                            <a:map from="unit_id" to="unit_id"/>
+                            <a:map from="responsibility_center_name" to="responsibility_center_name"/>
+                            <a:map from="responsibility_center_id" to="responsibility_center_id"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="responsibility_center_id"/>
+                    <a:field name="responsibility_center_name" autoComplete="true" autoCompleteField="resp_center_code_name" lovGridHeight="320" lovHeight="460" lovWidth="500" lovservice="fnd.fnd_responsibility_centers_lov" required="true" title="EXP_REPORT_LINES.RESPONSIBILITY_CENTER_ID">
+                        <a:mapping>
+                            <a:map from="responsibility_center_name" to="responsibility_center_name"/>
+                            <a:map from="responsibility_center_id" to="responsibility_center_id"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="position_id"/>
+                    <a:field name="position_name" displayfield="position_name" options="position_ds" required="true" returnfield="position_id" valuefield="position_id"/>
+                    <a:field name="employee_id"/>
+                    <a:field name="employee_name" autoComplete="true" autoCompleteField="emp_code_name" lovGridHeight="320" lovHeight="460" lovWidth="500" lovservice="expm.exp_report_employeelist_cross_com" required="true" title="EXP_REPORT_LINES.EMPLOYEE_ID">
+                        <a:mapping>
+                            <a:map from="name" to="employee_name"/>
+                            <a:map from="employee_id" to="employee_id"/>
+                            <a:map from="position_primary" to="position_primary"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="position_primary"/>
+                    <a:field name="currency_code"/>
+                    <a:field name="exchange_rate_type"/>
+                    <a:field name="exchange_rate_type_name"/>
+                    <a:field name="exchange_rate_quotation"/>
+                    <a:field name="exchange_rate_quotation_name"/>
+                    <a:field name="exchange_rate"/>
+                    <a:field name="line_number"/>
+                    <a:field name="description" required="true"/>
+                    <a:field name="city"/>
+                    <a:field name="place" autoComplete="true" autoCompleteField="place_code_name" lovGridHeight="320" lovHeight="450" lovLabelWidth="120" lovService="expm.exp_expense_policy_place_lov" lovWidth="550" prompt="EXP_REQUISITION_LINES.PLACE_ID" title="EXP_REQUISITION_LINES.PLACE_ID">
+                        <a:mapping>
+                            <a:map from="place_desc" to="place"/>
+                            <a:map from="place_id" to="place_id"/>
+                            <a:map from="place_type_id" to="place_type_id"/>
+                            <a:map from="place_type_desc" to="place_type"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="place_id"/>
+                    <a:field name="place_type" autoComplete="true" autoCompleteField="place_type_code_name" lovGridHeight="300" lovHeight="450" lovLabelWidth="120" lovService="expm.exp_expense_policy_place_type_lov" lovWidth="550" prompt="EXP_REQUISITION_LINES.PLACE_TYPE_ID" title="EXP_REQUISITION_LINES.PLACE_TYPE_ID">
+                        <a:mapping>
+                            <a:map from="place_type_id" to="place_type_id"/>
+                            <a:map from="description" to="place_type"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="place_type_id"/>
+                    <a:field name="budget_item_id"/>
+                    <a:field name="date_from" validator="dateValidate"/>
+                    <a:field name="date_to" validator="dateValidate"/>
+                    <a:field name="expense_type_id"/>
+                    <a:field name="expense_type_name" displayfield="expense_type_description" options="tra_expense_type_ds" required="true" returnfield="expense_type_id" valuefield="expense_type_id"/>
+                    <a:field name="expense_item_id"/>
+                    <a:field name="tra_req_item_name" displayfield="expense_item_description" options="tra_expense_item_ds" required="true" returnfield="expense_item_id" valuefield="expense_item_id"/>
+                    <a:field name="price" required="true" validator="priceValidator"/>
+                    <a:field name="primary_quantity" required="true"/>
+                    <a:field name="report_amount" required="true"/>
+                    <a:field name="report_functional_amount"/>
+                    <a:field name="period_name" autoComplete="true" autoCompleteField="period_name" lovGridHeight="300" lovHeight="460" lovWidth="500" prompt="EXP_REQUISITION_LINES.PERIOD_NAME" required="true" title="EXP_REQUISITION_LINES.PERIOD_NAME">
+                        <a:mapping>
+                            <a:map from="period_name" to="period_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="payment_flag" checkedvalue="Y" uncheckedvalue="N"/>
+                    <a:field name="payee_id"/>
+                    <a:field name="payment_schedule_line_id"/>
+                    <a:field name="invoice_category_name" displayField="invoice_category_name" options="invoice_category_ds" returnField="invoice_category" valueField="invoice_category_code">
+                        <a:mapping>
+                            <a:map from="invoice_type" to="invoice_type"/>
+                            <a:map from="invoice_category_code" to="invoice_category"/>
+                            <a:map from="source_type" to="source_type"/>
+                            <a:map from="authenticating_flag" to="authenticating_flag"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="invoice_type"/>
+                    <a:field name="invoice_category"/>
+                    <a:field name="invoice_code" autoComplete="true" autoCompleteField="invoice_code" lovAutoQuery="false" lovGridHeight="300" lovHeight="460" lovService="vat.vat1130.vat_invoice_query" lovWidth="600" title="VAT_INVOICE.INVOICE_CODE">
+                        <a:mapping>
+                            <a:map from="invoice_code" to="invoice_code"/>
+                            <a:map from="invoice_number" to="invoice_number"/>
+                            <a:map from="amount" to="price"/>
+                            <a:map from="tax_amount" to="tax_amount"/>
+                            <a:map from="not_tax_amount" to="not_tax_amount"/>
+                            <a:map from="tax_type_rate" to="tax_type_rate"/>
+                            <a:map from="invoice_date" to="invoice_date"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="invoice_number"/>
+                    <a:field name="invoice_item_desc" displayField="invoice_item_desc" options="invoice_items_ds" returnfield="invoice_item_id" valuefield="invoice_item_id"/>
+                    <a:field name="invoice_item_id"/>
+                    <a:field name="tax_type_rate" displayField="tax_type_rate" options="vat_tax_type_ds" returnfield="tax_type_rate" valuefield="tax_type_rate"/>
+                    <a:field name="tax_amount" validator="priceValidator"/>
+                    <a:field name="invoice_date"/>
+                    <a:field name="not_tax_amount"/>
+                    <a:field name="source_type"/>
+                    <a:field name="authenticating_flag"/>
+                    <a:placeHolder id="dynamicLineFields"/>
+                    <a:placeHolder id="dynamicLineFieldsObj"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="update" handler="lineupdate"/>
+                    <a:event name="load" handler="lineLoadFunction"/>
+                    <a:event name="remove" handler="removeLine"/>
+                    <a:event name="unselect" handler="unselect_Function"/>
+                    <a:event name="select" handler="select_Function"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="pmtplan_schedules_ds" autoQuery="true" bindName="pmtplan" bindTarget="tra_report_head" model="train.public.tra_report_pmtplan_schedules_query" queryUrl="${/request/@context_path}/autocrud/train.public.tra_report_pmtplan_schedules_query/query?tra_report_header_id=${/parameter/@tra_report_header_id}" selectable="true" submitUrl="${/request/@context_path}/autocrud/train.public.update_tra_rep_pmt_schedules/batch_update">
+                <a:fields>
+                    <a:field name="tra_report_header_id"/>
+                    <a:field name="payment_schedule_line_id"/>
+                    <a:field name="line_num"/>
+                    <a:field name="verification_loan"/>
+                    <a:field name="company_name"/>
+                    <a:field name="description"/>
+                    <a:field name="currency_name" required="true"/>
+                    <a:field name="currency"/>
+                    <a:field name="due_amount" required="true"/>
+                    <a:field name="write_off_amount"/>
+                    <a:field name="schedule_start_date" required="true"/>
+                    <a:field name="schedule_due_date" required="true"/>
+                    <a:field name="company_short_name"/>
+                    <a:field name="payee_type" displayField="code_value_name" options="pay_category_ds" required="true" returnField="payee_type_value" valueField="code_value"/>
+                    <a:field name="payee_type_value"/>
+                    <a:field name="payee_id"/>
+                    <a:field name="payee_partner_name" autoComplete="true" autoCompleteField="code_name" lovGridHeight="320" lovHeight="460" lovWidth="500" required="true" title="EXP_REPORT_LINES.PAYEE_ID">
+                        <a:mapping>
+                            <a:map from="id" to="payee_id"/>
+                            <a:map from="description" to="payee_partner_name"/>
+                            <a:map from="account_name" to="account_name"/>
+                            <a:map from="account_number" to="account_number"/>
+                            <a:map from="bank_code" to="bank_code"/>
+                            <a:map from="bank_name" to="bank_name"/>
+                            <a:map from="bank_location_code" to="bank_location_code"/>
+                            <a:map from="bank_location_name" to="bank_location_name"/>
+                            <a:map from="province_code" to="province_code"/>
+                            <a:map from="province_name" to="province_name"/>
+                            <a:map from="city_code" to="city_code"/>
+                            <a:map from="city_name" to="city_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="payment_method" displayField="description" options="payment_mehtod_ds" required="true" returnField="payment_type_id" valueField="payment_method_id"/>
+                    <a:field name="payment_type_id"/>
+                    <a:field name="account_number" autoComplete="true" autoCompleteField="account_number" fetchRemote="false" lovGridHeight="250" lovHeight="400" lovWidth="500" required="true" title="CSH_BANK_BALANCES.BANK_ACCOUNT_ID">
+                        <a:mapping>
+                            <a:map from="account_number" to="account_number"/>
+                            <a:map from="account_name" to="account_name"/>
+                            <a:map from="bank_code" to="bank_code"/>
+                            <a:map from="bank_name" to="bank_name"/>
+                            <a:map from="bank_location_code" to="bank_location_code"/>
+                            <a:map from="bank_location_name" to="bank_location_name"/>
+                            <a:map from="province_code" to="province_code"/>
+                            <a:map from="province_name" to="province_name"/>
+                            <a:map from="city_code" to="city_code"/>
+                            <a:map from="city_name" to="city_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="bank_code"/>
+                    <a:field name="bank_name"/>
+                    <a:field name="bank_location_code"/>
+                    <a:field name="bank_location_name"/>
+                    <a:field name="province_code"/>
+                    <a:field name="province_name"/>
+                    <a:field name="city_code"/>
+                    <a:field name="city_name"/>
+                    <a:field name="usedes_name" autoComplete="true" autoCompleteField="code_name" fetchRemote="false" lovGridHeight="300" lovHeight="460" lovService="train.public.csh_payment_usedes_vl?tra_report_type_id=${/parameter/@tra_report_type_id}&amp;tra_report_header_id=${/parameter/@tra_report_header_id}" lovWidth="500" required="true" title="CSH_PAYMENT_USEDS.USEDS_CODE">
+                        <a:mapping>
+                            <a:map from="usedes_code" to="usedes"/>
+                            <a:map from="description" to="usedes_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="usedes"/>
+                    <a:field name="bank_id"/>
+                    <a:field name="account_name" required="true"/>
+                    <a:field name="frozen_flag" checkedValue="Y" defaultValue="N" uncheckedValue="N"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="update" handler="pmtlineupdate"/>
+                    <a:event name="submitsuccess" handler="submit_success"/>
+                    <a:event name="add" handler="setpmtinitdata"/>
+                    <a:event name="remove" handler="remove_record"/>
+                    <a:event name="unselect" handler="unselectFunction"/>
+                    <a:event name="select" handler="selectFunction"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="head_object">
+                <a:datas dataSource="/model/head_object"/>
+            </a:dataSet>
+            <a:dataSet id="head_dimension">
+                <a:datas dataSource="/model/head_dimension"/>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar id="exp_rep_mt_standard_top_bar">
+                <a:screenTitle/>
+                <a:toolbarButton click="saveReport" text="HAP_SAVE" width="80"/>
+                <a:toolbarButton id="submitBtn" click="submitreport" text="PROMPT.SUBMIT" width="80"/>
+                <a:toolbarButton id="deletereportBtn" click="deletereport" text="HAP_DELETE_ALL_REPORT" width="80"/>
+            </a:screenTopToolbar>
+            <a:form id="tra_rep_mt_standard_head_form" title="EXP_REPORT_CREATE.TITEL">
+                <a:box id="tra_rep_mt_standard_normal_box" column="4" style="width:100%">
+                    <a:textField name="tra_report_number" bindtarget="tra_report_head" prompt="单据编号"/>
+                    <a:textField name="tra_report_type_name" bindtarget="tra_report_head" prompt="单据类型"/>
+                    <a:datePicker name="tra_report_date" bindtarget="tra_report_head" prompt="报销日期"/>
+                    <a:numberField name="sum_amount" allowDecimals="true" allowFormat="true" bindTarget="tra_report_head" prompt="总金额"/>
+                    <a:textField name="tra_report_employee_name" bindtarget="tra_report_head" prompt="报销人"/>
+                    <a:comboBox name="tra_report_position" bindtarget="tra_report_head" prompt="岗位"/>
+                    <a:textField name="tra_report_currency_name" bindtarget="tra_report_head" prompt="币种"/>
+                    <a:numberField name="attach_id" allowDecimals="false" bindtarget="tra_report_head" prompt="附件数"/>
+                    <a:textField name="tra_report_create_by" bindtarget="tra_report_head" prompt="制单人"/>
+                    <a:comboBox name="tra_report_payment_method" bindtarget="tra_report_head" prompt="付款方式"/>
+                    <a:comboBox name="payee_category_name" bindtarget="tra_report_head" prompt="收款对象"/>
+                    <a:lov name="payee_name" bindtarget="tra_report_head" prompt="收款方">
+                        <a:events>
+                            <a:event name="commit" handler="payee_name_lov_commit"/>
+                        </a:events>
+                    </a:lov>
+                    <a:numberField name="rate" bindTarget="tra_report_head" prompt="汇率"/>
+                    <a:textField name="tra_report_status" bindtarget="tra_report_head" prompt="状态">
+                        <a:events>
+                            <a:event name="commit" handler="headcommitpayee"/>
+                        </a:events>
+                    </a:textField>
+                    <a:placeHolder id="dynamicHeadColumn"/>
+                    <a:placeHolder id="dynamicHeadObject"/>
+                </a:box>
+                <a:box id="tra_rep_mt_standard_ta_box" style="width:100%">
+                    <a:hBox>
+                        <a:textArea name="description" id="tra_rep_mt_standard_desc_ta" bindtarget="tra_report_head" prompt="描述"/>
+                        <a:vBox>
+                            <a:checkBox name="invoice_flag" bindTarget="tra_report_head" label="含专票"/>
+                        </a:vBox>
+                    </a:hBox>
+                </a:box>
+            </a:form>
+            <a:tabPanel id="line_tab" marginHeight="220" marginWidth="29">
+                <a:tabs>
+                    <a:tab prompt="HEC.EXP_REPORT_LINE_INFO" width="150">
+                        <a:grid id="grid" bindTarget="tra_report_lines" marginHeight="255" navBar="true" style="margin-top:5px;margin-left:5px;">
+                            <a:toolBar>
+                                <a:button id="addButton_update" click="createLineRecord" icon="${/request/@context_path}/images/add.gif" text="HAP_NEW"/>
+                                <a:button id="line_delete" disabled="true" type="delete"/>
+                            </a:toolBar>
+                            <a:columns>
+                                <a:column name="line_number" align="center" editor="description_grid_tf" prompt="行号" width="50"/>
+                                <a:column name="description" align="left" editor="description_grid_tf" prompt="说明" width="150"/>
+                                <a:column name="company_name" align="left" editor="company_lov" prompt="公司" width="120"/>
+                                <a:column name="expense_type_name" align="left" editor="type_combox" prompt="报销类型" width="120"/>
+                                <a:column name="tra_req_item_name" align="left" editor="type_combox" prompt="费用项目" width="120"/>
+                                <a:column name="date_from" align="left" editor="datapicker_grid_dp" prompt="日期从" renderer="Aurora.formatDate" width="120"/>
+                                <a:column name="date_to" align="left" editor="datapicker_grid_dp" prompt="日期至" renderer="Aurora.formatDate" width="120"/>
+                                <a:column name="price" align="right" editor="numberfield" prompt="单价" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="primary_quantity" align="right" editor="quantitynumber_nf" prompt="数量" width="100"/>
+                                <a:column name="report_amount" align="right" prompt="报销金额" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="report_functional_amount" align="right" prompt="本币报销金额" renderer="setfunctionamount" width="100"/>
+                                <a:column name="invoice_category_name" align="center" editor="type_combox" prompt="发票种类" width="100"/>
+                                <a:column name="invoice_code" align="center" editorFunction="invoiceTypeEditorFun" prompt="发票代码" width="100"/>
+                                <a:column name="invoice_number" align="center" editorFunction="invoiceTypeEditorFun" prompt="发票号码" width="100"/>
+                                <a:column name="tax_type_rate" align="right" editorFunction="invoiceTypeEditorFun" prompt="税率" width="60"/>
+                                <a:column name="tax_amount" align="right" editorFunction="invoiceTypeEditorFun" footerRenderer="sumRenderer" prompt="税额" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="not_tax_amount" align="right" footerRenderer="sumRenderer" prompt="不含税金额" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="invoice_date" align="center" editorFunction="invoiceTypeEditorFun" prompt="开票日期" renderer="Aurora.formatDate" width="80"/>
+                                <a:column name="period_name" align="left" editor="company_lov" prompt="业务期间" width="80"/>
+                                <a:column name="responsibility_center_name" align="left" editor="company_lov" prompt="责任中心" width="120"/>
+                                <a:column name="unit_name" align="left" editor="company_lov" prompt="部门" width="120"/>
+                                <a:column name="employee_name" align="left" editor="company_lov" prompt="报销人" width="120"/>
+                                <a:column name="position_name" align="left" editor="type_combox" prompt="岗位" width="120"/>
+                                <a:column name="contract_header_code" align="left" editor="company_lov" hidden="true" prompt="合同编号" width="120"/>
+                                <a:column name="payment_schedule_line_code" align="left" editor="company_lov" hidden="true" prompt="合同资金计划行" width="120"/>
+                                <a:placeHolder id="dynamicLineColumn"/>
+                                <a:placeHolder id="dynamicLineColumnObj"/>
+                            </a:columns>
+                            <a:editors>
+                                <a:textField id="org_unit_level_code_grid_tf" typecase="upper"/>
+                                <a:textField id="description_grid_tf"/>
+                                <a:placeHolder id="numberfield_holder"/>
+                                <a:numberField id="tax_amount_nf" allowNegative="false"/>
+                                <a:numberField id="quantitynumber_nf" allowDecimals="false" allowNegative="false"/>
+                                <a:comboBox id="type_combox"/>
+                                <a:lov id="company_lov" lovGridHeight="250" lovHeight="500" lovWidth="600"/>
+                                <a:lov id="expense_object_type_lov" editable="false" lovGridHeight="250" lovHeight="450" lovWidth="500"/>
+                                <a:datePicker id="datapicker_grid_dp"/>
+                            </a:editors>
+                            <a:events>
+                                <a:event name="cellclick" handler="gridcellclick"/>
+                            </a:events>
+                        </a:grid>
+                    </a:tab>
+                    <a:tab prompt="HEC.EXP_REPORT_PMT_LINE_INFO" width="150">
+                        <a:grid id="pmt_grid" bindTarget="pmtplan_schedules_ds" marginHeight="255" navBar="true" style="margin-top:5px;margin-left:5px;">
+                            <a:toolBar>
+                                <a:button type="add"/>
+                                <a:button id="schedules_delete" disabled="true" type="delete"/>
+                            </a:toolBar>
+                            <a:columns>
+                                <a:column name="line_num" align="center" prompt="行号" renderer="line_number" width="50"/>
+                                <a:column name="verification_loan" align="center" hidden="true" prompt="核销借款" width="80"/>
+                                <a:column name="write_off_amount" align="right" hidden="true" prompt="核销金额" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="description" align="left" editor="pmt_tf" prompt="描述" width="150"/>
+                                <a:column name="due_amount" align="right" editor="pmt_nf" prompt="金额" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="payee_type" align="left" editor="pmt_cmb" prompt="收款对象" width="120"/>
+                                <a:column name="payee_partner_name" align="left" editor="pmt_lov" prompt="收款方" width="120"/>
+                                <a:column name="account_number" align="left" editor="pmt_lov" prompt="银行账号" width="120"/>
+                                <a:column name="account_name" align="left" editor="pmt_tf" prompt="银行账户" width="120"/>
+                                <a:column name="payment_method" align="left" editor="pmt_cmb" prompt="付款方式" width="120"/>
+                                <a:column name="usedes_name" align="left" editor="pmt_lov" prompt="付款用途" width="120"/>
+                                <a:column name="schedule_due_date" align="left" editor="schedule_due_date_dp" prompt="计划付款日" renderer="Aurora.formatDate"/>
+                                <a:column name="contract_number" align="left" editor="pmt_lov" hidden="true" prompt="合同编号" width="120"/>
+                                <a:column name="line_number" align="left" editor="pmt_lov" hidden="true" prompt="合同资金计划行" width="120"/>
+                                <a:column name="frozen_flag" align="center" editor="pmt_cb" prompt="冻结" width="50"/>
+                                <a:column name="bank_id" align="center" prompt="银行账户" renderer="bankAssign" width="80"/>
+                            </a:columns>
+                            <a:editors>
+                                <a:comboBox id="pmt_cmb"/>
+                                <a:textField id="pmt_tf"/>
+                                <a:lov id="pmt_lov" lovGridHeight="320" lovHeight="450" lovWidth="500"/>
+                                <a:datePicker id="schedule_start_date_dp"/>
+                                <a:datePicker id="schedule_due_date_dp" dayRenderer="check_date"/>
+                                <a:checkBox id="pmt_cb"/>
+                                <a:numberField id="pmt_nf"/>
+                            </a:editors>
+                            <a:events>
+                                <a:event name="cellclick" handler="pmtGridcellclick"/>
+                            </a:events>
+                        </a:grid>
+                    </a:tab>
+                </a:tabs>
+            </a:tabPanel>
+        </a:screenBody>
+        <script><![CDATA[
+            loadComplete();
+           
+        ]]></script>
+        <script><![CDATA[
+            function init() {
+               
+                var t = $('tra_report_head').getAt(0);
+                var r = t.getMeta();
+                var f1 = r.getField('rate_type_name');
+                var f2 = r.getField('rate_quotation_name');
+                var f3 = r.getField('rate');
+            
+                //初始化收款方查询lov
+                var payee_category = t.get('payee_category');
+                var payee_name = t.getField('payee_name');
+                if (payee_category == null || payee_category == undefined || payee_category == '') {
+                    payee_name.setReadOnly(true);
+                    payee_name.setLovService('');
+                } else if (payee_category == 'EMPLOYEE') {
+                    payee_name.setReadOnly(false);
+                    payee_name.setLovService('expm.exp_employee_req_lov');
+                    payee_name.setTitle('${l:EXP_EMPLOYEES.QUERY}');
+                } else if (payee_category == 'VENDER') {
+                    payee_name.setReadOnly(false);
+                    payee_name.setTitle('${l:VENDER_SEARCH}');
+                    payee_name.setLovService('expm.exp_vender_req_lov');
+                } else {
+                    payee_name.setReadOnly(false);
+                    payee_name.setTitle('${l:EXP_EMPLOYEES.QUERY}');
+                    payee_name.setLovService('expm.exp_customer_req_lov');
+                }
+            
+                if (t.get('currency_code') != t.get('functional_currency_code')) {
+                    var rateMethodCode = '${/model/exchange_type/record/@rate_method_code}';
+                    var meta = t.getMeta();
+                    if (rateMethodCode == 'DAILY' || rateMethodCode == 'FIXED') {
+                        meta.getField('rate_type_name').setRequired(false);
+                        meta.getField('rate_quotation_name').setReadOnly(true);
+                        meta.getField('rate').setReadOnly(true);
+                    } else {
+                        meta.getField('rate_quotation_name').setReadOnly(true);
+                        meta.getField('rate_quotation_name').setRequired(false);
+                        meta.getField('rate_type_name').setReadOnly(true);
+                        meta.getField('rate_type_name').setRequired(false);
+                    }
+                } else {
+                    f1.setReadOnly(true);
+                    f2.setReadOnly(true);
+                    f3.setReadOnly(true);
+                    f3.setRequired(true);
+                    t.set('rate', 1, false);
+                }
+                if (tra_report_header_id_bak != '') {
+                    r.getField('tra_report_date').setReadOnly(true);
+                    r.getField('tra_report_payment_method').setReadOnly(true);
+                    r.getField('tra_report_position').setReadOnly(true);
+                    r.getField('payee_category_name').setReadOnly(true);
+                    r.getField('payee_name').setReadOnly(true);
+                    for (var fieldName in t.data) {
+                        if (fieldName != "description" && fieldName != "attach_id" && fieldName != 'invoice_flag') {
+            
+                            r.getField(fieldName).setReadOnly(true);
+                        }
+                    }
+                    f1 = r.getField('payee_name');
+                     payee_category = t.get('payee_category');
+                    if (payee_category == 'EMPLOYEE') {
+                        f1.setLovService('expm.exp_employee_req_lov');
+                    } else if (payee_category == 'VENDER') {
+                        f1.setLovService('expm.exp_vender_req_lov');
+                    } else {
+                        f1.setLovService('expm.exp_customer_req_lov');
+                    }
+                } else {
+            
+                    f1 = r.getField('payee_name');
+                    f1.setReadOnly(false);
+                     payee_category = t.get('payee_category');
+                    if (payee_category == 'EMPLOYEE') {
+                        f1.setLovService('expm.exp_employee_req_lov');
+                        f1.setMapping([{
+                            from: 'employee_id',
+                            to: 'payee_id'
+                        }, {
+                            from: 'name',
+                            to: 'payee_name'
+                        }, {
+                            from: 'code_name',
+                            to: 'payee_name'
+                        }]);
+                    } else if (payee_category == 'VENDER') {
+                        f1.setLovService('expm.exp_vender_req_lov');
+                        f1.setMapping([{
+                            from: 'vender_id',
+                            to: 'payee_id'
+                        }, {
+                            from: 'vender_name',
+                            to: 'payee_name'
+                        }, {
+                            from: 'code_name',
+                            to: 'payee_name'
+                        }]);
+                    } else {
+                        f1.setLovService('expm.exp_customer_req_lov');
+                        f1.setMapping([{
+                            from: 'customer_id',
+                            to: 'payee_id'
+                        }, {
+                            from: 'customer_name',
+                            to: 'payee_name'
+                        }, {
+                            from: 'code_name',
+                            to: 'payee_name'
+                        }]);
+                    }
+                }
+                var hidename = '';
+                if ('${/model/policy_enabled/record/@policy_enabled}' == 'Y') {
+                    hidename = 'city';
+                } else {
+                    hidename = 'place';
+                }
+                var columns = $('grid').columns;
+                for (var i = 0,
+                    l = columns.length;i < l;i++) {
+                    var colname = columns[i].name;
+                    if (colname == hidename) {
+                        $('grid').hideColumn(colname);
+                    }
+                }
+                lineNum = $('tra_report_head').getAt(0).get('line_number');
+                lineNum = lineNum > 0 ? lineNum : 0;
+                getpmtdate();
+            }
+            init();
+           
+        ]]></script>
+        <script purpose="auto_resize"><![CDATA[
+            function expRepMTStandardInitSize() {
+                //描述宽度
+                var labelWidth = 75;
+                //标签宽度,5 = 3padding + 2border-spacing
+                var tagWidth = 150 + 5;
+                //页面宽度、高度
+                var vw = $A.getViewportWidth();
+                //留白宽度
+                var marginWidth = 35;
+                //自适应宽度
+                var autoWidth = vw - marginWidth;
+                //Form内部宽度，-2border
+                var formInnerWidth = autoWidth - 2;
+                //所占列数
+                var colSpan = 4;
+                //设置组件的自适应宽度
+                Ext.get('tra_rep_mt_standard_head_form').setWidth(autoWidth + 4);
+                $('line_tab').setWidth(autoWidth + 4);
+                $('grid').setWidth(autoWidth + 4 - 17);
+                $('pmt_grid').setWidth(autoWidth + 4 - 17);
+                Ext.get('tra_rep_mt_standard_desc_ta').setWidth(formInnerWidth - (formInnerWidth / colSpan - labelWidth - tagWidth) - labelWidth - 6 - 70);
+            }
+            expRepMTStandardInitSize();
+        ]]></script>
+    </a:view>
+    <a:view-config>
+        <c:batch-config source="/model/head_dimension" targetId="dynamicHeadColumn">
+            <a:lov name="${@dimension_code}" bindTarget="tra_report_head_dimension" lovGridHeight="320" lovHeight="450" lovWidth="500"/>
+        </c:batch-config>
+        <c:create-config targetId="dynamicHeadFields">
+            <p:loop source="/model/head_dimension">
+                <c:process-config>
+                    <a:field name="${@dimension_code}" autoComplete="true" autoCompleteField="code_name" defaultValue="${@value_description}" lovGridHeight="320" lovHeight="450" lovService="expm.EXP2110.exp_rep_ref_dimension_dvc_lov?dimension_id=${@dimension_id}&amp;enabled_flag=Y" lovWidth="500" prompt="${@description}" required="true" title="${@description}">
+                        <a:mapping>
+                            <a:map from="dimension_value_code" to="dimension_value_code"/>
+                            <a:map from="dimension_value_id" to="${@dimension_code1}"/>
+                            <a:map from="description" to="${@dimension_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@dimension_code1}" defaultValue="${@default_dim_value_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="dynamicHeadObject">
+            <p:loop source="/model/head_object">
+                <p:switch test="@expense_object_method">
+                    <p:case value="VALUE_LIST">
+                        <c:process-config>
+                            <a:lov name="${@expense_object_type_code}" bindTarget="tra_report_head_object" lovGridHeight="320" lovHeight="450" lovWidth="500"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="SQL_TEXT">
+                        <c:process-config>
+                            <a:lov name="${@expense_object_type_code}" bindTarget="tra_report_head_object" lovGridHeight="320" lovHeight="450" lovWidth="500"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="DESC_TEXT">
+                        <c:process-config>
+                            <a:textField name="${@expense_object_type_code}" bindTarget="tra_report_head_object"/>
+                        </c:process-config>
+                    </p:case>
+                </p:switch>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="dynamicHeadObjects">
+            <p:loop source="/model/head_object">
+                <c:process-config>
+                    <a:field name="${@expense_object_type_code}" defaultValue="${@default_object_desc}" lovGridHeight="320" lovHeight="450" lovUrl="${/request/@context_path}/modules/expm/public/exp_req_ref_obj_sql_query_lov.screen?expense_object_type_id=${@expense_object_type_id}" lovWidth="500" prompt="${@description}" required="${@required_flag}" title="${@description}">
+                        <a:mapping>
+                            <a:map from="id" to="${@forname}"/>
+                            <a:map from="description" to="${@expense_object_type_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@forname}" defaultValue="${@default_object_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:batch-config source="/model/line_dimension" targetId="dynamicLineColumn">
+            <a:column name="${@dimension_code}" align="center" editor="company_lov" prompt="${@description}"/>
+        </c:batch-config>
+        <c:create-config targetId="dynamicLineFields">
+            <p:loop source="/model/line_dimension">
+                <c:process-config>
+                    <a:field name="${@dimension_code}" defaultValue="${@value_description}" lovGridHeight="320" lovHeight="450" lovService="expm.EXP2110.exp_rep_ref_dimension_dvc_lov?dimension_id=${@dimension_id}&amp;enabled_flag=Y" lovWidth="500" prompt="${@description}" required="true" title="${@description}">
+                        <a:mapping>
+                            <a:map from="dimension_value_code" to="dimension_value_code"/>
+                            <a:map from="dimension_value_id" to="${@dimension_code1}"/>
+                            <a:map from="description" to="${@dimension_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@dimension_code1}" defaultValue="${@default_dim_value_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="dynamicLineColumnObj">
+            <p:loop source="/model/line_object">
+                <p:switch test="@expense_object_method">
+                    <p:case value="VALUE_LIST">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center" editor="expense_object_type_lov"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="SQL_TEXT">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center" editor="expense_object_type_lov"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="DESC_TEXT">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center" editor="description_grid_tf"/>
+                        </c:process-config>
+                    </p:case>
+                </p:switch>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="dynamicLineFieldsObj">
+            <p:loop source="/model/line_object">
+                <c:process-config>
+                    <a:field name="${@expense_object_type_code}" defaultValue="${@default_object_desc}" lovGridHeight="320" lovHeight="450" lovUrl="${/request/@context_path}/modules/expm/public/exp_req_ref_obj_sql_query_lov.screen?expense_object_type_id=${@expense_object_type_id}" lovWidth="500" prompt="${@description}" required="${@required_flag}" title="${@description}">
+                        <a:mapping>
+                            <a:map from="id" to="${@forname}"/>
+                            <a:map from="description" to="${@expense_object_type_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@forname}" defaultValue="${@default_object_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <!-- 调整类报销单的金额可以为负数 -->
+        <c:create-config targetId="numberfield_holder">
+            <p:switch test="/model/head_data/record/@adjustment_flag">
+                <p:case value="Y">
+                    <c:process-config>
+                        <a:numberField id="numberfield" allowNegative="true" decimalPrecision="3"/>
+                    </c:process-config>
+                </p:case>
+                <p:case>
+                    <c:process-config>
+                        <a:numberField id="numberfield" allowNegative="false" decimalPrecision="3"/>
+                    </c:process-config>
+                </p:case>
+            </p:switch>
+        </c:create-config>
+    </a:view-config>
+</a:screen>

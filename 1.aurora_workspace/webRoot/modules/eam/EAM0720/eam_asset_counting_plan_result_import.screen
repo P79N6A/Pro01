@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893
+    $Date: 2013-4-17 下午3:12:47  
+    $Revision: 1.0  
+    $Purpose: 导入盘点结果
+-->
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <a:init-procedure>
+        <a:model-query model="bgt.bgt_get_sys_import_head_id" rootPath="header"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="eam0720_asset_counting_plan_result_import_err_link" url="${/request/@context_path}/modules/eam/EAM0720/eam_asset_counting_plan_result_import_err.screen"/>
+        <a:link id="eam0720_asset_counting_plan_result_import_commit_link" model="eam.eam0720.eam0720_counting_plan_results_load_import_interface_edit" modelaction="update"/>
+        <a:link id="eam0720_asset_counting_plan_result_import_check_link" model="eam.eam0720.eam0720_counting_plan_results_check_import_interface_edit" modelaction="update"/>
+        <a:link id="eam0720_asset_counting_plan_result_import_upload_link" url="${/request/@context_path}/modules/eam/EAM0720/eam_asset_counting_plan_result_import_upload.screen"/>
+        <a:link id="eam0720_countting_plan_lines_back_link" url="${/request/@context_path}/modules/eam/EAM0720/eam_asset_counting_plan_execution_lines.screen"/>
+        <a:link id="eam0720_countting_plan_execution_link" url="${/request/@context_path}/modules/eam/EAM0720/eam_asset_counting_plan_execution.screen"/>
+        <script><![CDATA[
+        	function loadComplete(){
+        	    
+        	    if('${/parameter/@batch_header_id}'){
+	        		$('result_ds').setQueryParameter('header_id', '${/parameter/@batch_header_id}');
+	        		$('result_ds').query();
+	        		$('data_ds').setQueryParameter('header_id', '${/parameter/@batch_header_id}');
+	        		$('data_ds').query();
+        	    }
+        	}
+			function loadData(){
+				new Aurora.Window({id:'upload_window',url:$('eam0720_asset_counting_plan_result_import_upload_link').getUrl()+'?batch_header_id=${/model/header/record/@header_id}&header_id=${/parameter/@counting_plan_header_id}',title:'${l:PROMPT.IMPORT_RESULT}',width:420,height:275});
+			}
+			function checkData(){
+				var allData = $('data_ds').getAll();
+				if (allData.length == 0){
+					Aurora.showMessage('${l:PROMPT}', '${l:BGT_BUDGET_ITEMS_INTERFACE.CHECK1}');
+				} else{
+					var param	= {};
+					param['header_id']	 = '${/parameter/@counting_plan_header_id}';
+					Aurora.request({
+						url		: $('eam0720_asset_counting_plan_result_import_check_link').getUrl(),
+						para	: param,
+						success	: function(){
+						},
+						scope	: this
+					});
+				}
+			}
+			function submitData(){
+				var allData = $('data_ds').getAll();
+				if (allData.length == 0){
+					Aurora.showMessage('${l:PROMPT}', '${l:BGT_BUDGET_ITEMS_INTERFACE.CHECK2}');
+				} else{
+					var param	= {};
+					param['batch_header_id']	 = '${/parameter/@batch_header_id}';
+					param['header_id']	 = '${/parameter/@counting_plan_header_id}';
+					Aurora.request({
+						url		: $('eam0720_asset_counting_plan_result_import_commit_link').getUrl(),
+						para	: param,
+						success	: function(){
+							new Aurora.Window({
+			                    id: 'eam0720_countting_plan_lines_back_window',
+			                    url: $('eam0720_countting_plan_lines_back_link').getUrl() + '?plan_header_id=' + '${/parameter/@counting_plan_header_id}',
+			                    fullScreen:true,
+			                    title: '${l:EAM_COUNTING_PLAN_HEADERS.COUNTING_PLAN_LINES}'/* ,
+			                    height: 467,
+			                    width: 650 */
+			                }).on('close',function(){
+			                    Aurora.go($('eam0720_countting_plan_execution_link').getUrl());
+			                });
+						},
+						scope	: this
+					});
+				}
+			}
+			function errorData(){
+			    new Aurora.Window({
+                    id: 'eam0720_asset_counting_plan_result_import_err_window',
+                    url: $('eam0720_asset_counting_plan_result_import_err_link').getUrl()+'?header_id=${/parameter/@batch_header_id}',
+                    title: '${l:ERROR_MESSAGE}',
+                    height: 400,
+                    width: 630
+                });
+			}
+			
+			function back(){
+    			new Aurora.Window({
+                    id: 'eam0720_countting_plan_lines_back_window',
+                    url: $('eam0720_countting_plan_lines_back_link').getUrl() + '?plan_header_id=' + '${/parameter/@counting_plan_header_id}',
+                    fullScreen:true,
+                    title: '${l:EAM_COUNTING_PLAN_HEADERS.COUNTING_PLAN_LINES}'/* ,
+                    height: 467,
+                    width: 650 */
+                }).on('close',function(){
+                    Aurora.go($('eam0720_countting_plan_execution_link').getUrl());
+                });
+    		}
+		]]></script>
+        <a:dataSets>
+            <a:dataSet id="data_ds" fetchAll="true" model="eam.eam0720.eam0720_asset_counting_plan_result_import_interface_query"/>
+            <a:dataSet id="result_ds" autoPageSize="true" fetchAll="false" model="eam.eam0720.eam0720_asset_counting_plan_result_import_interface_query">
+                <a:fields>
+                    <a:field name="header_id"/>
+                    <a:field name="seq"/>
+                    <a:field name="asset_tag_code"/>
+                    <a:field name="asset_name"/>
+                    <a:field name="act_location_code"/>
+                    <a:field name="act_location_name"/>
+                    <a:field name="act_quantity"/>
+                    <a:field name="result_description"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:form title="PROMPT.IMPORT_RESULT" width="900">
+                <a:hBox>
+                    <a:button click="loadData" text="PROMPT.LOADDATA"/>
+                    <a:button click="checkData" text="PROMPT.CHECK"/>
+                    <a:button click="submitData" text="PROMPT.SUBMIT"/>
+                    <a:button click="errorData" text="PROMPT.ERROR"/>
+                    <a:button click="back" text="HAP_BACK"/>
+                </a:hBox>
+                <a:grid bindTarget="result_ds" height="320" navBar="true" width="900">
+                    <a:toolBar>
+                        <a:button type="excel"/>
+                    </a:toolBar>
+                    <a:columns>
+                        <!-- <a:column name="header_id" align="right"/> -->
+                        <a:column name="seq" align="center"/>
+                        <a:column name="asset_tag_code" align="center"/>
+                        <a:column name="asset_name" align="center"/>
+                        <a:column name="act_location_code" align="center"/>
+                        <a:column name="act_location_name" align="center"/>
+                        <a:column name="act_quantity" align="center"/>
+                        <a:column name="result_description" align="left"/>
+                    </a:columns>
+                </a:grid>
+            </a:form>
+            <script><![CDATA[
+            	loadComplete();
+            ]]></script>
+        </a:screenBody>
+    </a:view>
+</a:screen>

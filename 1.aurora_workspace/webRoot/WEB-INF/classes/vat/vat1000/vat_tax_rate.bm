@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-7-1 下午5:03:43  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:ns2="aurora.database.local.oracle" xmlns:f="aurora.database.features" xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        t.*,
+                        t.description tax_type_desc
+                    FROM
+                        vat_tax_rate_vl t
+                    ORDER BY
+                        t.tax_type_rate
+                    ) v #WHERE_CLAUSE# #ORDER_BY_CLAUSE#
+            ]]></bm:query-sql>
+        </bm:operation>
+        <bm:operation name="insert">
+            <bm:update-sql><![CDATA[
+				
+	   				begin
+	   					vat_tax_rate_pkg.insert_vat_tax_rate(p_tax_type_code => ${@tax_type_code},
+										   					 p_description   => ${@tax_type_desc},
+										   					 p_tax_type_rate => ${@tax_type_rate},
+										   					 p_sale_tax_flag => ${@sale_tax_flag},
+										   					 p_enabled_flag  => ${@enabled_flag},
+										   					 p_user_id       => ${/session/@user_id});
+	   				end;
+	   			   			
+   			]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="update">
+            <bm:update-sql><![CDATA[
+				
+	   				begin
+	   					vat_tax_rate_pkg.update_vat_tax_rate(p_tax_rate_id     => ${@tax_rate_id},
+	   					                                     p_tax_type_code   => ${@tax_type_code},
+										   					 p_description     => ${@tax_type_desc},
+										   					 p_tax_type_rate   => ${@tax_type_rate},
+										   					 p_sale_tax_flag   => ${@sale_tax_flag},
+										   					 p_enabled_flag    => ${@enabled_flag},
+										   					 p_user_id         => ${/session/@user_id});
+	   				end;
+	   			   			
+   			]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="delete">
+            <bm:update-sql><![CDATA[
+				
+	   				begin
+	   					vat_tax_rate_pkg.delete_vat_tax_rate(p_tax_rate_id     => ${@tax_rate_id},
+										   					 p_user_id         => ${/session/@user_id});
+	   				end;
+	   			   			
+   			]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="tax_rate_id" databaseType="NUMBER" datatype="java.lang.Double"/>
+        <bm:field name="tax_type_code" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_TAX_RATE.TAX_TYPE_CODE"/>
+        <bm:field name="tax_type_desc" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_TAX_RATE.TAX_TYPE_RATE"/>
+        <bm:field name="tax_type_rate" databaseType="NUMBER" datatype="java.lang.Double" prompt="VAT_TAX_RATE.TAX_TYPE_RATE"/>
+        <bm:field name="sale_tax_flag" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_TAX_RATE.SALE_TAX_FLAG"/>
+        <bm:field name="enabled_flag" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_TAX_RATE.ENABLED_FLAG"/>
+    </bm:fields>
+    <bm:primary-key>
+        <bm:pk-field name="tax_rate_id"/>
+    </bm:primary-key>
+    <bm:features>
+        <ns2:sequence-pk/>
+        <f:standard-who/>
+    </bm:features>
+    <bm:query-fields>
+        <bm:query-field name="tax_type_code" queryExpression="v.tax_type_code like &apos;%&apos;||${@tax_type_code}||&apos;%&apos;"/>
+        <bm:query-field name="tax_type_desc" queryExpression="v.tax_type_desc like &apos;%&apos;||${@tax_type_desc}||&apos;%&apos;"/>
+        <bm:query-field field="tax_type_rate" queryOperator="like"/>
+    </bm:query-fields>
+</bm:model>
