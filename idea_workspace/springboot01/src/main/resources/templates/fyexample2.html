@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <script>
+        var curPage = 1; //当前页码
+        var total,totalPage;
+        var pageSize=5;
+        //获取数据
+        function getData(page){
+            $.ajax({
+                type: 'GET',
+                url: '/UserController/page',
+                data: {'pageNum':page-1,"pageSize":pageSize},
+                dataType:'json',
+                success:function(json){
+                    console.log(json);
+                    $("#tablebody").empty();
+                    total = json.total; //总记录数
+                    // pageSize = json.pageSize; //每页显示条数
+                    curPage = page; //当前页
+                    totalPage = json.pages; //总页数
+                    var table_html = "";
+                    var list = json.list;
+                    $.each(list,function(index,array){ //遍历json数据列
+                        table_html += "<tr>" + "<td>" +
+                            "<input type='checkbox' value='check'></td>" +
+                            "<td contentEditable='true'>"+array['userId']+"</td>" +
+                            "<td>"+array['userName']+"</td>" +
+                            "<td>"+array['password']+"" + "</td>" +
+                            "<td>"+array['sex']+"" + "</td>" +
+                            "<td>"+array['age']+"" + "</td>" +
+                            "<td>"+array['phoneNumber']+"" + "</td>" +
+                            "<td>"+array['creationDate']+"" + "</td>" +
+                            "<td>"+array['lastUpdateDate']+"" + "</td>" +
+                            "<td>"+array['comments']+"" + "</td>" +
+
+                            "<td><select id='permission' name='type'>" +
+                            "<option value ='present'>"+array['permission']+
+                            "</option>" +
+                            "<option value ='none'>无权限</option>" +
+                            "<option value ='all'>管理员</option>" +
+                            "<option value ='order'>订单管理</option>" +
+                            "<option value ='customer'>客户管理</option>" +
+                            "<option value ='supplier'>供应商管理</option>" +
+                            "<option value ='company'>车辆管理</option>" +
+                            "<option value ='warehouse'>仓库管理</option>" +
+                            "</select></td></tr>";
+                    });
+                    $("#tablebody").append(table_html);
+                },
+                complete:function(){ //生成分页条
+                    getPageBar();
+                },
+                error:function(){
+                    alert("数据加载失败");
+                }
+            });
+        }
+
+        //获取分页条
+        function getPageBar(){
+            //页码大于最大页数
+            if(curPage>totalPage) curPage=totalPage;
+            //页码小于1
+            if(curPage<1) curPage=1;
+            pageStr = "";
+
+            //如果是第一页
+            if(curPage==1){
+                //
+                //<li class='active'><a href='javascript:void(0)'>1</a></li>
+                pageStr += "<li><a href='javascript:void(0)' rel='1'>1</a></li><li><a href='javascript:void(0)' rel='2'>2</a></li><li><a href='javascript:void(0)'>3</a></li><li><a href='javascript:void(0)' rel='"+(parseInt(curPage)+1)+"'>下一页</a></li><li><a href='javascript:void(0)' rel='"+totalPage+"'>尾页</a></li>";
+            } else if(curPage>=totalPage){
+                pageStr += "<li><a href='javascript:void(0)' rel='1'>首页</a></li><li><a href='javascript:void(0)' rel='"+(parseInt(curPage)-1)+"'>上一页</a></li><li><a href='javascript:void(0)' rel='1'>1</a></li><li><a href='javascript:void(0)' rel='1'>1</a></li><li><a href='javascript:void(0)' rel='2'>2</a></li><li><a href='javascript:void(0)'>3</a></li><li><a href='javascript:void(0)' rel='"+(parseInt(curPage)+1)+"'>下一页</a></li><li><a href='javascript:void(0)' rel='"+totalPage+"'>尾页</a></li>";
+            } else {
+                pageStr += "<li><a href='javascript:void(0)' rel='1'>1</a></li><li><a href='javascript:void(0)' rel='2'>2</a></li><li><a href='javascript:void(0)'>3</a></li><li><a href='javascript:void(0)' rel='"+(parseInt(curPage)+1)+"'>下一页</a></li><li><a href='javascript:void(0)' rel='"+totalPage+"'>尾页</a></li>";
+            }
+
+            $("#one").html(pageStr);
+        }
+
+
+        $(document).ready(function(){
+            getData(1);
+            $("#one li a").on('click',function(){
+                alert('a被点击了');
+                var rel = $(this).attr("rel");
+                if(rel){
+                    getData(rel);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<table>
+    <thead>
+    <tr align="center">
+        <th width="50" class="td2">选择</th>
+        <th width="50" class="td2">id</th>
+        <th width="50" class="td2">用户名</th>
+        <th width="50" class="td2">密码</th>
+        <th width="50" height="33" class="td2">性别</th>
+        <th width="50" class="td2">年龄</th>
+        <th width="50" class="td2">电话</th>
+        <th width="100" class="td2">创建日期</th>
+        <th width="100" class="td2">更新日期</th>
+        <th width="50" class="td2">描述</th>
+    </tr>
+    </thead>
+    <tbody id="tablebody" align="center">
+
+    </tbody>
+</table>
+</body>
+</html>

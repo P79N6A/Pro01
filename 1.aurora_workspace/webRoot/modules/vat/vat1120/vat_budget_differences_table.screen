@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:c="aurora.application.action" xmlns:p="uncertain.proc" xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure>
+        <a:model-query model="vat.vat1120.fnd_dimension_description" rootPath="dimension_desc"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="exp_report_readonly_wfl_link" url="${/request/@context_path}/modules/expm/public/exp_report_readonly_wfl_finance_query_readonly.screen"/>
+        <script><![CDATA[
+            function resetquery() {
+                $('vat_budget_differences_table_query_ds').reset();
+            }
+            
+            function seeDetail(value, record, name) {
+                var head_id = record.get('document_id');
+                return '<a href="javascript:detailNewWindow(' + head_id + ');">' + value + '</a>';
+            }
+            
+            function detailNewWindow(head_id) {
+                var url = $('exp_report_readonly_wfl_link').getUrl() + '?exp_report_header_id=' + head_id + '&canUploadFlag=false';
+                new Aurora.Window({
+                    url: url,
+                    fullScreen: true
+                });
+            }
+            
+            function sumRenderer(records, name) {
+                var sum = 0;
+                for (var i = 0;i < records.length;i++) {
+                    var r = records[i].get(name);
+                    var n = parseFloat(r);
+                    if (!isNaN(n)) {
+                        sum += n;
+                    }
+                }
+                sum = Math.round(sum * 100) / 100; 
+                return '<font><label style="color:red">' + sum + '</label></font>';
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="source_type">
+                <a:datas>
+                    <a:record name="进项税抵扣" value="VAT_TAX"/>
+                    <a:record name="进项税转出" value="TRANSFER"/>
+                    <a:record name="视同销售处理" value="AS_SALES"/>
+                </a:datas>
+            </a:dataSet>
+            <a:dataSet id="vat_budget_differences_table_query_ds" model="vat.vat1120.vat_budget_differences_table">
+                <a:fields>
+                    <a:field name="period_name" lovGridHeight="300" lovHeight="460" lovService="vat.vat1080.vat_tax_transfer_or_as_sale_period_query" lovWidth="500" prompt="VAT_BGT_BUDGET_RESERVES.PERIOD_NAME" title="VAT_BGT_BUDGET_RESERVES.PERIOD_NAME">
+                        <a:mapping>
+                            <a:map from="period_name" to="period_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="company_id"/>
+                    <a:field name="company_code"/>
+                    <a:field name="company_name" autoComplete="true" autoCompleteField="company_name" lovGridHeight="320" lovHeight="460" lovWidth="500" lovservice="fnd.fnd_companies_lov" prompt="VAT_BGT_BUDGET_RESERVES.COMPANY_NAME" title="VAT_BGT_BUDGET_RESERVES.COMPANY_NAME">
+                        <a:mapping>
+                            <a:map from="company_id" to="company_id"/>
+                            <a:map from="company_code" to="company_code"/>
+                            <a:map from="company_short_name" to="company_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="source_type"/>
+                    <a:field name="source_type_desc" displayField="name" options="source_type" returnField="source_type" valueField="value"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="vat_budget_differences_table_result_ds" autoCount="true" autoQuery="true" fetchAll="false" model="vat.vat1120.vat_budget_differences_table" queryDataSet="vat_budget_differences_table_query_ds" selectable="true">
+                <a:fields>
+                    <a:field name="company_name"/>
+                    <a:field name="document_id"/>
+                    <a:field name="document_number"/>
+                    <a:field name="document_line_number"/>
+                    <a:field name="period_name"/>
+                    <a:field name="responsibility_center_name"/>
+                    <a:field name="invoice_code"/>
+                    <a:field name="invoice_number"/>
+                    <a:field name="budget_item_desc"/>
+                    <a:field name="account_desc"/>
+                    <a:field name="amount"/>
+                    <a:field name="source_type_desc"/>
+                    <a:field name="d1" prompt="${/model/dimension_desc/record/@d1_description}"/>
+                    <a:field name="d2" prompt="${/model/dimension_desc/record/@d2_description}"/>
+                    <a:field name="d3" prompt="${/model/dimension_desc/record/@d3_description}"/>
+                    <a:field name="d4" prompt="${/model/dimension_desc/record/@d4_description}"/>
+                    <a:field name="d5" prompt="${/model/dimension_desc/record/@d5_description}"/>
+                    <a:field name="d6" prompt="${/model/dimension_desc/record/@d6_description}"/>
+                    <a:field name="d7" prompt="${/model/dimension_desc/record/@d7_description}"/>
+                    <a:field name="d8" prompt="${/model/dimension_desc/record/@d8_description}"/>
+                    <a:field name="d9" prompt="${/model/dimension_desc/record/@d9_description}"/>
+                    <a:field name="d10" prompt="${/model/dimension_desc/record/@d10_description}"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="resetquery" text="HAP_RESET" width="80"/>
+                <a:gridButton bind="vat_budget_differences_table_gird" type="excel" width="80"/>
+            </a:screenTopToolbar>
+            <a:queryForm bindTarget="vat_budget_differences_table_query_ds" resultTarget="vat_budget_differences_table_result_ds" style="width:100%;border:none">
+                <a:formToolBar>
+                    <a:textField name="document_number" bindTarget="vat_budget_differences_table_query_ds"/>
+                    <a:lov name="period_name" bindtarget="vat_budget_differences_table_query_ds"/>
+                    <a:lov name="company_name" bindtarget="vat_budget_differences_table_query_ds"/>
+                    <a:comboBox name="source_type_desc" bindTarget="vat_budget_differences_table_query_ds"/>
+                </a:formToolBar>
+            </a:queryForm>
+            <a:grid id="vat_budget_differences_table_gird" bindTarget="vat_budget_differences_table_result_ds" marginHeight="121" marginWidth="42" navBar="true">
+                <a:columns>
+                    <a:column name="company_name" align="center" width="100"/>
+                    <a:column name="document_number" align="center" renderer="seeDetail" width="120"/>
+                    <a:column name="document_line_number" align="center" width="60"/>
+                    <a:column name="period_name" align="center" width="80"/>
+                    <a:column name="responsibility_center_name" align="center" width="100"/>
+                    <a:column name="invoice_code" align="center" width="100"/>
+                    <a:column name="invoice_number" align="center" width="100"/>
+                    <a:column name="budget_item_desc" align="center" width="150"/>
+                    <a:column name="account_desc" align="center" width="150"/>
+                    <a:column name="amount" align="right" footerRenderer="sumRenderer" renderer="Aurora.formatMoney" width="80"/>
+                    <a:column name="source_type_desc" align="center" width="100"/>
+                    <a:column name="d1" align="center" width="100"/>
+                    <a:column name="d2" align="center" width="100"/>
+                    <a:column name="d3" align="center" width="100"/>
+                    <a:column name="d4" align="center" width="100"/>
+                    <a:column name="d5" align="center" width="100"/>
+                    <a:column name="d6" align="center" width="100"/>
+                    <a:column name="d7" align="center" width="100"/>
+                    <a:column name="d8" align="center" width="100"/>
+                    <a:column name="d9" align="center" width="100"/>
+                    <a:column name="d10" align="center" width="100"/>
+                </a:columns>
+            </a:grid>
+        </a:screenBody>
+        <script purpose="auto_resize"><![CDATA[
+            function vat_budget_differences_table_info_infoInitSize() {
+                //页面宽度、高度
+                var vw = $A.getViewportWidth();
+                //留白宽度
+                var marginWidth = 35;
+                //自适应宽度
+                var autoWidth = vw - marginWidth;
+                //设置组件的自适应宽度
+                $('vat_budget_differences_table_gird').setWidth(autoWidth);
+            }
+            vat_budget_differences_table_info_infoInitSize();
+        ]]></script>
+    </a:view>
+</a:screen>

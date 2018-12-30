@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-7-30 下午12:05:01  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:ns2="aurora.database.local.oracle" xmlns:f="aurora.database.features" xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        *
+                    FROM
+                        vat_invoice t
+                    WHERE
+                        t.company_id IN (${@header_company_id},${@line_company_id})
+                    ) v #WHERE_CLAUSE#
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="vat_invoice_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="VAT_INVOICE_ID"/>
+        <bm:field name="company_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="COMPANY_ID"/>
+        <bm:field name="invoice_code" databaseType="VARCHAR2" datatype="java.lang.String" displayWidth="100" forDisplay="true" forQuery="true" physicalName="INVOICE_CODE" prompt="VAT_INVOICE.INVOICE_CODE"/>
+        <bm:field name="invoice_number" databaseType="VARCHAR2" datatype="java.lang.String" displayWidth="100" forDisplay="true" forQuery="true" physicalName="INVOICE_NUMBER" prompt="VAT_INVOICE.INVOICE_NUMBER"/>
+        <bm:field name="invoice_date" databaseType="DATE" datatype="java.util.Date" displayWidth="80" forDisplay="true" physicalName="INVOICE_DATE" prompt="VAT_INVOICE.INVOICE_DATE"/>
+        <bm:field name="amount" databaseType="NUMBER" datatype="java.lang.Double" displayWidth="80" forDisplay="true" physicalName="AMOUNT" prompt="VAT_INVOICE.AMOUNT"/>
+        <bm:field name="tax_amount" databaseType="NUMBER" datatype="java.lang.Double" displayWidth="80" forDisplay="true" physicalName="TAX_AMOUNT" prompt="VAT_INVOICE.TAX_AMOUNT"/>
+        <bm:field name="not_tax_amount" databaseType="NUMBER" datatype="java.lang.Double" displayWidth="80" forDisplay="true" physicalName="NOT_TAX_AMOUNT" prompt="VAT_INVOICE.NOT_TAX_AMOUNT"/>
+        <bm:field name="tax_type_rate" databaseType="NUMBER" datatype="java.lang.Double" displayWidth="80" forDisplay="true" physicalName="TAX_TYPE_RATE" prompt="VAT_INVOICE.TAX_TYPE_RATE"/>
+        <bm:field name="saler_tax_number" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="SALER_TAX_NUMBER" prompt="VAT_INVOICE.SALER_TAX_NUMBER"/>
+        <bm:field name="buyer_tax_number" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="BUYER_TAX_NUMBER" prompt="VAT_INVOICE.BUYER_TAX_NUMBER"/>
+        <bm:field name="status" databaseType="VARCHAR2" datatype="java.lang.String" displayWidth="80" forDisplay="true" physicalName="STATUS" prompt="VAT_INVOICE.STATUS"/>
+        <bm:field name="attribute1" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE1"/>
+        <bm:field name="attribute2" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE2"/>
+        <bm:field name="attribute3" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE3"/>
+        <bm:field name="attribute4" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE4"/>
+        <bm:field name="attribute5" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE5"/>
+        <bm:field name="attribute6" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE6"/>
+        <bm:field name="attribute7" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE7"/>
+        <bm:field name="attribute8" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE8"/>
+        <bm:field name="attribute9" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE9"/>
+        <bm:field name="attribute10" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE10"/>
+        <bm:field name="attribute11" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE11"/>
+        <bm:field name="attribute12" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE12"/>
+        <bm:field name="attribute13" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE13"/>
+        <bm:field name="attribute14" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE14"/>
+        <bm:field name="attribute15" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE15"/>
+        <bm:field name="attribute16" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE16"/>
+        <bm:field name="attribute17" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE17"/>
+        <bm:field name="attribute18" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE18"/>
+        <bm:field name="attribute19" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE19"/>
+        <bm:field name="attribute20" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ATTRIBUTE20"/>
+    </bm:fields>
+    <bm:primary-key>
+        <bm:pk-field name="vat_invoice_id"/>
+    </bm:primary-key>
+    <bm:features>
+        <ns2:sequence-pk/>
+        <f:standard-who/>
+    </bm:features>
+    <bm:query-fields>
+        <bm:query-field field="invoice_code" queryOperator="="/>
+        <bm:query-field name="invoice_number" queryExpression="v.invoice_number like &apos;%&apos;||${@invoice_number}||&apos;%&apos;"/>
+    </bm:query-fields>
+</bm:model>

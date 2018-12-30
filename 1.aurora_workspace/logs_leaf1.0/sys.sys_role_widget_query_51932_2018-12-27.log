@@ -1,0 +1,59 @@
+2018-12-27 10:26:12.705 [uncertain.proc] [CONFIG] Enter procedure pre-service
+2018-12-27 10:26:12.706 [leaf.application.session_check] [CONFIG] Session data copied to context
+2018-12-27 10:26:12.706 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.706 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.706 [leaf.application.session_check] [CONFIG] Checking BM access sys.sys_role_widget for operation query
+2018-12-27 10:26:12.708 [leaf.application.session_check] [CONFIG] Result from leaf.bm.DefaultAccessChecker@79879a93 is true
+2018-12-27 10:26:12.708 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-27 10:26:12.709 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.709 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.710 [uncertain.proc] [CONFIG] [action] CheckServiceLock
+2018-12-27 10:26:12.710 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-27 10:26:12.710 [uncertain.proc] [CONFIG] [action] ValidateInput
+2018-12-27 10:26:12.710 [uncertain.proc] [CONFIG] [action] InvokeService
+2018-12-27 10:26:12.710 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.711 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.sys_role_widget==============================
+2018-12-27 10:26:12.727 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.727 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.728 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:12.728 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.728 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:12.728 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:12.728 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:12.743 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:12.985 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:12.985 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+                select srw.widget_id,
+                       srw.role_id,
+                       srw.subject,
+                       srw.function_code,
+                       srw.enabled_flag,
+                       srw.image,
+                       (select sfv.function_name
+                          from sys_function_v sfv
+                         where sfv.function_code = srw.function_code) function_name,
+                         (select sfv.service_name
+                          from sys_function_v sfv
+                         where sfv.function_code = srw.function_code) service_name
+              from SYS_ROLE_WIDGET srw
+               WHERE ((((select count(1) from sys_user_home_page m where m.user_id = ? and (m.subject=? or m.subject is null)) >0) and not exists(select 1       from sys_user_home_page m        where m.user_id = ? and m.role_id = ?        and m.function_code = srw.function_code and (m.subject=? or m.subject is null))) or (((select count(1) from sys_user_home_page m where m.user_id = ? and (m.subject=? or m.subject is null)) =0) and not exists(select 1 from sys_role_home_page h where h.function_code = srw.function_code and h.role_id=? and (h.subject=? or h.subject is null))))and srw.role_id=? and (srw.subject= ? or srw.subject is null)
+            
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.2	Access path:/session/@subject	Data type of passed value :java.lang.String	Value:HAP	Output:false	Database Type:null	
+No.3	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.4	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.5	Access path:/session/@subject	Data type of passed value :java.lang.String	Value:HAP	Output:false	Database Type:null	
+No.6	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.7	Access path:/session/@subject	Data type of passed value :java.lang.String	Value:HAP	Output:false	Database Type:null	
+No.8	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.9	Access path:/session/@subject	Data type of passed value :java.lang.String	Value:HAP	Output:false	Database Type:null	
+No.10	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.11	Access path:/session/@subject	Data type of passed value :java.lang.String	Value:HAP	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:12.985 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.985 [uncertain.proc] [CONFIG] [action] CreateSuccessResponse

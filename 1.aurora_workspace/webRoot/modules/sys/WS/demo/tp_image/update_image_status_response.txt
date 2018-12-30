@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Body>
+      <soapenv:soapResponse>
+         <status>success</status>
+         <message>Invoke Success</message>
+         <result/>
+      </soapenv:soapResponse>
+   </soapenv:Body>
+</soapenv:Envelope>

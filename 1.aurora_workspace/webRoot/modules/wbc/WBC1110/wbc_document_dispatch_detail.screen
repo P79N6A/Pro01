@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: hyb  
+    $Date: 2011-12-19
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure>
+        <a:model-query autocount="true" model="wbc.wbc_node_action_type_list" rootpath="actions"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="wbc_doc_document_require_return_link" model="db.wbc_core_pkg.doc_process_require_return" modelaction="execute"/>
+        <a:link id="wbc_doc_document_reject_link" model="db.wbc_core_pkg.doc_process_reject" modelaction="execute"/>
+        <a:link id="wbc_doc_document_approve_link" model="db.wbc_core_pkg.doc_process_agree" modelaction="execute"/>
+        <a:link id="wbc_doc_document_process_link" model="db.wbc_core_pkg.doc_process" modelaction="execute"/>
+        <a:link id="vat_report_check_invoice_relation_link" model="expm.vat_report_check_invoice_relation" modelaction="execute"/>
+        <style><![CDATA[
+        	#confirmbtn .item-btn-mc{
+			    background:transparent url(${/request/@context_path}/images/wfl/confirm.png);
+			}
+			
+			#refusebtn .item-btn-mc{
+			    background:transparent url(${/request/@context_path}/images/wfl/refuse.png);
+			}
+        
+			#backbtn .item-btn-mc{
+			    background:transparent url(${/request/@context_path}/images/wfl/back.png);
+			}
+			
+			#returnbtn .item-btn-mc{
+			    background:transparent url(${/request/@context_path}/images/wfl/return.png);
+			}
+			
+			#approve_div{
+			    position:fixed;
+			    top:0px;
+			    left:10px;
+			    width:100%;
+			    background-color:#c9e0e6;
+			}
+			
+			#approve_area{
+			    
+			}
+			
+			#approve_area table{
+			    border:none;
+			}
+			
+			#approve_area td{
+			    border:none;
+			    background:none;
+			}
+			
+			#toggle_comment_btn{
+			    display:block;
+			    width:35px;
+			    height:26px;
+			    line-height:26px;
+			    text-align:center;
+			    border:1px solid #C7C7C7;
+			    background-color:#FFFFFF;
+			}
+			
+			#toggle_comment_btn:hover{
+			    color:#005A78;
+			    background-color:#F7F7F7;
+			}
+			
+			#comments_placeholder{
+			    width:352px;
+			}
+			
+			#textarea{
+			    position:fixed;
+			    top:5px;
+			    left:53px;
+			    line-height:22px;
+			}
+			
+			#approve_placeholder{
+			    height:35px;
+			}
+			
+			
+			
+            #div_table{
+                margin-left:15px;
+                margin-top:5px;
+            }
+            td input{
+                width:56px;
+            }
+            #wbc_approve_header{
+                display:block;
+                width:1024px;
+                height:64px;
+                top:0px;
+                z-index:1;
+                padding-top:10px;
+                padding-left:8px;
+            }
+            #wbc_approve_header1{
+                display:block;
+                width:1024px;
+                height:20px;
+                top:0px;
+                z-index:1;
+                padding-top:2px;
+                padding-left:8px;
+            }
+            .btn_div{
+                float:right;
+                padding-top:20px;
+            }
+             .btn_div input:hover{
+                width:60px; 
+                height:26px;
+                border:1px solid #dadada;
+            }
+            .btn_div #require_return:hover{
+                width:104px; 
+                height:26px;
+                border:1px solid #dadada;
+            }
+            .btn_image{
+                padding-left:30px;
+                padding-top:6px;
+            }
+            
+            /*澶勭悊鎰忚css*/
+            #process_option_div{
+                margin-left:15px;
+                margin-top:20px;
+            }
+            #process_table{
+                width:910px;
+                border:0px;
+                bgcolor:"#000000";
+                cellspacing:1px;
+                cellpadding:0;
+            }
+            #process_date{
+                width:120px;
+            }
+            #process_node{
+                width:120px;
+            }
+            #process_handler{
+                width:120px;
+            }
+            #process_position{
+                width:120px;
+            }
+        ]]></style>
+        <script><![CDATA[
+            var expandFlag = false;
+            
+            function approveFun(btn) {
+                var value = document.getElementById('textarea').value;
+                var allActions = $('wbc_node_action_type_list').getAll();
+                var confirmActionId, refuseActionId, requestActionId, action_id;
+                for (var i = 0;i < allActions.length;i++) {
+                    if (allActions[i].get('action_type') == '1') {
+                        confirmActionId = allActions[i].get("action_id");
+                    }
+                    if (allActions[i].get('action_type') == '-1') {
+                        refuseActionId = allActions[i].get("action_id");
+                    }
+                    if (allActions[i].get('action_type') == '0') {
+                        requestActionId = allActions[i].get("action_id");
+                    }
+                }
+                if (btn.id == 'confirmbtn') {
+                    action_id = confirmActionId;
+                } else if (btn.id == 'refusebtn') {
+                    action_id = refuseActionId;
+                } else if (btn.id == 'returnbtn') {
+                    action_id = requestActionId;
+                }
+            
+                /* Aurora.request({
+                 lockMessage: '${l:HAP_WAITING}',
+                 lockMessage: '${l:HAP_WAITING}',
+                 url: $('wbc_doc_document_process_link').getUrl(),
+                 para: {
+                 user_id: '${/session/@user_id}',
+                 options: value,
+                 action_id: action_id,
+                 dispatch_head_id: Number('${/parameter/@dispatch_head_id}'),
+                 dispatch_line_id: Number('${/parameter/@dispatch_line_id}')
+                 },
+                 success: function(args) {
+                 history.go(-1);
+                 },
+                 scope: this
+                 }); */
+            
+                if (action_id == confirmActionId) {
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: $('vat_report_check_invoice_relation_link').getUrl(),
+                        para: {
+                            exp_report_header_id: ${/parameter/@p_head_id}
+                        },
+                        success: function(res) {
+                            //凭证整理时抵扣状态认证状态改变,不会提示发票超期
+                            if (res.result.flag == 'NOTICE') {
+                                var okCan = Aurora.showConfirm('${l:PROMPT}', res.result.error, function() {
+                                    Aurora.request({
+                                        lockMessage: '${l:HAP_WAITING}',
+                                        lockMessage: '${l:HAP_WAITING}',
+                                        url: $('wbc_doc_document_process_link').getUrl(),
+                                        para: {
+                                            user_id: '${/session/@user_id}',
+                                            options: value,
+                                            action_id: action_id,
+                                            dispatch_head_id: Number('${/parameter/@dispatch_head_id}'),
+                                            dispatch_line_id: Number('${/parameter/@dispatch_line_id}')
+                                        },
+                                        success: function(args) {
+                                            history.go(-1);
+                                        },
+                                        scope: this
+                                    });
+                                    okCan.close();
+                                }, function() {
+                                    okCan.close();
+                                }, 450, 150);
+                            } else {
+                                Aurora.request({
+                                    lockMessage: '${l:HAP_WAITING}',
+                                    lockMessage: '${l:HAP_WAITING}',
+                                    url: $('wbc_doc_document_process_link').getUrl(),
+                                    para: {
+                                        user_id: '${/session/@user_id}',
+                                        options: value,
+                                        action_id: action_id,
+                                        dispatch_head_id: Number('${/parameter/@dispatch_head_id}'),
+                                        dispatch_line_id: Number('${/parameter/@dispatch_line_id}')
+                                    },
+                                    success: function(args) {
+                                        history.go(-1);
+                                    },
+                                    scope: this
+                                });
+                            }
+                        },
+                        scope: this
+                    });
+                } else {
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: $('wbc_doc_document_process_link').getUrl(),
+                        para: {
+                            user_id: '${/session/@user_id}',
+                            options: value,
+                            action_id: action_id,
+                            dispatch_head_id: Number('${/parameter/@dispatch_head_id}'),
+                            dispatch_line_id: Number('${/parameter/@dispatch_line_id}')
+                        },
+                        success: function(args) {
+                            history.go(-1);
+                        },
+                        scope: this
+                    });
+                }
+            }
+            // function approve() {
+            // var value = document.getElementById('textarea').value;
+            // Aurora.request({lockMessage:'${l:HAP_WAITING}',lockMessage:'${l:HAP_WAITING}',
+            // url: /*${/request/@context_path}/autocrud/wbc.wbc_doc_document_approve/execute*/$('wbc_doc_document_approve_link').getUrl(),
+            // para: {
+            // user_id: '${/session/@user_id}',
+            // options: value,
+            // dispatch_head_id: Number('${/parameter/@dispatch_head_id}'),
+            // dispatch_line_id: Number('${/parameter/@dispatch_line_id}')
+            // },
+            // success: function(args) {
+            // history.go(-1);
+            // },
+            // scope: this
+            // });
+            // }
+            
+            // function reject(){
+            // var value = document.getElementById('textarea').value;
+            // Aurora.request({lockMessage:'${l:HAP_WAITING}',lockMessage:'${l:HAP_WAITING}',
+            // url: /*${/request/@context_path}/autocrud/wbc.wbc_doc_document_reject/execute*/$('wbc_doc_document_reject_link').getUrl(),
+            // para: {
+            // user_id: '${/session/@user_id}',
+            // options: value,
+            // dispatch_head_id: Number('${/parameter/@dispatch_head_id}'),
+            // dispatch_line_id: Number('${/parameter/@dispatch_line_id}')
+            // },
+            // success: function(args) {
+            // history.go(-1);
+            // },
+            // scope: this
+            // });
+            // }
+            
+            // function require_return(){
+            // var value = document.getElementById('textarea').value;
+            // Aurora.request({lockMessage:'${l:HAP_WAITING}',lockMessage:'${l:HAP_WAITING}',
+            // url: /*${/request/@context_path}/autocrud/wbc.wbc_doc_document_require_return/execute*/$('wbc_doc_document_require_return_link').getUrl(),
+            // para: {
+            // user_id: '${/session/@user_id}',
+            // options: value,
+            // dispatch_head_id: Number('${/parameter/@dispatch_head_id}'),
+            // dispatch_line_id: Number('${/parameter/@dispatch_line_id}')
+            // },
+            // success: function(args) {
+            // history.go(-1);
+            // },
+            // scope: this
+            // });
+            // }
+            
+            function back() {
+                history.go(-1);
+            }
+            
+            function toggleComment() {
+                if (!expandFlag) {
+                    expandFlag = true;
+                    Ext.get('textarea').setHeight(300, true);
+                    Ext.get('approve_div').setHeight(315, true);
+                    Ext.get('approve_placeholder').setHeight(310, true);
+                    Ext.get('toggle_comment_btn').dom.innerHTML = '${l:PROMPT.SHRINK}';
+                } else {
+                    expandFlag = false;
+                    Ext.get('textarea').setHeight(28, true);
+                    Ext.get('approve_div').setHeight(40, true);
+                    Ext.get('approve_placeholder').setHeight(35, true);
+                    Ext.get('toggle_comment_btn').dom.innerHTML = '${l:PROMPT.EXPAND}';
+                }
+            }
+        ]]></script>
+        <!-- <div id="wbc_approve_header">
+            <textarea id="textarea" style="height:55px;width:650px; margin-left:12px; margin-right:12px;border:1px solid #dadada;resize:none"/>
+        </div>
+        <div class="btn_div">
+            <input onClick="approve()" src="${/request/@context_path}/images/for_pad/approve_3.png" style="margin-left:600px;" type="image"/>
+            <input onClick="reject()" src="${/request/@context_path}/images/for_pad/refuse.png" style="margin-left:10px;" type="image"/>
+            <input id="require_return" onClick="require_return()" src="${/request/@context_path}/images/for_pad/require_return.png" style="margin-left:10px;" type="image"/>
+            <input onclick="javascript:back();" src="${/request/@context_path}/images/for_pad/back.png" style="margin-left:10px;" type="image"/>
+            <hr style="float:left;padding-left:10px;margin-left:20px;width:900px;"/>
+        </div> -->
+        <a:dataSets>
+            <a:dataSet id="wbc_node_action_type_list">
+                <a:datas datasource="/model/actions"/>
+            </a:dataSet>
+            <a:dataSet id="commit_ds" autoCreate="true">
+                <a:fields>
+                    <a:field name="dispatch_head_id"/>
+                    <a:field name="dispatch_line_id"/>
+                    <a:field name="options"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="approve_result_ds_detail_ds" loadData="true" model="wbc.WBC1110.wbc_dispatch_process_opinion" pageSize="100">
+                <a:fields>
+                    <a:field name="process_time"/>
+                    <a:field name="business_node_desc"/>
+                    <a:field name="process_state_desc"/>
+                    <a:field name="handler_desc"/>
+                    <a:field name="work_team_desc"/>
+                    <a:field name="process_opinion"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <div id="approve_div">
+            <table id="approve_area">
+                <tr>
+                    <td>
+                        <a id="toggle_comment_btn" href="javascript:toggleComment();"><![CDATA[
+	            			${l:PROMPT.EXPAND}
+	            		]]></a>
+                    </td>
+                    <td>
+                        <div id="comments_placeholder"/>
+                    </td>
+                    <a:freeMarker><![CDATA[
+	                	
+	                		<#if model.getObject("actions").getChilds()  ??>
+		                		<#list model.getObject("actions").getChilds() as action >
+		                			<#if action.getString("action_type") == "1">
+			                			<td>
+						                    <a:button id="confirmbtn" click="approveFun" height="28" width="68"/>
+						                </td>
+		                			</#if>
+		                			<#if action.getString("action_type") == "-1">
+			                			<td>
+						                    <a:button id="refusebtn" click="approveFun" height="28" width="68"/>
+						                </td>
+		                			</#if>
+		                			<#if action.getString("action_type") == "0">
+			                			<td>
+						                    <a:button id="returnbtn" click="approveFun" height="28" width="68"/>
+						                </td>
+		                			</#if>
+		                		</#list>
+	                		</#if>
+	                	
+	                ]]></a:freeMarker>
+                    <td>
+                        <a:button id="backbtn" click="back" height="28" width="68"/>
+                    </td>
+                </tr>
+            </table>
+            <a:textArea id="textarea" height="22" width="350"/>
+        </div>
+        <div id="approve_placeholder"/>
+        <a:screenBody>
+            <a:screen-include screen="${/parameter/@business_node_service_url}?head_id=${/parameter/@p_head_id}"/>
+        </a:screenBody>
+        <a:form padding="0" showMargin="false" style="margin-left:15px;margin-top:10px;width:97%" title="WFL_WORKFLOW_APPROVE.COMMENT">
+            <a:table bindTarget="approve_result_ds_detail_ds" height="200" style="border:none">
+                <a:columns>
+                    <a:column name="process_time" Width="120" align="center" prompt="WFL_WORKFLOW_MESSAGE.MESSAGE_DATE" renderer="Aurora.formatDateTime"/>
+                    <a:column name="business_node_desc" Width="120" align="center" prompt="WBC_DOCUMENT_DISPATCH_DETAIL.PROCESS_NODE"/>
+                    <a:column name="process_state_desc" align="center" prompt="WFL_WORKFLOW_APPROVAL.ACTION" width="120"/>
+                    <a:column name="handler_desc" Width="120" align="center" prompt="WFL_WORKFLOW_APPROVE_RECORD.APPROVER_NAME"/>
+                    <a:column name="work_team_desc" align="center" prompt="WBC_DOCUMENT_DISPATCH_DETAIL.PROCESS_WORK_TEAM" width="120"/>
+                    <a:column name="process_opinion" prompt="WFL_WORKFLOW_APPROVE.COMMENT" width="310"/>
+                </a:columns>
+            </a:table>
+        </a:form>
+    </a:view>
+</a:screen>

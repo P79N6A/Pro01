@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure/>
+    <a:view package="ui.template" template="empty">
+        <script><![CDATA[
+    		function onProvincesUpdate(ds,record,name,value,oldvalue){
+    		    if(name == 'region_code'){
+    		        $('second_combobox_ds').setQueryParameter('region_code', value);
+					$('second_combobox_ds').query();
+    		    }
+    		}
+    	]]></script>
+        <a:dataSets>
+            <!-- 省的数据源 -->
+            <a:dataSet id="first_combobox_ds" autoQuery="true" fetchAll="true" model="train.TRA1020.tra_region_code"/>
+            <!-- 市的数据源 -->
+            <a:dataSet id="second_combobox_ds" autoQuery="true" fetchAll="true" model="train.TRA1020.tra_region_code_art"/>
+            <a:dataSet id="main_ds">
+                <a:fields>
+                    <a:field name="first_combo" displayField="description" options="first_combobox_ds" prompt="省" returnField="region_code" valueField="region_code"/>
+                    <a:field name="second_combo" displayField="description" options="second_combobox_ds" prompt="市" returnField="description" valueField="description"/>
+                    <a:field name="region_code"/>
+                </a:fields>
+                <!-- 触发事件 -->
+                <a:events>
+                    <a:event name="update" handler="onProvincesUpdate"/>
+                </a:events>
+            </a:dataSet>
+        </a:dataSets>
+        <!-- form 放置两个comboBox二级联动-->
+        <a:form column="1" style="margin:10px;" title="ComboBox——省市二级联动">
+            <a:comboBox name="first_combo" bindTarget="main_ds"/>
+            <a:comboBox name="second_combo" bindTarget="main_ds"/>
+        </a:form>
+    </a:view>
+</a:screen>

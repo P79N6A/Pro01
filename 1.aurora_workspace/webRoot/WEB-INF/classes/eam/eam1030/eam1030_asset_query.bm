@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: StephenWang4010  
+    $Date: 2013-5-14 下午4:09:18  
+    $Revision: 1.0  
+    $Purpose: 资产查询
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[            
+            	select vv.*
+            	  from (select eah.asset_id,
+						       eah.asset_code,
+						       eah.entity_class_id,
+						       (select ec.description
+						          from eam_asset_entity_classes_vl ec
+						         where ec.CLASS_ID = eah.ENTITY_CLASS_ID) entity_class_desc,
+						       (select vl.currency_name
+						          from gld_currency_vl vl
+						         where vl.currency_code = eah.currency_code) currency_desc,
+						       (select vl.currency_name
+						          from gld_currency_vl vl,eam_asset_finance_info   fi
+						         where vl.currency_code = fi.currency_code
+						           and fi.asset_id = eah.ASSET_ID) fi_currency_desc,
+						       eah.category_id,
+						       (select eac.description 
+						          from eam_asset_categories_vl  eac 
+						         where eac.CATEGORY_ID = eah.CATEGORY_ID) category_desc,
+						       eah.asset_book_id,
+						       (select el.description
+						          from eam_locations_vl el
+						         where el.LOCATION_ID = eah.LOCATION_ID) location_name,
+						       (select el.location_type
+						          from eam_locations_vl el
+						         where el.LOCATION_ID = eah.LOCATION_ID) location_type,
+						       (select v.code_value_name
+						          from sys_code_values_v v, eam_locations_vl el
+						         where el.location_type = v.code_value
+						           and el.LOCATION_ID = eah.LOCATION_ID
+						           and v.code = 'EAM_LOCATION_TYPE') location_type_desc,
+						       eah.tag_number,
+						       eah.serial_number,
+						       eah.status,
+						       (select v.code_value_name
+						          from sys_code_values_v v
+						         where v.code_value = eah.status
+						           and v.code = 'EAM_ASSET_STATUS') status_desc,
+						       eah.location_id,
+						       --实物
+						       eah.value_man_company_id val_company_id,
+						       (select fc.company_short_name
+						          from fnd_companies_vl fc
+						         where fc.company_id = eah.value_man_company_id) val_company_name,
+						       eah.value_man_unit_id val_unit_id,
+						       (select eou.description
+						          from exp_org_unit_vl eou
+						         where eou.unit_id = eah.value_man_unit_id) val_unit_name,
+						       eah.value_man_position_id val_position_id,
+						       (select eop.description
+						          from exp_org_position_vl eop
+						         where eop.position_id = eah.value_man_position_id) val_position_name,
+						       eah.entity_company_id ety_company_id,
+						       (select fc.company_short_name
+						          from fnd_companies_vl fc
+						         where fc.company_id = eah.entity_company_id) ety_company_name,
+						       eah.entity_unit_id ety_unit_id,
+						       (select eou.description
+						          from exp_org_unit_vl eou
+						         where eou.unit_id = eah.entity_unit_id) ety_unit_name,
+						       eah.entity_position_id ety_position_id,
+						       (select eop.description
+						          from exp_org_position_vl eop
+						         where eop.position_id = eah.entity_position_id) ety_position_name,
+						       eah.responsibility_company_id ety_res_company_id,
+						       (select fc.company_short_name
+						          from fnd_companies_vl fc
+						         where fc.company_id = eah.responsibility_company_id) ety_res_company_name,
+						       eah.responsibility_center_id ety_res_center_id,
+						       (select fr.responsibility_center_name
+						          from fnd_responsibility_centers_vl fr
+						         where fr.responsibility_center_id = eah.responsibility_center_id) ety_res_center_name,
+						       --分类
+						       (select ec.value_man_company_id
+						          from eam_asset_entity_classes_vl ec
+						         where ec.CLASS_ID = eah.ENTITY_CLASS_ID) cls_val_company_id,
+						       (select fc.company_short_name
+						          from fnd_companies_vl fc, eam_asset_entity_classes_vl ec
+						         where fc.company_id = ec.value_man_company_id
+						           and ec.CLASS_ID = eah.ENTITY_CLASS_ID) cls_val_company_name,
+						       (select ec.value_man_unit_id
+						          from eam_asset_entity_classes_vl ec
+						         where ec.CLASS_ID = eah.ENTITY_CLASS_ID) cls_val_unit_id,
+						       (select eou.description
+						          from exp_org_unit_vl eou, eam_asset_entity_classes_vl ec
+						         where eou.unit_id = ec.value_man_unit_id
+						           and ec.CLASS_ID = eah.ENTITY_CLASS_ID) cls_val_unit_name,
+						       (select ec.value_man_position_id
+						          from eam_asset_entity_classes_vl ec
+						         where ec.CLASS_ID = eah.ENTITY_CLASS_ID) cls_val_position_id,
+						       (select eop.description
+						          from exp_org_position_vl eop, eam_asset_entity_classes_vl ec
+						         where eop.position_id = ec.value_man_position_id
+						           and ec.CLASS_ID = eah.ENTITY_CLASS_ID) cls_val_position_name,
+						       (select ec.entity_man_company_id
+						          from eam_asset_entity_classes_vl ec
+						         where ec.CLASS_ID = eah.ENTITY_CLASS_ID) cls_ety_company_id,
+						       (select fc.company_short_name
+						          from fnd_companies_vl fc, eam_asset_entity_classes_vl ec
+						         where fc.company_id = ec.entity_man_company_id
+						           and ec.CLASS_ID = eah.ENTITY_CLASS_ID) cls_ety_company_name,
+						       (select ec.entity_man_unit_id
+						          from eam_asset_entity_classes_vl ec
+						         where ec.CLASS_ID = eah.ENTITY_CLASS_ID) cls_ety_unit_id,
+						       (select eou.description
+						          from exp_org_unit_vl eou, eam_asset_entity_classes_vl ec
+						         where eou.unit_id = ec.entity_man_unit_id
+						           and ec.CLASS_ID = eah.ENTITY_CLASS_ID) cls_ety_unit_name,
+						       (select ec.entity_man_position_id
+						          from eam_asset_entity_classes_vl ec
+						         where ec.CLASS_ID = eah.ENTITY_CLASS_ID) cls_ety_position_id,
+						       (select eop.description
+						          from exp_org_position_vl eop, eam_asset_entity_classes_vl ec
+						         where eop.position_id = ec.entity_man_position_id
+						           and ec.CLASS_id = eah.ENTITY_CLASS_ID) cls_ety_position_name,
+						       --位置
+						       (select el.value_man_company_id
+						          from eam_locations_vl el
+						         where el.LOCATION_ID = eah.LOCATION_ID) lct_val_company_id,
+						       (select fc.company_short_name
+						          from fnd_companies_vl fc, eam_locations_vl el
+						         where fc.company_id = el.value_man_company_id
+						           and el.LOCATION_ID = eah.LOCATION_ID) lct_val_company_name,
+						       (select el.value_man_unit_id
+						          from eam_locations_vl el
+						         where el.LOCATION_ID = eah.LOCATION_ID) lct_val_unit_id,
+						       (select eou.description
+						          from exp_org_unit_vl eou, eam_locations_vl el
+						         where eou.unit_id = el.value_man_unit_id
+						           and el.LOCATION_ID = eah.LOCATION_ID) lct_val_unit_name,
+						       (select el.value_man_position_id
+						          from eam_locations_vl el
+						         where el.LOCATION_ID = eah.LOCATION_ID) lct_val_position_id,
+						       (select eop.description
+						          from exp_org_position_vl eop, eam_locations_vl el
+						         where eop.position_id = el.value_man_position_id
+						           and el.LOCATION_ID = eah.LOCATION_ID) lct_val_position_name,
+						       (select el.entity_man_company_id
+						          from eam_locations_vl el
+						         where el.LOCATION_ID = eah.LOCATION_ID) lct_ety_company_id,
+						       (select fc.company_short_name
+						          from fnd_companies_vl fc, eam_locations_vl el
+						         where fc.company_id = el.entity_man_company_id
+						           and el.LOCATION_ID = eah.LOCATION_ID) lct_ety_company_name,
+						       (select el.entity_man_unit_id
+						          from eam_locations_vl el
+						         where el.LOCATION_ID = eah.LOCATION_ID) lct_ety_unit_id,
+				               --出租资产
+				               (SELECT RH.RENT_UNIT_ID
+				                  FROM EAM_ASSET_RENT_HIS RH
+				                 WHERE RH.ASSET_ID = EAH.ASSET_ID
+				                   AND RH.BACK_FLAG = 'N') rent_unit_id,
+						       (select eou.description
+						          from exp_org_unit_vl eou, eam_locations_vl el
+						         where eou.unit_id = el.entity_man_unit_id
+						           and el.LOCATION_ID = eah.LOCATION_ID) lct_ety_unit_name,
+						       (select el.entity_man_position_id
+						          from eam_locations_vl el
+						         where el.LOCATION_ID = eah.LOCATION_ID) lct_ety_position_id,
+						       (select eop.description
+						          from exp_org_position_vl eop, eam_locations_vl el
+						         where eop.position_id = el.entity_man_position_id
+						           and el.LOCATION_ID = eah.LOCATION_ID) lct_ety_position_name,
+						       (select el.responsibility_company_id
+						          from eam_locations_vl el
+						         where el.LOCATION_ID = eah.LOCATION_ID) lct_res_company_id,
+						       (select fc.company_short_name
+						          from fnd_companies_vl fc, eam_locations_vl el
+						         where fc.company_id = el.responsibility_company_id
+						           and el.LOCATION_ID = eah.LOCATION_ID) lct_res_company_name,
+						       (select el.responsibility_center_id
+						          from eam_locations_vl el
+						         where el.LOCATION_ID = eah.LOCATION_ID) lct_res_center_id,
+						       (select fr.responsibility_center_name
+						          from fnd_responsibility_centers_vl fr, eam_locations_vl el
+						         where fr.responsibility_center_id = el.responsibility_center_id
+						           and el.LOCATION_ID = eah.LOCATION_ID) lct_res_center_name,
+						       eah.cost,
+						       eah.quantity,
+						       eah.asset_unit,
+						       (select fu.description_text
+						          from fnd_uom_codes_vl fu
+						         where fu.uom_code = eah.asset_unit) as asset_unit_desc,
+						       eah.date_of_purchase,
+						       to_char(eah.start_use_date, 'yyyy-mm-dd') start_use_date,
+						       eah.lock_flag,
+						       to_char(eah.gain_date, 'yyyy-mm-dd') AS gain_date,
+						       (select v.code_value_name
+						          from sys_code_values_v v
+						         where v.code = 'EAM_AST_SOURCE_TYPE'
+						           and v.code_value = eah.asset_source_type) asset_source_type_desc,
+						       eah.asset_source_type,
+						       (select substr(fd.description_text,0,10)
+						          from fnd_descriptions fd
+						         where fd.description_id = eah.description_id
+						           and fd.language = ${/session/@lang}) asset_name,
+						       eah.currency_code,
+						       (select fi.finance_class_id
+						          from eam_asset_finance_info   fi
+						         where fi.asset_id = eah.ASSET_ID) finance_class_id,
+						       (select ef.description 
+						          from eam_asset_fin_classes_vl ef ,eam_asset_finance_info   fi
+						         where ef.CLASS_ID = fi.finance_class_id
+						           and fi.asset_id = eah.asset_id) finance_class_name,
+						       (select fi.original_cost
+						          from eam_asset_finance_info   fi
+						         where fi.asset_id = eah.ASSET_ID) original_cost,
+						       (select fi.current_cost
+						          from eam_asset_finance_info   fi
+						         where fi.asset_id = eah.ASSET_ID) current_cost,
+						       eah.created_by user_id,
+						       (select e.employee_id
+						          from exp_employees e, sys_user su
+						         where e.employee_id = su.employee_id
+						           and su.user_id = eah.created_by) employee_id,
+						       (select e.name
+						          from exp_employees e, sys_user su
+						         where e.employee_id = su.employee_id
+						           and su.user_id = eah.created_by) employee_name,
+						       (select fi.depreciate_flag
+						          from eam_asset_finance_info   fi
+						         where fi.asset_id = eah.ASSET_ID) depreciate_flag,
+						       (select fi.accumulated_dep_amt
+						          from eam_asset_finance_info   fi
+						         where fi.asset_id = eah.ASSET_ID) accumulated_dep_amt,
+						       (select fi.impairment_loss_amt
+						          from eam_asset_finance_info   fi
+						         where fi.asset_id = eah.ASSET_ID) impairment_loss_amt,
+						       (select fi.currency_code
+						          from eam_asset_finance_info   fi
+						         where fi.asset_id = eah.ASSET_ID)  fi_currency_code,
+						       (select fi.life_in_month
+						          from eam_asset_finance_info   fi
+						         where fi.asset_id = eah.ASSET_ID) life_in_month,
+						       (select fi.remaining_life_in_month
+						          from eam_asset_finance_info   fi
+						         where fi.asset_id = eah.ASSET_ID) remaining_life_in_month,
+						       (select fi.life_in_month - fi.remaining_life_in_month
+						          from eam_asset_finance_info   fi
+						         where fi.asset_id = eah.ASSET_ID ) used_month,
+						       (select fi.current_cost - fi.accumulated_dep_amt - fi.impairment_loss_amt
+						          from eam_asset_finance_info   fi
+						         where fi.asset_id = eah.ASSET_ID) current_value,
+						         eah.address,
+						         eah.last_update_date
+						  from eam_asset_headers     eah) vv
+								         #WHERE_CLAUSE#
+								         order by vv.last_update_date desc
+				         ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="asset_id"/>
+        <bm:field name="asset_book_id"/>
+        <bm:field name="asset_code" prompt="EAM_ASSET_HEADERS.ASSET_CODE"/>
+        <bm:field name="asset_name" prompt="EAM_ASSET_HEADERS.DESCRIPTION"/>
+        <bm:field name="user_id"/>
+        <bm:field name="employee_id"/>
+        <bm:field name="employee_name" prompt="AST_REQUISITION_ORIGINATOR"/>
+        <bm:field name="asset_source_type"/>
+        <bm:field name="asset_source_type_desc" prompt="EAM_ASSET_HEADERS.ASSET_SOURCE_TYPE"/>
+        <bm:field name="category_id"/>
+        <bm:field name="category_desc" prompt="EAM_ASSET_HEADERS.CATEGORY_ID"/>
+        <bm:field name="entity_class_id"/>
+        <bm:field name="entity_class_desc" prompt="EAM_ASSET_HEADERS.ENTITY_CLASS_ID"/>
+        <bm:field name="lock_flag" prompt="EAM_ASSET_HEADERS.LOCK_FLAG"/>
+        <bm:field name="gain_date" prompt="EAM_ASSET_HEADERS.GAIN_DATE"/>
+        <bm:field name="currency_code"/>
+        <bm:field name="currency_desc" prompt="GLD_EXCHANGE_RATES.FROM_CURRENCY"/>
+        <bm:field name="quantity" prompt="BGT_JOURNAL_LINES.QUANTITY"/>
+        <bm:field name="asset_unit"/>
+        <bm:field name="asset_unit_desc" prompt="AST_ASSET_HEADERS.ASSET_UNIT"/>
+        <bm:field name="cost" prompt="EAM_ASSET_HEADERS.COST"/>
+        <bm:field name="status"/>
+        <bm:field name="status_desc" prompt="AST_ASSET_HEADERS_VL.ASSET_STATUS"/>
+        <bm:field name="finance_class_id"/>
+        <bm:field name="finance_class_name" prompt="EAM_ASSET_HEADERS.FIN_CLASS_ID"/>
+        <bm:field name="fi_currency_code"/>
+        <bm:field name="fi_currency_desc" prompt="EAM_ASSET_HEADER.FIN_CURRENCY_CODE"/>
+        <bm:field name="original_cost" prompt="EAM_ASSET_FINANCE_INFO.ORIGINAL_COST"/>
+        <bm:field name="current_cost" prompt="EAM_ASSET_FINANCE_INFO.CURRENT_COST"/>
+        <bm:field name="start_use_date" prompt="EAM_ASSET_HEADERS.START_USE_DATE"/>
+        <bm:field name="depreciate_flag" prompt="AST_ASSET.CHECK_DEPRECIATION_FLAG"/>
+        <bm:field name="accumulated_dep_amt" prompt="EAM_ASSET_FINANCE_INFO.ACCUMULATED_DEP_AMT"/>
+        <bm:field name="impairment_loss_amt" prompt="EAM_ASSET_FINANCE_INFO.IMPAIRMENT_LOSS_AMT"/>
+        <bm:field name="life_in_month" prompt="EAM_ASSET_FINANCE_INFO.LIFE_IN_MONTH"/>
+        <bm:field name="remaining_life_in_month" prompt="EAM_ASSET_FINANCE_INFO.REMAINING_LIFE_IN_MONTH"/>
+        <bm:field name="used_month"/>
+        <bm:field name="current_value" prompt="EAM_REQUISITION_LINES.CURRENT_VALUE"/>
+        <bm:field name="val_company_name" prompt="EAM_ASSET_HEADERS.VAL_COMPANY_NAME"/>
+        <bm:field name="val_unit_name" prompt="EAM_ASSET_HEADERS.VAL_UNIT_NAME"/>
+        <bm:field name="val_position_name" prompt="EAM_ASSET_HEADERS.VAL_POSITION_NAME"/>
+        <bm:field name="ety_company_name" prompt="EAM_ASSET_HEADERS.ETY_COMPANY_NAME"/>
+        <bm:field name="ety_unit_name" prompt="EAM_ASSET_HEADERS.ETY_UNIT_NAME"/>
+        <bm:field name="ety_position_name" prompt="EAM_ASSET_HEADERS.ETY_POSITION_NAME"/>
+        <bm:field name="ety_res_company_name" prompt="EAM_ASSET_HEADERS.ETY_RES_COMPANY_NAME"/>
+        <bm:field name="ety_res_center_name" prompt="EAM_ASSET_HEADERS.ETY_RES_CENTER_NAME"/>
+        <bm:field name="cls_val_company_name" prompt="EAM_ASSET_HEADERS.CLS_VAL_COMPANY_NAME"/>
+        <bm:field name="cls_val_unit_name" prompt="EAM_ASSET_HEADERS.CLS_VAL_UNIT_NAME"/>
+        <bm:field name="cls_val_position_name" prompt="EAM_ASSET_HEADERS.CLS_VAL_POSITION_NAME"/>
+        <bm:field name="cls_ety_company_name" prompt="EAM_ASSET_HEADERS.CLS_ETY_COMPANY_NAME"/>
+        <bm:field name="cls_ety_unit_name" prompt="EAM_ASSET_HEADERS.CLS_ETY_UNIT_NAME"/>
+        <bm:field name="cls_ety_position_name" prompt="EAM_ASSET_HEADERS.CLS_ETY_POSITION_NAME"/>
+        <bm:field name="lct_val_company_name" prompt="EAM_ASSET_HEADERS.LCT_VAL_COMPANY_NAME"/>
+        <bm:field name="lct_val_unit_name" prompt="EAM_ASSET_HEADERS.LCT_VAL_UNIT_NAME"/>
+        <bm:field name="lct_val_position_name" prompt="EAM_ASSET_HEADERS.LCT_VAL_POSITION_NAME"/>
+        <bm:field name="lct_ety_company_name" prompt="EAM_ASSET_HEADERS.LCT_ETY_COMPANY_NAME"/>
+        <bm:field name="lct_ety_unit_name" prompt="EAM_ASSET_HEADERS.LCT_ETY_UNIT_NAME"/>
+        <bm:field name="lct_ety_position_name" prompt="EAM_ASSET_HEADERS.LCT_ETY_POSITION_NAME"/>
+        <bm:field name="lct_res_company_name" prompt="EAM_ASSET_HEADERS.LCT_RES_COMPANY_NAME"/>
+        <bm:field name="lct_res_center_name" prompt="EAM_ASSET_HEADERS.LCT_RES_CENTER_NAME"/>
+        <bm:field name="val_company_id"/>
+        <bm:field name="val_unit_id"/>
+        <bm:field name="val_position_id"/>
+        <bm:field name="ety_company_id"/>
+        <bm:field name="ety_unit_id"/>
+        <bm:field name="ety_position_id"/>
+        <bm:field name="ety_res_company_id"/>
+        <bm:field name="ety_res_center_id"/>
+        <bm:field name="cls_val_company_id"/>
+        <bm:field name="cls_val_unit_id"/>
+        <bm:field name="cls_val_position_id"/>
+        <bm:field name="cls_ety_company_id"/>
+        <bm:field name="cls_ety_unit_id"/>
+        <bm:field name="cls_ety_position_id"/>
+        <bm:field name="lct_val_company_id"/>
+        <bm:field name="lct_val_unit_id"/>
+        <bm:field name="lct_val_position_id"/>
+        <bm:field name="lct_ety_company_id"/>
+        <bm:field name="lct_ety_unit_id"/>
+        <bm:field name="lct_ety_position_id"/>
+        <bm:field name="lct_res_company_id"/>
+        <bm:field name="lct_res_center_id"/>
+        <bm:field name="location_id"/>
+        <bm:field name="location_name" prompt="EXP_REQ_EXPENSE_POLICIES.PLACE_ID"/>
+        <bm:field name="location_type_desc" prompt="EXP_REQ_EXPENSE_POLICIES.PLACE_TYPE_ID"/>
+        <bm:field name="tag_number" prompt="EAM_ASSET_HEADERS.TAG_NUMBER"/>
+        <bm:field name="serial_number" prompt="EAM_ASSET_HEADERS.SERIAL_NUMBER"/>
+        <bm:field name="location_type"/>
+        <bm:field name="address" prompt="EAM_ASSET_HEADERS.ADDRESS"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field field="val_company_id" queryOperator="="/>
+        <bm:query-field field="val_unit_id" queryOperator="="/>
+        <bm:query-field field="val_position_id" queryOperator="="/>
+        <bm:query-field field="ety_company_id" queryOperator="="/>
+        <bm:query-field field="ety_unit_id" queryOperator="="/>
+        <bm:query-field field="ety_position_id" queryOperator="="/>
+        <bm:query-field field="ety_res_company_id" queryOperator="="/>
+        <bm:query-field field="ety_res_center_id" queryOperator="="/>
+        <bm:query-field field="cls_val_company_id" queryOperator="="/>
+        <bm:query-field field="cls_val_unit_id" queryOperator="="/>
+        <bm:query-field field="cls_val_position_id" queryOperator="="/>
+        <bm:query-field field="cls_ety_company_id" queryOperator="="/>
+        <bm:query-field field="cls_ety_unit_id" queryOperator="="/>
+        <bm:query-field field="cls_ety_position_id" queryOperator="="/>
+        <bm:query-field field="lct_val_company_id" queryOperator="="/>
+        <bm:query-field field="lct_val_unit_id" queryOperator="="/>
+        <bm:query-field field="lct_val_position_id" queryOperator="="/>
+        <bm:query-field field="lct_ety_company_id" queryOperator="="/>
+        <bm:query-field field="lct_ety_unit_id" queryOperator="="/>
+        <bm:query-field field="lct_ety_position_id" queryOperator="="/>
+        <bm:query-field field="lct_res_company_id" queryOperator="="/>
+        <bm:query-field field="lct_res_center_id" queryOperator="="/>
+        <bm:query-field field="asset_book_id" queryOperator="="/>
+        <bm:query-field field="asset_code" queryOperator="like"/>
+        <bm:query-field field="asset_name" queryOperator="like"/>
+        <bm:query-field field="category_id" queryOperator="="/>
+        <bm:query-field field="finance_class_id" queryOperator="="/>
+        <bm:query-field field="asset_source_type" queryOperator="="/>
+        <bm:query-field field="status" queryOperator="="/>
+        <bm:query-field field="tag_number" queryOperator="="/>
+        <bm:query-field field="serial_number" queryOperator="="/>
+        <bm:query-field field="entity_class_id" queryOperator="="/>
+        <bm:query-field field="location_id" queryOperator="="/>
+        <bm:query-field field="location_type" queryOperator="="/>
+        <bm:query-field field="employee_id" queryOperator="="/>
+        <bm:query-field name="req_date_from" queryExpression="vv.start_use_date &gt;= ${@req_date_from}"/>
+        <bm:query-field name="req_date_to" queryExpression="vv.start_use_date &lt;= ${@req_date_to}"/>
+    </bm:query-fields>
+    <bm:data-filters>
+        <bm:data-filter expression="EXISTS  (SELECT 1 FROM eam_employee_assigns_v eav WHERE eav.user_id = ${/session/@user_id} AND eav.enabled_flag = &apos;Y&apos; AND exists (select 1 from (SELECT fcs.company_id FROM fnd_companies fcs START WITH fcs.company_id = ${/session/@company_id} CONNECT BY prior fcs.company_id = fcs.parent_company_id) v where eav.company_id = v.company_id) AND ( vv.lct_ety_unit_id = eav.unit_id OR vv.cls_ety_unit_id = eav.unit_id OR vv.rent_unit_id = eav.unit_id))"/>
+    </bm:data-filters>
+</bm:model>

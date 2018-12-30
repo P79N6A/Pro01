@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure>
+        <a:model-query model="expm.get_record" rootPath="record"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="vat_invoice_cert_reject_comment_link" model="vat.vat1040.vat_invoice_cert" modelaction="execute"/>
+        <script><![CDATA[
+            function doSave() {
+                if ($('report_reject_ds').validate()) {
+                    var exp_report_header_id = $('vat_invoice_result_ds').getAt(0).get('exp_report_header_id');
+                    var comment = $('report_reject_ds').getAt(0).get('comment');
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: $('vat_invoice_cert_reject_comment_link').getUrl(),
+                        para: {
+                            exp_report_header_id: exp_report_header_id,
+                            auth_status: 'F',
+                            comment: comment
+                        },
+                        success: function() {
+                            doReturn();
+                        },
+                        scope: this
+                    });
+                    doReturn();
+                }
+            }
+            
+            function doReturn() {
+                $('vat_invoice_cert_reject_window').close();
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="report_reject_ds" autoCreate="true">
+                <a:fields>
+                    <a:field name="name" defaultValue="${/model/record/record/@name}" readOnly="true"/>
+                    <a:field name="comment" required="true"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:form title="VAT.REJECT_REASON">
+                <a:textField name="name" bindTarget="report_reject_ds" prompt="EXP_REPORT_REJECT.NAME"/>
+                <a:textArea name="comment" bindTarget="report_reject_ds" prompt="EXP_REPORT_REJECT.P_DESCRIPTION" width="485"/>
+            </a:form>
+            <a:hBox>
+                <a:button click="doSave" text="PROMPT.OK"/>
+                <a:button click="doReturn" text="PROMPT.RETURN"/>
+            </a:hBox>
+        </a:screenBody>
+    </a:view>
+</a:screen>

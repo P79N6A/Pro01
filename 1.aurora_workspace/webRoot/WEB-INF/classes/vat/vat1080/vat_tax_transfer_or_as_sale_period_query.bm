@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        v.period_name,
+                        v.period_year,
+                        v.period_num,
+                        v.internal_period_num,
+                        v.period_set_code,
+                        (SELECT
+                            gpsv.period_set_name
+                        FROM
+                            gld_period_sets_vl gpsv
+                        WHERE
+                            gpsv.period_set_code = v.period_set_code
+                        ) period_set_name
+                    FROM
+                        gld_period_status_v v
+                    WHERE
+                        v.adjustment_flag = 'N' AND
+                        v.period_set_code =
+                        (SELECT
+                            b.period_set_code
+                        FROM
+                            gld_set_of_books b
+                        WHERE
+                            b.set_of_books_id =
+                            (SELECT
+                                f.set_of_books_id
+                            FROM
+                                fnd_companies f
+                            WHERE
+                                f.company_id = NVL(${/parameter/@company_id},${/session/@company_id})
+                            )
+                        ) AND
+                        v.company_id = NVL(${/parameter/@company_id},${/session/@company_id})
+                    )v #WHERE_CLAUSE#
+                ORDER BY
+                    v.internal_period_num DESC
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="period_name" forDisplay="true" forQuery="true" prompt="EXP_REQUISITION_LINES.PERIOD_NAME"/>
+        <bm:field name="period_year" forDisplay="true" forQuery="true" prompt="BGT_PERIODS.BGT_PERIOD_YEAR"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field name="period_name" queryExpression="upper(v.period_name) like upper(&apos;%&apos;||${@period_name}||&apos;%&apos;)"/>
+        <bm:query-field name="period_year" queryExpression="upper(v.period_year) like upper(&apos;%&apos;||${@period_year}||&apos;%&apos;)"/>
+    </bm:query-fields>
+</bm:model>

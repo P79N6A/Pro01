@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT *
+                FROM (select bv.event_name,
+       eda.description,
+       bv.event_desc,
+       bv.param1,
+       bv.param2,
+       bv.param3,
+       bv.param4,
+       bv.param5,
+       bv.param6,
+       bv.param7,
+       bv.param8,
+       eda.line_number,
+       eda.transportation,
+       (select scvv.code_value_name
+          from sys_code_values_v scvv
+         where scvv.code = 'TRANSPORTATION'
+           and scvv.code_value = eda.transportation) transportation_display,
+       (select scvv.code_value_name
+          from sys_code_values_v scvv
+         where scvv.code = 'TRANSPORTATION'
+           and scvv.code_value = bv.param8) param8_desc,
+       eda.amount,
+       decode(bv.source_from,
+              'EXP_REQUISITION',
+              (select ev.description
+                 from exp_requisition_lines el, exp_req_items_vl ev
+                where el.exp_req_item_id = ev.req_item_id
+                  and el.exp_requisition_line_id = bv.param1),
+              'EXP_REPORT',
+              (select rv.description
+                 from exp_report_lines rl, exp_expense_items_vl rv
+                where rl.expense_item_id = rv.expense_item_id
+                  and rl.exp_report_line_id = bv.param1),
+              'EXP_TRAVEL_PLAN',
+              (select tpv.description
+                 from exp_travel_plan_lines tpl, exp_req_items_vl tpv
+                where tpl.req_item_id = tpv.req_item_id
+                  and tpl.travel_plan_line_id = bv.param1)) as item_desc
+  from (select *
+          from (select a.record_id,
+                       a.event_name,
+                       b.event_desc,
+                       a.event_type,
+                       a.event_param as doc_header_id,
+                       to_number(a.param1) as doc_line_id,
+                       a.event_source as source_from,
+                       a.param1,
+                       a.param2,
+                       a.param3,
+                       a.param4,
+                       a.param5,
+                       a.param6,
+                       a.param7,
+                       a.param8,
+                       a.created_by,
+                       a.creation_date,
+                       a.last_updated_by,
+                       a.last_update_date
+                  from evt_event_record a, evt_event b
+                 where a.event_source in
+                       ('EXP_REQUISITION', 'EXP_REPORT', 'EXP_TRAVEL_PLAN')
+                   and a.event_name not in
+                       ('EXP_REPORT_POST_AUDIT',
+                        'EXP_REQUISITION_SUBMIT',
+                        'EXP_REPORT_SUBMIT')
+                   and a.event_name = b.event_name(+)) v
+         where v.record_id in
+               (select max(r.record_id)
+                  from evt_event_record r
+                 where r.event_param = ${/parameter/@doc_header_id}
+                   and r.event_source = ${/parameter/@document_type}
+                 group by r.event_param, r.param1, r.event_source)) bv,
+       exp_document_all_v eda
+ where bv.doc_header_id = eda.header_id
+   and bv.source_from = eda.source_from
+   and bv.doc_line_id = eda.doc_line_id
+   and bv.param7 is not null) #WHERE_CLAUSE#
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="event_name" physicalname="event_name"/>
+        <bm:field name="event_desc" physicalname="event_desc"/>
+        <bm:field name="description" physicalname="description"/>
+        <bm:field name="param1" physicalname="param1"/>
+        <bm:field name="param2" physicalname="param2"/>
+        <bm:field name="param3" physicalname="param3"/>
+        <bm:field name="param4" physicalname="param4"/>
+        <bm:field name="param5" physicalname="param5"/>
+        <bm:field name="param6" physicalname="param6"/>
+        <bm:field name="param7" physicalname="param7"/>
+        <bm:field name="param8" physicalname="param8"/>
+        <bm:field name="line_number" physicalname="line_number"/>
+        <bm:field name="transportation" physicalname="transportation"/>
+        <bm:field name="amount" physicalname="amount"/>
+        <bm:field name="item_desc" physicalname="item_desc"/>
+        <bm:field name="transportation_display" physicalname="transportation_display"/>
+        <bm:field name="param8_desc" physicalname="param8_desc"/>
+    </bm:fields>
+</bm:model>

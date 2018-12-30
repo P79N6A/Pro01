@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="execute">
+            <bm:parameters>
+                <bm:parameter name="flag" output="true" outputPath="@flag"/>
+                <bm:parameter name="message" output="true" outputPath="@message"/>
+            </bm:parameters>
+            <bm:update-sql><![CDATA[
+            	begin
+					gld_period_pkg.check_vat_info(p_company_id        =>${/session/@company_id},
+                                   				  p_period_name       =>${@period_name},
+                                   				  p_flag              =>${@flag},
+                                   				  p_message           =>${@message},
+                                   				  p_user_id           =>${/session/@user_id});
+                end;]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

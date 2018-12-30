@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+
+	SELECT *
+    FROM (select el.employee_levels_id,
+    			 el.description queryDescription,
+              	 el.description,
+              	 el.enabled_flag,
+              	  el.level_series_id,
+             
+              	  el.employee_levels_code,
+              	 el.created_by,
+              	 (select el.employee_levels_code || '_' || el.description
+      			 from EXP_LEVEL_SERIES_VL ls
+    			 where el.level_series_id = ls.level_series_id) LEVEL_SERIES
+          from EXP_EMPLOYEE_LEVELS_VL el
+          ) tt #WHERE_CLAUSE# #ORDER_BY_CLAUSE#
+]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="employee_levels_code" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="EMPLOYEE_LEVELS_CODE" prompt="雇员级别代码"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="DESCRIPTION" prompt="描述"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field name="employee_levels_code" queryExpression="tt。employee_levels_code = ${@employee_levels_code}"/>
+        <bm:query-field name="description" queryExpression="tt.description = ${@description}"/>
+    </bm:query-fields>
+</bm:model>

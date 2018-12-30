@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dc:data-source-config xmlns:dc="aurora.datasource" useTransactionManager="false">
+    <dc:database-connections>
+    	<dc:database-connection driverClass="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@mas218:1521:MAS" userName="hec3dev" password="hec3dev" pool="true" initSql="BEGIN sys_nls_language_pkg.set_nls_language(p_nls_language => ${/session/@lang});END;">
+        <!--<dc:database-connection driverClass="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@172.31.212.18:1521:mas" userName="hec3dev" passwordEncryptorClass="aurora.security.crypto.encrypt.Base64Encryptor" password="aGVjM2Rldg==" pool="true" initSql="BEGIN sys_nls_language_pkg.set_nls_language(p_nls_language => ${/session/@lang});END;">-->
+		<!--<dc:database-connection driverClass="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@172.20.0.77:1522:hec3pt" userName="hec3pt" password="hec3pt" pool="true" initSql="BEGIN sys_nls_language_pkg.set_nls_language(p_nls_language => ${/session/@lang});END;">-->
+			<dc:properties>
+				minPoolSize=20
+				maxPoolSize=20
+				testConnectionOnCheckin=true
+				checkoutTimeout=30000
+				idleConnectionTestPeriod=60
+				maxIdleTime=120
+				preferredTestQuery=select 1 from dual
+			</dc:properties>        
+        </dc:database-connection>
+
+    </dc:database-connections>  
+</dc:data-source-config>

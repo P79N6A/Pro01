@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <script>
+        var curPage = 0; //当前页码
+        var total=getData(0);//总条数
+        var pageSize=5;//每页数
+        var totalPage=total/pageSize; //总页数
+
+      function  click1() {
+          curPage=0;
+          getData(curPage);
+        }
+      function  click2() {
+        if(curPage>=1){curPage=curPage-1;getData(curPage);}
+      }
+      function  click3() {
+          if(curPage<total/pageSize-1){//一定别忘了减1！！！！因为是从第0页开始的
+              curPage=curPage+1;
+              getData(curPage);
+          }
+      }
+      function  click4() {
+         curPage=Math.floor(total/pageSize);
+         getData(curPage)
+      }
+        // $("#pagecount").on('click','span a',function(){
+        //     var rel = $(this).attr("rel");
+        //     if(rel){
+        //         getData(rel);
+        //     }
+        // });
+
+        // var datas={
+        //     "pageNum":page-1,"pageSize":5
+        // };
+        var aaa=0;
+        function getData(page){
+            var   ttt;
+            $.ajax({
+                url:'/UserController/myPageTest?pageNum='+page+'&pageSize='+5,
+                type:'GET',
+                data: {},
+                async: false,//！！！！！！！ 同步这样才能执行完再传出去
+                beforeSend:function(){
+                },
+                success:function(json){
+                    console.log("结果是"+json.list);
+                    for(var i=0;i<json.list.length;i++){
+                        console.log(json.list[i]);
+                        // $('#reply_'+mid).prepend("<dl style='background-color:pink;'><dt>"+content+"</dt><dd>回复者："+name+"</dd><dd>回复时间："+time+"</dd></dl>");
+                    }
+                    ttt = json.total.valueOf(); //总记录数
+                    console.log(total);
+//怎样传出去
+                    // pageSize = json.pageSize; //每页显示条数
+                    pageSize=5;
+                    curPage = page; //当前页
+                    totalPage = json.totalPage; //总页数
+                    var ul=$('.theme_body').find('*').remove();
+                    string='';
+                    $.each(json.list,function(index,array){ //遍历json数据列
+                        string += "<tr>" + "<td>" +
+                            "<input type='checkbox' value='check'></td>" +
+                            "<td contentEditable='true'>"+array['userId']+"</td>" +
+                            "<td>"+array['userName']+"</td>" +
+                            "<td>"+array['password']+"" + "</td>" +
+                            "<td>"+array['sex']+"" + "</td>" +
+                            "<td>"+array['age']+"" + "</td>" +
+                            "<td>"+array['phoneNumber']+"" + "</td>" +
+                            "<td>"+array['creationDate']+"" + "</td>" +
+                            "<td>"+array['lastUpdateDate']+"" + "</td>" +
+                            "<td>"+array['comments']+"" + "</td>" +
+
+                            "<td><select id='permission' name='type'>" +
+                            "<option value ='present'>"+array['permission']+
+                            "</option>" +
+                            "<option value ='none'>无权限</option>" +
+                            "<option value ='all'>管理员</option>" +
+                            "<option value ='order'>订单管理</option>" +
+                            "<option value ='customer'>客户管理</option>" +
+                            "<option value ='supplier'>供应商管理</option>" +
+                            "<option value ='company'>车辆管理</option>" +
+                            "<option value ='warehouse'>仓库管理</option>" +
+                            "</select></td></tr>";
+
+                    });
+                    $('.theme_body').append(string);
+
+                },
+                complete:function(){ //生成分页条
+                    // getPageBar();
+                },
+                error:function(){
+                    alert("数据加载失败");
+                }
+            });
+            return ttt;
+        }
+
+        //获取分页条
+        // function getPageBar(){
+        //     $("#pagecount").find('*').remove();
+        //     //页码大于最大页数
+        //     if(curPage>totalPage) curPage=totalPage;
+        //     //页码小于1
+        //     if(curPage<1) curPage=1;
+        //     pageStr = "<span>共"+total+"条</span><span>"+curPage+"/"+totalPage+"</span>";
+        //
+        //     //如果是第一页
+        //     if(curPage==1){
+        //         pageStr += "<span>首页</span><span>上一页</span>";
+        //     }else{
+        //         pageStr += "<span><a href='javascript:void(0)' rel='1'>首页</a></span><span><a href='javascript:void(0)' rel='"+(curPage-1)+"'>上一页</a></span>";
+        //     }
+        //
+        //     //如果是最后页
+        //     if(curPage>=totalPage){
+        //         pageStr += "<span>下一页</span><span>尾页</span>";
+        //     }else{
+        //         pageStr += "<span><a href='javascript:void(0)' rel='"+(parseInt(curPage)+1)+"'>下一页</a></span><span><a href='javascript:void(0)' rel='"+totalPage+"'>尾页</a></span>";
+        //     }
+        //     $("#pagecount").append(pageStr);
+        // }
+    </script>
+</head>
+<body>
+
+<!--<div><ul class="theme_body"></ul></div>-->
+<div id="pagecount"class="pagecount"></div>
+<button id="first" onclick="click1()">首页</button>
+<button id="pre" onclick="click2()">上一页</button>
+<button id="next" onclick="click3()">下一页</button>
+<button id="end" onclick="click4()">末页</button>
+
+
+<table>
+<thead>
+<tr align="center">
+<th width="50" class="td2">选择</th>
+<th width="50" class="td2">id</th>
+<th width="50" class="td2">用户名</th>
+<th width="50" class="td2">密码</th>
+<th width="50" height="33" class="td2">性别</th>
+<th width="50" class="td2">年龄</th>
+<th width="50" class="td2">电话</th>
+<th width="100" class="td2">创建日期</th>
+<th width="100" class="td2">更新日期</th>
+<th width="50" class="td2">描述</th>
+</tr>
+</thead>
+<tbody class="theme_body" align="center">
+
+</tbody>
+</table>
+</body>
+</html>

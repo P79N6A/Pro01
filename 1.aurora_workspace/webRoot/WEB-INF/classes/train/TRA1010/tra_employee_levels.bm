@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+
+	SELECT *
+    FROM (select el.employee_levels_id,
+    			 el.description queryDescription,
+              	 el.description,
+              	 el.enabled_flag,
+              	  el.level_series_id,
+              	  el.employee_levels_code,
+              	 el.created_by,
+              	 (select el.employee_levels_code || '_' || el.description
+      			 from EXP_LEVEL_SERIES_VL ls
+    			 where el.level_series_id = ls.level_series_id) LEVEL_SERIES
+          from EXP_EMPLOYEE_LEVELS_VL el
+          ) tt #WHERE_CLAUSE# #ORDER_BY_CLAUSE#
+]]></bm:query-sql>
+        </bm:operation>
+        <bm:operation name="insert">
+            <bm:update-sql><![CDATA[
+             begin
+  exp_employee_levels_pkg.insert_exp_employee_levels(p_employee_levels_code  =>${@employee_levels_code},
+                                       p_description          =>${@description},
+                                       p_enabled_flag    => ${@enabled_flag},
+                                       p_created_by           =>${/session/@user_id},
+                                       p_level_series_id      =>${@level_series_id},
+                                       p_employee_levels_id   =>${@employee_levels_id});
+end;
+        
+        ]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="update">
+            <bm:update-sql><![CDATA[
+             begin
+  exp_employee_levels_pkg.update_exp_employee_levels(p_employee_levels_id =>${@employee_levels_id},
+                                       p_description         =>${@description},
+                                       p_enabled_flag        =>${@enabled_flag},
+                                        p_created_by          =>${/session/@company_id}, 
+                                        p_language_code       =>${@language_code}, 
+                                       p_level_series_id     =>${@level_series_id});
+        end;
+        ]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="delete">
+            <bm:update-sql><![CDATA[
+             begin
+  exp_employee_levels_pkg.delete_exp_employee_levels(p_employee_levels_id =>${@employee_levels_id});
+        end;
+        ]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <!-- <bm:field name="region_code" databaseType="VARCHAR2"  datatype="java.lang.String"  physicalName="REGION_CODE" required="true"/> -->
+        <!-- <bm:field name="employee_levels_code" databaseType="VARCHAR2"    datatype="java.lang.String"  physicalName="employee_levels_code"/>
+			
+			<bm:field name="description" databaseType="VARCHAR2"  datatype="java.lang.String"  physicalName="DESCRIPTION"/>
+			
+			<bm:field name="query_employee_levels_code" databaseType="VARCHAR2" forDisplay="true"  forQuery="true"    datatype="java.lang.String"  physicalName="employee_levels_code"/>
+			<bm:field name="queryDescription" databaseType="VARCHAR2" forDisplay="true"  forQuery="true" datatype="java.lang.String"  physicalName="DESCRIPTION"/> --><![CDATA[
+			
+			
+		]]></bm:fields>
+    <bm:query-fields>
+        <bm:query-field name="level_series" queryExpression="tt。level_series like ${@level_series}"/>
+        <bm:query-field name="description" queryExpression="tt.description like ${@description}"/>
+        <bm:query-field name="employee_levels_code" queryExpression="tt.employee_levels_code like ${@employee_levels_code}"/>
+    </bm:query-fields>
+</bm:model>

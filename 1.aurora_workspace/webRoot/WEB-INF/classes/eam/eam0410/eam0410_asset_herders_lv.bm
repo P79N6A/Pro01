@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893
+    $Date: 2013-3-11 上午10:25:34  
+    $Revision: 1.0  
+    $Purpose: 资产lov
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[select * from (select h.asset_id,
+       h.asset_code,
+       f.description_text,
+       efi.current_cost,
+       efi.accumulated_dep_amt,
+       efi.impairment_loss_amt
+  from eam_asset_headers h, fnd_descriptions f, eam_asset_finance_info efi
+ where h.description_id = f.description_id
+   and f.language = ${/session/@lang}
+   and efi.asset_id = h.asset_id
+   and h.lock_flag = 'N'
+   and h.status in ('INSTORE','USING','RENTED','LENDED')
+   and exists
+ (select 1
+          from eam_requisition_types t, eam_req_type_ref_asset_types rt
+         where rt.ast_requisition_type_id = t.ast_requisition_type_id
+           and t.ast_requisition_type_id = ${@ast_requisition_type_id}
+           and rt.entity_class_id = h.entity_class_id))v
+           #WHERE_CLAUSE#
+   ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="asset_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="ASSET_ID"/>
+        <bm:field name="asset_code" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="ASSET_CODE" prompt="EAM_ASSET_HEADERS.ASSET_CODE"/>
+        <bm:field name="description_text" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="DESCRIPTION_TEXT" prompt="EAM_ASSET_HEADERS.DESCRIPTION"/>
+        <bm:field name="current_cost" databaseType="NUMBER" datatype="java.lang.Long" physicalName="CURRENT_COST"/>
+        <bm:field name="accumulated_dep_amt" databaseType="NUMBER" datatype="java.lang.Long" physicalName="ACCUMULATED_DEP_AMT"/>
+        <bm:field name="impairment_loss_amt" databaseType="NUMBER" datatype="java.lang.Long" physicalName="IMPAIRMENT_LOSS_AMT"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field name="asset_code" datatype="java.lang.String" queryexpression="upper(v.asset_code) like &apos;%&apos;||upper(${@asset_code})||&apos;%&apos;"/>
+        <bm:query-field name="description_text" datatype="java.lang.String" queryexpression="upper(v.description_text) like &apos;%&apos;||upper(${@description_text})||&apos;%&apos;"/>
+    </bm:query-fields>
+</bm:model>

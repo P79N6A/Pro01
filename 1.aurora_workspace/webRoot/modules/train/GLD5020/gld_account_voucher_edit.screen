@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	$Author: zedong huang
+    $Date: 2018-12-17 am
+    $Revision: 1.0  
+    $Purpose: train-firstdemo
+-->
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <a:init-procedure>
+        <a:model-query autoCount="false" fetchAll="true" model="expm.exp_report_employeelist" rootPath="employee_list"/>
+        <a:model-query autoCount="false" defaultwhereclause="enabled_flag=&apos;Y&apos;" fetchAll="true" model="gld.gld_currency" rootPath="currency_list"/>
+        <a:model-query autoCount="false" defaultWhereClause=" user_id=${/session/@user_id}" fetchAll="true" model="sys.sys_user" rootPath="employee"/>
+    </a:init-procedure>
+    <a:box column="2" row="3">
+        <a:textField name="cmp1"/>
+        <a:textField name="cmp2"/>
+        <a:textField name="cmp3"/>
+        <a:textField name="cmp4"/>
+        <a:textField name="cmp5"/>
+        <a:textField name="cmp6"/>
+    </a:box>
+    <a:vBox>
+        <a:textField name="cmp1"/>
+        <a:textField name="cmp2"/>
+        <a:textField name="cmp3"/>
+    </a:vBox>
+    <a:hBox>
+        <a:textField name="cmp1"/>
+        <a:textField name="cmp2"/>
+        <a:textField name="cmp3"/>
+    </a:hBox>
+    <a:form id="loginForm" labelWidth="100" row="1" title="Form Title" width="320">
+        <a:textField name="cmp1"/>
+        <a:textField name="cmp2"/>
+        <a:textField name="cmp2"/>
+    </a:form>
+    <a:gridButton/>
+</a:screen>

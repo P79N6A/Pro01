@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    d.hec_batch_num AS req_sn,
+                    d.detail_id AS detail_sn
+                FROM
+                    csh_transaction_details d
+                WHERE
+                    d.payment_status = 'PAY_SENT' AND
+                    d.payment_method =
+                    (SELECT
+                        payment_method_id
+                    FROM
+                        csh_payment_methods m
+                    WHERE
+                        m.payment_method_code = 'GYL'
+                    )
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="req_sn"/>
+        <bm:field name="detail_sn"/>
+    </bm:fields>
+</bm:model>

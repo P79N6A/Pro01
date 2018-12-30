@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:o="aurora.database.local.oracle" xmlns:bm="http://www.aurora-framework.org/schema/bm" xmlns:f="aurora.database.features" alias="t1" baseTable="DEMO_EBANK_LINES">
+    <bm:fields>
+        <bm:field name="line_id" physicalName="LINE_ID" prompt="DEMO_EBANK_LINES.LINE_ID"/>
+        <bm:field name="header_id" physicalName="HEADER_ID" prompt="DEMO_EBANK_LINES.HEADER_ID"/>
+        <bm:field name="ceitinfo" physicalName="CEITINFO" prompt="DEMO_EBANK_LINES.CEITINFO"/>
+        <bm:field name="transtype" physicalName="TRANSTYPE" prompt="DEMO_EBANK_LINES.TRANSTYPE"/>
+        <bm:field name="insid" physicalName="INSID" prompt="DEMO_EBANK_LINES.INSID"/>
+        <bm:field name="obssid" physicalName="OBSSID" prompt="DEMO_EBANK_LINES.OBSSID"/>
+        <bm:field name="fractn_fribkn" physicalName="fractn_fribkn" prompt="DEMO_EBANK_LINES.FRACTN_FRIBKN"/>
+        <bm:field name="fractn_actacn" physicalName="FRACTN_ACTACN" prompt="DEMO_EBANK_LINES.FRACTN_ACTACN"/>
+        <bm:field name="fractn_actnam" physicalName="FRACTN_ACTNAM" prompt="DEMO_EBANK_LINES.FRACTN_ACTNAM"/>
+        <bm:field name="toactn_toibkn" physicalName="TOACTN_TOIBKN" prompt="DEMO_EBANK_LINES.TOACTN_TOIBKN"/>
+        <bm:field name="toactn_actacn" physicalName="TOACTN_ACTACN" prompt="DEMO_EBANK_LINES.TOACTN_ACTACN"/>
+        <bm:field name="toactn_toname" physicalName="TOACTN_TONAME" prompt="DEMO_EBANK_LINES.TOACTN_TONAME"/>
+        <bm:field name="toactn_toaddr" physicalName="TOACTN_TOADDR" prompt="DEMO_EBANK_LINES.TOACTN_TOADDR"/>
+        <bm:field name="toactn_tobknm" physicalName="TOACTN_TOBKNM" prompt="DEMO_EBANK_LINES.TOACTN_TOBKNM"/>
+        <bm:field name="trnamt" physicalName="TRNAMT" prompt="DEMO_EBANK_LINES.TRNAMT"/>
+        <bm:field name="trncur" physicalName="TRNCUR" prompt="DEMO_EBANK_LINES.TRNCUR"/>
+        <bm:field name="priolv" physicalName="PRIOLV" prompt="DEMO_EBANK_LINES.PRIOLV"/>
+        <bm:field name="furinfo" physicalName="FURINFO" prompt="DEMO_EBANK_LINES.FURINFO"/>
+        <bm:field name="trfdate" physicalName="TRFDATE" prompt="DEMO_EBANK_LINES.TRFDATE"/>
+        <bm:field name="trftime" physicalName="TRFTIME" prompt="DEMO_EBANK_LINES.TRFTIME"/>
+        <bm:field name="comacn" physicalName="COMACN" prompt="DEMO_EBANK_LINES.COMACN"/>
+        <bm:field name="query_count"/>
+    </bm:fields>
+    <bm:features>
+        <o:sequence-pk/>
+    </bm:features>
+    <bm:primary-key>
+        <bm:pk-field name="line_id"/>
+    </bm:primary-key>
+    <bm:operations>
+        <bm:operation name="update">
+            <bm:update-sql><![CDATA[
+            
+            BEGIN
+                UPDATE
+                    DEMO_EBANK_LINES t
+                SET
+                    t.query_count = ${@query_count}
+                WHERE
+                    t.line_id = ${@line_id};
+            END;
+            
+           ]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure>
+        <a:model-query model="gl.gl_segment_description" rootPath="segment_descs"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="vat_as_sales_confirm_link" url="${/request/@context_path}/modules/vat/vat1100/vat_as_sales_confirm.svc"/>
+        <a:link id="vat_as_sales_refuse_link" url="${/request/@context_path}/modules/vat/vat1100/vat_as_sales_refuse.svc"/>
+        <a:link id="exp_report_readonly_wfl_link" url="${/request/@context_path}/modules/expm/public/exp_report_readonly_wfl_finance_query_readonly.screen"/>
+        <script><![CDATA[
+            function query() {
+                $('vat_as_sales_confirm_result_ds').query();
+            }
+            
+            function resetquery() {
+                $('vat_as_sales_confirm_query_ds').reset();
+            }
+            
+            function sumRenderer(records, name) {
+                var sum = 0;
+                for (var i = 0;i < records.length;i++) {
+                    var r = records[i].get(name);
+                    var n = parseFloat(r);
+                    if (!isNaN(n)) {
+                        sum += n;
+                    }
+                }
+                sum = Math.round(sum * 100) / 100;
+                return '<font><label style="color:red">' + sum + '</label></font>';
+            }
+            
+            function confirm() {
+                if ($('vat_as_sales_confirm_query_ds').validate()) {
+                    var records = $('vat_as_sales_confirm_result_ds').getJsonData(true);
+            
+                    if (records.length == 0) {
+                        Aurora.showInfoMessage('${l:PROMPT}', '${l:PROMPT.SELECT_LINE_DATD}', null, 250, 100);
+                        return;
+                    }
+            
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: $('vat_as_sales_confirm_link').getUrl(),
+                        para: records,
+                        success: query,
+                        scope: this
+                    });
+                }
+            }
+            
+            function refuse() {
+                if ($('vat_as_sales_confirm_query_ds').validate()) {
+                    var records = $('vat_as_sales_confirm_result_ds').getJsonData(true);
+            
+                    if (records.length == 0) {
+                        Aurora.showInfoMessage('${l:PROMPT}', '${l:PROMPT.SELECT_LINE_DATD}', null, 250, 100);
+                        return;
+                    }
+            
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: $('vat_as_sales_refuse_link').getUrl(),
+                        para: records,
+                        success: query,
+                        scope: this
+                    });
+                }
+            
+            }
+            
+            function tabSelectFunction(tab, index) {
+                if (index != 1) {
+                    return;
+                }
+                var records = $('vat_as_sales_confirm_result_ds').getSelected();
+                if (records.length != 1) {
+                    Aurora.showInfoMessage('${l:PROMPT}', '${l:PROMPT.PLEASE_SELECT_ONE}', null, 250, 100);
+                    return;
+                }
+                var record = records[0];
+                var process_id = record.get('process_id');
+                $('vat_as_sales_confirm_account').setQueryParameter('process_id', process_id);
+                $('vat_as_sales_confirm_account').query();
+            }
+            
+            function expRepNumRenderer(value, record, name) {
+                var header_id = record.get('document_id');
+                return '<a href="javascript:detailNewWindow(' + header_id + ');">' + value + '</a>';
+            }
+            
+            function detailNewWindow(header_id) {
+                new Aurora.Window({
+                    fullScreen: true,
+                    url: $('exp_report_readonly_wfl_link').getUrl() + '?exp_report_header_id=' + header_id
+                });
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="vat_as_sales_confirm_query_ds" autoQuery="false" model="vat.vat1100.vat_as_sales_confirm">
+                <a:fields>
+                    <a:field name="period_name" lovGridHeight="300" lovHeight="460" lovService="bgt.bgt_periods_detail_lov" lovWidth="500" prompt="VAT_AS_SALES.PERIOD_NAME" required="true" title="VAT_AS_SALES.PERIOD_NAME">
+                        <a:mapping>
+                            <a:map from="period_name" to="period_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="document_number"/>
+                    <a:field name="document_line_number"/>
+                    <a:field name="invoice_code"/>
+                    <a:field name="invoice_number"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="vat_as_sales_confirm_result_ds" autoPageSize="true" model="vat.vat1100.vat_as_sales_confirm" queryDataSet="vat_as_sales_confirm_query_ds" selectable="true">
+                <a:fields>
+                    <a:field name="process_id"/>
+                    <a:field name="document_id"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="vat_as_sales_confirm_account" model="vat.vat1090.vat_as_sales_account">
+                <a:fields>
+                    <a:field name="account_code"/>
+                    <a:field name="je_category_code" prompt="${/model/segment_descs/record/@segment_je_desc}"/>
+                    <a:field name="account_segment1" prompt="${/model/segment_descs/record/@segment1_desc}"/>
+                    <a:field name="account_segment2" prompt="${/model/segment_descs/record/@segment2_desc}"/>
+                    <a:field name="account_segment3" prompt="${/model/segment_descs/record/@segment3_desc}"/>
+                    <a:field name="account_segment4" prompt="${/model/segment_descs/record/@segment4_desc}"/>
+                    <a:field name="account_segment5" prompt="${/model/segment_descs/record/@segment5_desc}"/>
+                    <a:field name="account_segment6" prompt="${/model/segment_descs/record/@segment6_desc}"/>
+                    <a:field name="account_segment7" prompt="${/model/segment_descs/record/@segment7_desc}"/>
+                    <a:field name="account_segment8" prompt="${/model/segment_descs/record/@segment8_desc}"/>
+                    <a:field name="account_segment9" prompt="${/model/segment_descs/record/@segment9_desc}"/>
+                    <a:field name="account_segment10" prompt="${/model/segment_descs/record/@segment10_desc}"/>
+                    <a:field name="account_segment11" prompt="${/model/segment_descs/record/@segment11_desc}"/>
+                    <a:field name="account_segment12" prompt="${/model/segment_descs/record/@segment12_desc}"/>
+                    <a:field name="account_segment13" prompt="${/model/segment_descs/record/@segment13_desc}"/>
+                    <a:field name="account_segment14" prompt="${/model/segment_descs/record/@segment14_desc}"/>
+                    <a:field name="account_segment15" prompt="${/model/segment_descs/record/@segment15_desc}"/>
+                    <a:field name="account_segment16" prompt="${/model/segment_descs/record/@segment16_desc}"/>
+                    <a:field name="account_segment17" prompt="${/model/segment_descs/record/@segment17_desc}"/>
+                    <a:field name="account_segment18" prompt="${/model/segment_descs/record/@segment18_desc}"/>
+                    <a:field name="account_segment19" prompt="${/model/segment_descs/record/@segment19_desc}"/>
+                    <a:field name="account_segment20" prompt="${/model/segment_descs/record/@segment20_desc}"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="resetquery" text="HAP_RESET" width="80"/>
+                <a:toolbarButton click="confirm" text="VAT.CONFIRM" width="80"/>
+                <a:toolbarButton click="refuse" text="VAT.REFUSE" width="80"/>
+            </a:screenTopToolbar>
+            <a:queryForm bindTarget="vat_as_sales_confirm_query_ds" resultTarget="vat_as_sales_confirm_result_ds" style="width:100%;border:none">
+                <a:formToolBar>
+                    <a:lov name="period_name" bindtarget="vat_as_sales_confirm_query_ds"/>
+                    <a:textField name="document_number" bindTarget="vat_as_sales_confirm_query_ds"/>
+                    <a:textField name="document_line_number" bindTarget="vat_as_sales_confirm_query_ds"/>
+                </a:formToolBar>
+                <a:formBody column="4">
+                    <a:textField name="invoice_code" bindTarget="vat_as_sales_confirm_query_ds"/>
+                    <a:textField name="invoice_number" bindTarget="vat_as_sales_confirm_query_ds"/>
+                </a:formBody>
+            </a:queryForm>
+            <a:tabPanel id="line_tab" marginHeight="120">
+                <a:tabs>
+                    <a:tab prompt="VAT.REPORT_INFO">
+                        <a:grid id="line_gird" bindTarget="vat_as_sales_confirm_result_ds" marginHeight="150" navBar="true">
+                            <a:columns>
+                                <a:column name="period_name" align="center" width="80"/>
+                                <a:column name="company_name" align="center" width="120"/>
+                                <a:column name="status_desc" align="center" width="80"/>
+                                <a:column name="document_number" align="center" renderer="expRepNumRenderer" width="120"/>
+                                <a:column name="document_line_number" align="center" width="40"/>
+                                <a:column name="invoice_code" align="center" width="100"/>
+                                <a:column name="invoice_number" align="center" width="100"/>
+                                <a:column name="report_amount" align="right" footerRenderer="sumRenderer" renderer="Aurora.formatMoney" width="80"/>
+                                <a:column name="invoice_amount" align="right" footerRenderer="sumRenderer" renderer="Aurora.formatMoney" width="80"/>
+                                <a:column name="sale_amount" align="right" footerRenderer="sumRenderer" renderer="Aurora.formatMoney" width="80"/>
+                                <a:column name="sale_tax_rate" align="right" width="80"/>
+                                <a:column name="sale_tax_amount" align="right" footerRenderer="sumRenderer" renderer="Aurora.formatMoney" width="80"/>
+                                <a:column name="invoice_status_desc" align="center" width="80"/>
+                                <a:column name="account_code" align="center" width="80"/>
+                                <a:column name="account_desc" align="center" width="150"/>
+                                <a:column name="budget_item_code" align="left" width="80"/>
+                                <a:column name="budget_item_desc" align="left" width="150"/>
+                            </a:columns>
+                        </a:grid>
+                    </a:tab>
+                    <a:tab prompt="VAT.ACCOUNT_INFO">
+                        <a:grid id="account_gird" bindTarget="vat_as_sales_confirm_account" marginHeight="150" navBar="true">
+                            <a:columns>
+                                <a:column name="description" align="center" width="200"/>
+                                <a:column name="period_name" align="center" width="80"/>
+                                <a:column name="company_code" align="center" width="80"/>
+                                <a:column name="company_name" align="center" width="120"/>
+                                <a:column name="responsibility_center_code" align="center" width="80"/>
+                                <a:column name="responsibility_center_name" align="center" width="100"/>
+                                <a:column name="account_code" align="center" width="80"/>
+                                <a:column name="account_desc" align="center" width="150"/>
+                                <a:column name="entered_amount_dr" align="right" width="80"/>
+                                <a:column name="entered_amount_cr" align="right" width="80"/>
+                                <a:column name="functional_amount_dr" align="right" width="80"/>
+                                <a:column name="functional_amount_cr" align="right" width="80"/>
+                                <a:column name="account_segment1" align="center"/>
+                                <a:column name="account_segment2" align="center"/>
+                                <a:column name="account_segment3" align="center"/>
+                                <a:column name="account_segment4" align="center"/>
+                                <a:column name="account_segment5" align="center"/>
+                                <a:column name="account_segment6" align="center"/>
+                                <a:column name="account_segment7" align="center"/>
+                                <a:column name="account_segment8" align="center"/>
+                                <a:column name="account_segment9" align="center"/>
+                                <a:column name="account_segment10" align="center"/>
+                                <a:column name="account_segment11" align="center"/>
+                                <a:column name="account_segment12" align="center"/>
+                                <a:column name="account_segment13" align="center"/>
+                                <a:column name="account_segment14" align="center"/>
+                                <a:column name="account_segment15" align="center"/>
+                                <a:column name="account_segment16" align="center"/>
+                                <a:column name="account_segment17" align="center"/>
+                                <a:column name="account_segment18" align="center"/>
+                                <a:column name="account_segment19" align="center"/>
+                                <a:column name="account_segment20" align="center"/>
+                            </a:columns>
+                        </a:grid>
+                    </a:tab>
+                </a:tabs>
+                <a:events>
+                    <a:event name="select" handler="tabSelectFunction"/>
+                </a:events>
+            </a:tabPanel>
+        </a:screenBody>
+        <script purpose="auto_resize"><![CDATA[
+            function vat_as_sales_confirm_info_infoInitSize() {
+                //页面宽度、高度
+                var vw = $A.getViewportWidth();
+                //留白宽度
+                var marginWidth = 35;
+                //自适应宽度
+                var autoWidth = vw - marginWidth;
+                //设置组件的自适应宽度
+                $('line_tab').setWidth(autoWidth + 4);
+                $('line_gird').setWidth(autoWidth);
+                $('account_gird').setWidth(autoWidth);
+            }
+            vat_as_sales_confirm_info_infoInitSize();
+        ]]></script>
+    </a:view>
+</a:screen>

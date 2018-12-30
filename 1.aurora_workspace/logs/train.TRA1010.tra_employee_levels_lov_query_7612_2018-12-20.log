@@ -1,0 +1,45 @@
+2018-12-20 09:28:46.943 [aurora.application.session_check] [CONFIG] Session data copied to context
+2018-12-20 09:28:46.943 [aurora.application.session_check] [CONFIG] Checking BM access train.TRA1010.tra_employee_levels_lov for operation query
+2018-12-20 09:28:46.944 [aurora.application.session_check] [CONFIG] Result from aurora.bm.DefaultAccessChecker@4413a385 is true
+2018-12-20 09:28:46.944 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-20 09:28:46.944 [uncertain.proc] [CONFIG] [action] CheckServiceLock
+2018-12-20 09:28:46.944 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-20 09:28:46.944 [uncertain.proc] [CONFIG] [action] ValidateInput
+2018-12-20 09:28:46.944 [uncertain.proc] [CONFIG] [action] InvokeService
+2018-12-20 09:28:46.944 [aurora.database] [CONFIG] ===================================== prepare to run model-query train.TRA1010.tra_employee_levels_lov==============================
+2018-12-20 09:28:46.947 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-20 09:28:46.947 [uncertain.proc] [FINE] aurora.database.service.BusinessModelService.onDecideSqlGenerationMode
+2018-12-20 09:28:46.947 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-20 09:28:46.947 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-20 09:28:46.947 [uncertain.proc] [FINE] aurora.database.features.OrderByClauseCreator.onPopulateOperationSql
+2018-12-20 09:28:46.947 [uncertain.proc] [FINE] aurora.database.features.WhereClauseCreator.onPopulateOperationSql
+2018-12-20 09:28:46.947 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-20 09:28:46.947 [uncertain.proc] [FINE] aurora.bm.QuerySqlCreator.onExecuteQuery
+2018-12-20 09:28:46.949 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-20 09:28:46.949 [uncertain.proc] [FINE] aurora.database.features.AutoQueryCounter.onQueryFinish
+2018-12-20 09:28:46.950 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-20 09:28:46.950 [uncertain.proc] [FINE] aurora.database.features.CacheBasedLookUpField.postFetchResultSet
+2018-12-20 09:28:46.951 [aurora.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+
+	SELECT *
+    FROM (select el.employee_levels_id,
+    			 el.description queryDescription,
+              	 el.description,
+              	 el.enabled_flag,
+              	  el.level_series_id,
+             
+              	  el.employee_levels_code,
+              	 el.created_by,
+              	 (select el.employee_levels_code || '_' || el.description
+      			 from EXP_LEVEL_SERIES_VL ls
+    			 where el.level_series_id = ls.level_series_id) LEVEL_SERIES
+          from EXP_EMPLOYEE_LEVELS_VL el
+          ) tt  
+
+---------------------Binding info---------------------
+null
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-20 09:28:46.951 [uncertain.proc] [CONFIG] [action] CreateSuccessResponse

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns1:model xmlns:ns1="http://www.aurora-framework.org/schema/bm" alias="t1" extend="eam.eam_requisition_lines" extendMode="reference">
+    <ns1:fields>
+        <ns1:field name="requisition_line_id"/>
+        <ns1:field name="requisition_header_id"/>
+        <ns1:field name="value_type" expression="(select h.value_type from eam_requisition_headers h where h.requisition_header_id=t1.requisition_header_id)"/>
+        <ns1:field name="line_number" prompt="EXP_REPORT_LINES.LINE_NUMBER"/>
+        <ns1:field name="transaction_type_id"/>
+        <ns1:field name="accounting_flag" expression="(SELECT t.accounting_flag FROM eam_transaction_types t WHERE t1.transaction_type_id = t.transaction_type_id)"/>
+        <ns1:field name="trans_type_desc" expression="(SELECT f.description_text FROM eam_transaction_types t, fnd_descriptions f WHERE t.description_id = f.description_id AND f.language = ${/session/@lang} AND t.transaction_type_id = t1.transaction_type_id)" prompt="EAM_REQUISITION_TYPES.DEFAULT_TRX_TYPE_DESC"/>
+        <ns1:field name="asset_id"/>
+        <ns1:field name="asset_code" expression="(select f.asset_code from eam_asset_headers f where f.asset_id = t1.asset_id)" prompt="AST_ASSET_HEADERS_VL.ASSET_NUM"/>
+        <ns1:field name="asset_name" expression="(select f.description_text from eam_asset_headers h, fnd_descriptions f where f.description_id = h.description_id and h.asset_id = t1.asset_id and f.language=${/session/@lang})" prompt="EAM_ASSET_HEADERS.DESCRIPTION"/>
+        <ns1:field name="quantity" prompt="EXP_REPORT_LINES.PRIMARY_QUANTITY"/>
+        <ns1:field name="currency_code"/>
+        <ns1:field name="price" prompt="EXP_REPORT_DISTS.PRICE"/>
+        <ns1:field name="amount" prompt="EXP_TRAVEL_REQ_TEMPLATE.AMOUNT"/>
+        <ns1:field name="from_location_id"/>
+        <ns1:field name="to_location_id"/>
+        <ns1:field name="from_fin_calss_id"/>
+        <ns1:field name="to_fin_class_id"/>
+        <ns1:field name="from_entity_class_id"/>
+        <ns1:field name="to_entity_class_id"/>
+        <ns1:field name="description" prompt="EXP_EMPLOYEE.NOTES"/>
+        <ns1:field name="expense_amount"/>
+        <ns1:field name="revenue_amount"/>
+        <ns1:field name="pl_amount"/>
+        <ns1:field name="from_cost"/>
+        <ns1:field name="to_cost"/>
+        <ns1:field name="company_id"/>
+        <ns1:field name="responsibility_center_id"/>
+        <ns1:field name="operation_unit_id"/>
+        <ns1:field name="unit_id"/>
+        <ns1:field name="employee_id"/>
+        <ns1:field name="position_id"/>
+        <ns1:field name="default_journal_date" expression="nvl(to_char(t1.accptn_check_date, &apos;yyyy-mm-dd&apos;), to_char(SYSDATE, &apos;yyyy-mm-dd&apos;))"/>
+        <ns1:field name="contract_id"/>
+        <ns1:field name="contract_name" expression="(select h.contract_number from con_contract_headers h where h.contract_header_id=t1.contract_id)" prompt="EAM_CONTRACT"/>
+        <ns1:field name="acceptance_date" prompt="EAM_ASSET_HEADERS.DATE_OF_PURCHASE"/>
+        <ns1:field name="accptn_check_date" prompt="EAM_REQUISITION_LINES.ACCPTN_CHECK_DATE"/>
+    </ns1:fields>
+    <ns1:query-fields>
+        <ns1:query-field field="requisition_line_id" queryOperator="="/>
+        <ns1:query-field field="requisition_header_id" queryOperator="="/>
+    </ns1:query-fields>
+    <ns1:operations>
+        <ns1:operation name="insert">
+            <ns1:parameters>
+                <ns1:parameter name="requisition_line_id" output="true" outputPath="@requisition_line_id"/>
+            </ns1:parameters>
+            <ns1:update-sql><![CDATA[
+    			
+    				BEGIN
+    					eam_requisition_pkg.insert_eam_requisition_line(
+    									${@requisition_line_id},
+                                        ${@requisition_header_id},
+                                        ${@transaction_type_id},
+                                        ${@asset_id},
+                                        ${@quantity},
+                                        ${@currency_code},
+                                        ${@price},
+                                        ${@cost},
+                                        ${@from_location_id},
+                                        ${@to_location_id},
+                                        ${@from_fin_calss_id},
+                                        ${@to_fin_class_id},
+                                        ${@from_entity_class_id},
+                                        ${@to_entity_class_id},
+                                        ${@req_desc},
+                                        ${@expense_amount},
+                                        ${@revenue_amount},
+                                        ${@pl_amount},
+                                        ${@from_cost},
+                                        ${@to_cost},
+                                        ${/session/@company_id},
+                                        ${@responsibility_center_id},
+                                        ${@operation_unit_id},
+                                        ${@unit_id},
+                                        ${@employee_id},
+                                        ${@position_id},
+                                        ${@contract_header_id},
+                                        to_date(${@date_of_purchase},'yyyy-mm-dd'),
+                                        to_date(${@gain_date},'yyyy-mm-dd'),
+                                        ${@to_employee_id},
+                                        ${@partner_name},
+                                        to_date(${@start_date},'yyyy-mm-dd'),
+                                        to_date(${@end_date},'yyyy-mm-dd'),
+                                        null,
+                                        null,
+                                        ${/session/@user_id});
+    				END;
+    			
+    		]]></ns1:update-sql>
+        </ns1:operation>
+        <ns1:operation name="update">
+            <ns1:update-sql><![CDATA[
+    			
+    				BEGIN
+    					eam_requisition_pkg.update_eam_requisition_line(
+    									${@requisition_line_id},
+                                        ${@requisition_header_id},
+                                        ${@transaction_type_id},
+                                        ${@asset_id},
+                                        ${@quantity},
+                                        ${@currency_code},
+                                        ${@price},
+                                        ${@cost},
+                                        ${@from_location_id},
+                                        ${@to_location_id},
+                                        ${@from_fin_calss_id},
+                                        ${@to_fin_class_id},
+                                        ${@from_entity_class_id},
+                                        ${@to_entity_class_id},
+                                        ${@req_desc},
+                                        ${@expense_amount},
+                                        ${@revenue_amount},
+                                        ${@pl_amount},
+                                        ${@from_cost},
+                                        ${@to_cost},
+                                        ${/session/@company_id},
+                                        ${@responsibility_center_id},
+                                        ${@operation_unit_id},
+                                        ${@unit_id},
+                                        ${@employee_id},
+                                        ${@position_id},
+                                        ${@contract_header_id},
+                                        to_date(${@date_of_purchase},'yyyy-mm-dd'),
+                                        to_date(${@gain_date},'yyyy-mm-dd'),
+                                        ${@to_employee_id},
+                                        ${@partner_name},
+                                        to_date(${@start_date},'yyyy-mm-dd'),
+                                        to_date(${@end_date},'yyyy-mm-dd'),
+                                        null,
+                                        null,
+                                        ${/session/@user_id});
+    				END;
+    			
+    		]]></ns1:update-sql>
+        </ns1:operation>
+        <ns1:operation name="delete">
+            <ns1:update-sql><![CDATA[
+    			begin
+    				eam_requisition_pkg.delete_eam_requisition_line(
+    								    ${@requisition_header_id},
+                                        ${@requisition_line_id},
+                                        ${/session/@user_id});
+    			end;
+    		]]></ns1:update-sql>
+        </ns1:operation>
+    </ns1:operations>
+</ns1:model>

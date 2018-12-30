@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <a:init-procedure>
+        <a:model-query model="vat.vat1050.vat_transfer_ratio_batch_id" rootPath="batch_id"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="vat_transfer_ratio_import_error_link" url="${/request/@context_path}/modules/vat/vat1050/vat_transfer_ratio_import_error.screen"/>
+        <a:link id="vat_transfer_ratio_import_submit_link" model="vat.vat1050.vat_transfer_ratio_submit_interface" modelaction="update"/>
+        <a:link id="vat_transfer_ratio_import_check_link" model="vat.vat1050.vat_transfer_ratio_check_interface" modelaction="update"/>
+        <a:link id="vat_transfer_radio_upload_link" url="${/request/@context_path}/modules/vat/vat1050/vat_transfer_radio_upload.screen"/>
+        <a:link id="vat_transfer_ratio_import_link" url="${/request/@context_path}/modules/vat/vat1050/vat_transfer_ratio_import.screen"/>
+        <script><![CDATA[
+            function loadComplete() {
+                $('result_ds').setQueryParameter('batch_id', '${/model/batch_id/record/@batch_id}');
+                $('result_ds').setQueryParameter("import_flag", "Y");
+                $('result_ds').query();
+            }
+            
+            function loadData() {
+                new Aurora.Window({
+                    url: $('vat_transfer_radio_upload_link').getUrl() + "?batch_id=${/model/batch_id/record/@batch_id}&amp;import_flag=&apos;Y&apos;",
+                    width: 420,
+                    height: 275
+                });
+            }
+            
+            function checkData() {
+                var allData = $('result_ds').getAll();
+                if (allData.length == 0) {
+                    Aurora.showMessage('${l:PROMPT}', '${l:BGT_BUDGET_ITEMS_INTERFACE.CHECK1}');
+                } else {
+                    var param = {};
+                    param['batch_id'] = '${/model/batch_id/record/@batch_id}';
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: $('vat_transfer_ratio_import_check_link').getUrl(),
+                        para: param,
+                        success: function(data) {
+                            if (data.result.return_status) {
+                                if (data.result.return_status == 'SUCCESS') {
+                                    Aurora.showMessage('提示', '核对完成，导入数据没有错误');
+                                } else {
+                                    dispatchErrorData();
+                                }
+                            } else {
+                                Aurora.showErrorMessage('错误', '校验程序执行错误');
+                            }
+                        },
+                        scope: this
+                    });
+                }
+            }
+            
+            function submitData() {
+                var allData = $('result_ds').getAll();
+                if (allData.length == 0) {
+                    Aurora.showMessage('${l:PROMPT}', '${l:BGT_BUDGET_ITEMS_INTERFACE.CHECK2}');
+                } else {
+                    var param = {};
+                    param['batch_id'] = '${/model/batch_id/record/@batch_id}';
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: $('vat_transfer_ratio_import_submit_link').getUrl(),
+                        para: param,
+                        success: function(data) {
+                            if (data.result.load_status) {
+                                if (data.result.load_status == 'DATA_ERROR') {
+                                    dispatchCheckData();
+                                } else if (data.result.load_status == 'SUCCESS') {
+                                    Aurora.showMessage('提示', '数据导入成功');
+                                    $('result_ds').query();
+                                } else {
+                                    Aurora.showErrorMessage('错误', '数据导入失败');
+                                }
+                            } else {
+                                Aurora.showErrorMessage('错误', '提交程序执行出错');
+                            }
+                        },
+                        scope: this
+                    });
+                }
+            }
+            
+            function dispatchCheckData() {
+                checkData();
+            }
+            
+            function dispatchErrorData() {
+                errorData();
+            }
+            
+            function errorData() {
+                new Aurora.Window({
+                    id: 'error_window',
+                    url: $("vat_transfer_ratio_import_error_link").getUrl() + "?batch_id=${/model/batch_id/record/@batch_id}",
+                    fullScreen: true
+                });
+            }
+            
+            function back() {
+                window.location.href = $('vat_transfer_ratio_import_link').getUrl();
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="result_ds" fetchAll="false" model="vat.vat1050.vat_transfer_ratio_load" pageSize="15">
+                <a:fields>
+                    <a:field name="batch_line_id"/>
+                    <a:field name="company_code"/>
+                    <a:field name="period_name"/>
+                    <a:field name="transfer_ratio"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="loadData" text="PROMPT.LOADDATA" width="80"/>
+                <a:toolbarButton click="checkData" text="PROMPT.CHECK" width="80"/>
+                <a:toolbarButton click="submitData" text="HAP_SUBMIT" width="80"/>
+                <a:toolbarButton click="errorData" text="PROMPT.ERROR" width="80"/>
+                <a:gridButton bind="vat_transfer_ratio_load_gird" type="excel" width="80"/>
+                <a:gridButton click="back" text="HAP_BACK" width="80"/>
+            </a:screenTopToolbar>
+            <a:grid id="vat_transfer_ratio_load_gird" bindTarget="result_ds" marginHeight="100" marginWidth="30" navBar="true">
+                <a:columns>
+                    <a:column name="batch_line_id" align="right" width="50"/>
+                    <a:column name="company_code" align="center" width="80"/>
+                    <a:column name="period_name" align="center" width="80"/>
+                    <a:column name="transfer_ratio" align="right" width="80"/>
+                </a:columns>
+            </a:grid>
+            <script><![CDATA[
+                loadComplete();
+            ]]></script>
+        </a:screenBody>
+    </a:view>
+</a:screen>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scheduler-config debug="true" xmlns="aurora.plugin.quartz" xmlns:qz="org.quartz">
+    <jobs>
+        <auroraJobDetail stateful="true" name="ebank_unionpay_guangzhou_pay" method="run" procedure="ebank.unionpay_guangzhou.batch_pay_send" jobClass="aurora.plugin.quartz.ProcedureInvoke"/>
+        <auroraJobDetail stateful="true" name="ebank_unionpay_guangzhou_query" method="run" procedure="ebank.unionpay_guangzhou.batch_pay_query" jobClass="aurora.plugin.quartz.ProcedureInvoke"/>
+        <auroraJobDetail stateful="true" name="ebank_weibao_pay" method="run" procedure="ebank.weibao.batch_pay_send" jobClass="aurora.plugin.quartz.ProcedureInvoke"/>
+        <auroraJobDetail stateful="true" name="ebank_weibao_query" method="run" procedure="ebank.weibao.batch_pay_query" jobClass="aurora.plugin.quartz.ProcedureInvoke"/>
+    </jobs>
+    <triggers>
+        <qz:simple-trigger name="ebank_unionpay_guangzhou_pay_trigger" startTime="2012-01-01 00:00:00" repeatCount="-1" repeatInterval="600000"/>
+        <qz:simple-trigger name="ebank_unionpay_guangzhou_query_trigger" startTime="2012-01-01 00:00:00" repeatCount="-1" repeatInterval="600000"/>
+        <qz:simple-trigger name="ebank_weibao_pay_trigger" startTime="2012-01-01 00:00:00" repeatCount="-1" repeatInterval="600000"/>
+        <qz:simple-trigger name="ebank_weibao_query_trigger" startTime="2012-01-01 00:00:00" repeatCount="-1" repeatInterval="600000"/>
+    </triggers>
+    <instances>
+        <job-instance jobName="ebank_unionpay_guangzhou_pay" triggerName="ebank_unionpay_guangzhou_pay_trigger"/>
+        <job-instance jobName="ebank_unionpay_guangzhou_query" triggerName="ebank_unionpay_guangzhou_query_trigger"/>
+        <job-instance jobName="ebank_weibao_pay" triggerName="ebank_weibao_pay_trigger"/>
+        <job-instance jobName="ebank_weibao_query" triggerName="ebank_weibao_query_trigger"/>
+    </instances>
+</scheduler-config>

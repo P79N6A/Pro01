@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>-->
+
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.cookie.js"></script>
+    <script>
+
+        // $("#form1").on("click",".btn",function(e){
+        //     var radioValue = $('input:radio[name="kind"]:checked').val();
+        //     var formData=$("#form1").serialize();
+        //     $.ajax({
+        //         url:"/UserController/singleBaseSelectAll",
+        //         type:"post",
+        //         data:{"userName":$("#userName").val(),"password":$("#password").val()},
+        //         dataType:"json",
+        //         success:function(result){
+        //             if("true"==result.flag){
+        //                 window.location.href = "http://www.baidu.com";
+        //             }else{
+        //                 alert("用户名或者密码不对");
+        //             }
+        //         }
+        //     })
+        // })
+    </script>
+    <!--$ .post（）是jQuery的简单POST请求函数，用于替换复杂的$ .ajax。-->
+    <!--$.ajax({type: 'POST',url: url,data: data,success: success,dataType: dataType});-->
+    <script type="text/javascript">
+        function setCookie(userName,password){
+            $.cookie("userName", userName);
+            $.cookie("password", password);
+        }
+
+
+    function login() {
+        let userName=$.trim($("#txtUserName").val());
+        let password=$("#tetPassword").val()
+        $.ajax({//几个参数需要注意一下
+            type: "GET",//方法类型
+            url: "/UserController/checkUser" ,
+            data: {"userName":userName,"password":password},
+            success: function (result) {
+                console.log(result);//打印服务端返回的数据(调试用)
+                if(result.status=="OK" &&result.data!=0){alert("用户名密码正确，登陆成功");
+                    // localStorage.setItem("userName",userName);//H5 统一域名才有效
+                    // localStorage.setItem("password",password);
+                    // setCookie("userName",userName);
+                    // setCookie("password",password);
+                    setCookie(userName,password)
+                    window.location.href="http://localhost:8090/index";
+                    console.log(localStorage.getItem("userName")+localStorage.getItem("password"));
+
+                }else{alert("登录失败");}
+            },
+            dataType: "json",//预期服务器返回的数据类型,
+            error : function() {alert("异常！");}
+        });
+    }
+    </script>
+</head>
+
+<body style="background: lightblue;">
+<div id="form-div" style="text-align: center;margin-top: 200px">
+    <h3>个人代办系统</h3>
+    <form id="form1" onsubmit="return false" action="##" method="post">
+        <p>用户名：<input name="userName" type="text" id="txtUserName" tabindex="1" size="15" value=""/></p>
+        <p>密　码：<input name="password" type="password" id="tetPassword" tabindex="2" size="16" value=""/></p>
+        <p><input type="button" value="登录" onclick="login()">&nbsp;<input type="reset" value="重置"></p>
+    </form>
+</div>
+</body>
+
+</html>
+
+
+
+<!--// window.location.reload();-->
+<!--//  localStorage.setItem(key,value);//key要用单引号或者双引号包括着，value就是你要存的数据-->
+<!--//  在需要引用数据的页面用localStorage获取数据-->
+<!--//-->
+<!--//  var name=localStorage.getItem(key);//key要用单引号或者双引号包括着,用一变量存起来方便使用-->
+<!--//  删除数据，因为localStorage是可长期存储数据的，所以如果用完后不再需要的话，可以顺手销毁掉-->
+<!--//-->
+<!--//  localStorage.removeItem(key);//删除单个数据-->
+<!--//  localStorage.clear();//删除所有数据-->
+<!--//  localStorage.key(index);//得到某个索引的key-->
+
+
+<!--使用jQuery设置cookie非常简单。如，我们创建一个名为“example”，值为“foo”的cookie：-->
+
+<!--$.cookie("example", "foo");-->
+<!--要设置cookie的有效期，可以设置expires值，如设置cookie的过期时间为10天：-->
+
+<!--$.cookie("example", "foo",{expires:10});-->
+<!--设置cookie一小时后过期：-->
+
+<!--var cookietime = new Date();-->
+<!--cookietime.setTime(date.getTime() + (60 * 60 * 1000));//coockie保存一小时-->
+<!--$.cookie("example", "foo",{expires:cookietime});-->
+<!--要设置cookie的保存路径，可以设置path值，如设置路径为根目录：-->
+
+<!--$.cookie("example", "foo",{path:"/"});-->
+<!--如果要设置路径为/admin，则：-->
+
+<!--$.cookie("example", "foo",{path:"/admin"});-->
+<!--获取cookie值-->
+<!--使用jQuery获取cookie的值的方法那是相当的简单，下面是弹出框显示名为“example”的cookie的值：-->
+
+<!--alert($.cookie("example"));-->
+<!--删除Cookie-->
+<!--使用jQuery删除cookie，只需要将cookie的值为null，注意如果设置值为空的字符串时，并不能删除cookie，只是将cookie值清空而已。-->
+
+<!--$.cookie("example",null);-->
+<!--了解了cookie相关设置操作方法后，再接下来的文章中，我会用实例演示cookies的应用，如记录网站用户浏览的历史记录（浏览过的商品、看过的电影），敬请关注。-->
+
+<!--声明：本文为原创文章，helloweba.com和作者拥有版权，如需转载，请注明来源于helloweba.com并保留原文链接，否则视为侵权。-->

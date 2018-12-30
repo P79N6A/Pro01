@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Tank 
+    $Date: 2017-36 下午2:58:54  
+    $Revision: 1.0  
+    $Purpose: 付款用途查询bm
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        v.usedes_code,
+                        v.description
+                    FROM
+                        csh_payment_usedes_vl v,
+                        exp_rep_ref_payment_usedes u
+                    WHERE
+                        v.usedes_id             =u.usedes_id AND
+                        v.enabled_flag          ='Y' AND
+                        u.expense_report_type_id=NVL(${/parameter/@expense_report_type_id},
+                        (SELECT
+                            hh.tra_report_type_id
+                        FROM
+                            tra_report_headers hh
+                        WHERE
+                            hh.tra_report_header_id=${/parameter/@tra_report_header_id}
+                        ))
+                    )t #WHERE_CLAUSE#
+                ORDER BY
+                    t.usedes_code
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="usedes_code" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="USEDES_CODE" prompt="CSH_PAYMENT_USEDS.USEDS_CODE"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="DESCRIPTION" prompt="CSH_PAYMENT_USEDS.DESCRIPTION"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field field="usedes_code" queryOperator="like"/>
+        <bm:query-field field="description" queryOperator="like"/>
+        <bm:query-field name="code_name" queryExpression="(usedes_code like ${@code_name} || &apos;%&apos; or description like &apos;%&apos;||${@code_name}||&apos;%&apos; )"/>
+    </bm:query-fields>
+</bm:model>

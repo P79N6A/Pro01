@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893
+    $Date: 2013-4-1 下午1:56:08  
+    $Revision: 1.0  
+    $Purpose: 资产盘点计划明细查询
+-->
+<ns1:model xmlns:ns1="http://www.aurora-framework.org/schema/bm" alias="t1" extend="eam.eam_counting_plan_lines" extendMode="reference">
+    <ns1:fields>
+        <ns1:field name="counting_plan_header_id"/>
+        <ns1:field name="counting_plan_line_id"/>
+        <ns1:field name="line_number"/>
+        <ns1:field name="asset_id"/>
+        <ns1:field name="asset_code" expression="(select h.asset_code from eam_asset_headers h where h.asset_id = t1.asset_id)" prompt="EAM_ASSET_HEADERS.ASSET_CODE"/>
+        <ns1:field name="asset_name" expression="(select f.description_text from eam_asset_headers h, fnd_descriptions f where f.description_id = h.description_id and h.asset_id = t1.asset_id and f.language=${/session/@lang})" prompt="EAM_ASSET_HEADERS.DESCRIPTION"/>
+        <ns1:field name="tag_number" expression="(select h.tag_number from eam_asset_headers h where h.asset_id = t1.asset_id)" prompt="EAM_ASSET_HEADERS.TAG_NUMBER"/>
+        <ns1:field name="asset_card_num" expression="(select f.asset_card_num from eam_asset_headers h,eam_asset_finance_info f where h.asset_id = t1.asset_id and f.asset_id = h.asset_id)" prompt="EAM_ASSET_FINANCE_INFO.ASSET_CARD_NUM"/>
+        <ns1:field name="current_location_id"/>
+        <ns1:field name="current_location_code" prompt="EAM_LOCATIONS.LOCATION_CODE"/>
+        <ns1:field name="location_desc" expression="(select l.DESCRIPTION from EAM_LOCATIONS_VL l where l.location_id = current_location_id)" prompt="EAM_LOCATIONS.DESCRIPTION"/>
+        <ns1:field name="current_quantity" prompt="EAM_ASSET_HEADERS.QUANTITY"/>
+        <ns1:field name="counting_description" prompt="EAM_COUNTING_PLAN_HEADERS.DESCRIPTION"/>
+    </ns1:fields>
+    <ns1:query-fields>
+        <ns1:query-field field="counting_plan_header_id" queryOperator="="/>
+        <ns1:query-field field="counting_plan_line_id" queryOperator="="/>
+        <ns1:query-field field="line_number" queryOperator="="/>
+        <ns1:query-field field="asset_id" queryOperator="="/>
+        <ns1:query-field field="current_location_id" queryOperator="="/>
+        <ns1:query-field field="current_location_code" queryOperator="like"/>
+        <ns1:query-field field="current_quantity" queryOperator="="/>
+        <ns1:query-field field="counting_description" queryOperator="like"/>
+    </ns1:query-fields>
+</ns1:model>

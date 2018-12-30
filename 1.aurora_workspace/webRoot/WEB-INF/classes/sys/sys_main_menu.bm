@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        t.function_id,
+                        t.function_code,
+                        t.parent_function_id,
+                        (SELECT
+                            DESCRIPTION_TEXT
+                        FROM
+                            fnd_descriptions
+                        WHERE
+                            DESCRIPTION_ID = t.function_name_id AND
+                            Language       = ${/session/@lang}
+                        ) AS function_description,
+                        (SELECT
+                            COUNT(1) * 75
+                        FROM
+                            sys_function t,
+                            sys_role_function srf
+                        WHERE
+                            t.function_type       = 'G' AND
+                            t.parent_function_id IS NULL AND
+                            t.function_id         = srf.function_id AND
+                            srf.role_id           = ${/session/@role_id}
+                        ) AS count_menu_length
+                    FROM
+                        sys_function t,
+                        sys_role_function srf
+                    WHERE
+                        t.function_type       = 'G' AND
+                        t.parent_function_id IS NULL AND
+                        t.function_id         = srf.function_id AND
+                        srf.role_id           = ${/session/@role_id} AND
+                        EXISTS
+                        (SELECT
+                            1
+                        FROM
+                            sys_function t1,
+                            sys_role_function fu1
+                        WHERE
+                            t1.function_type      = 'G' AND
+                            t1.function_id        = fu1.function_id AND
+                            t1.PARENT_FUNCTION_ID = t.function_id AND
+                            fu1.role_id           = ${/session/@role_id}
+                        )
+                    ORDER BY
+                        t.sequence
+                    )v
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <a:init-procedure>
+        <a:model-delete model="vat.vat1050.delete_interface"/>
+        <a:model-insert model="vat.vat1050.insert_interface"/>
+    </a:init-procedure>
+</a:screen>

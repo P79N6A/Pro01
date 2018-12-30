@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: StephenWang  
+    $Date: 2013-2-28 下午1:43:56  
+    $Revision: 1.0  
+    $Purpose: 指定公司对应的员工信息查询
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+    			
+    				SELECT ee.employee_id,
+					       ee.company_id,
+					       ee.employee_code,
+					       ee.name,
+					       (employee_code || '-' || NAME) AS employee_name
+					  FROM exp_employee_assigns_v ee
+					 WHERE ee.employee_id IN (SELECT a.granted_employee_id employee_id
+					                            FROM exp_document_authorities a,
+					                                 exp_employees            e,
+					                                 sys_user                 su
+					                           WHERE a.employee_id = e.employee_id
+					                                 AND su.employee_id = e.employee_id
+					                                 AND SYSDATE BETWEEN nvl(a.start_date,
+					                                                         SYSDATE) AND nvl(a.end_date,
+					                                                                          SYSDATE)
+					                                 AND su.user_id = ${/session/@user_id}
+					                          UNION
+					                          SELECT e.employee_id
+					                            FROM exp_employees e,
+					                                 sys_user      su
+					                           WHERE su.employee_id = e.employee_id
+					                                 AND su.user_id = ${/session/@user_id})
+					       AND ee.company_id = ${/session/@company_id}
+    			
+    		]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

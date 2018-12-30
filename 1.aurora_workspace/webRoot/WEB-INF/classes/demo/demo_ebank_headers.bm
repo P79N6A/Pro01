@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:o="aurora.database.local.oracle" xmlns:bm="http://www.aurora-framework.org/schema/bm" xmlns:f="aurora.database.features" alias="t1" baseTable="DEMO_EBANK_HEADERS">
+    <bm:fields>
+        <bm:field name="header_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="HEADER_ID" prompt="DEMO_EBANK_HEADERS.HEADER_ID"/>
+        <bm:field name="termid" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="TERMID" prompt="DEMO_EBANK_HEADERS.TERMID"/>
+        <bm:field name="trnid" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="TRNID" prompt="DEMO_EBANK_HEADERS.TRNID"/>
+        <bm:field name="custid" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="CUSTID" prompt="DEMO_EBANK_HEADERS.CUSTID"/>
+        <bm:field name="cusopr" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="CUSOPR" prompt="DEMO_EBANK_HEADERS.CUSOPR"/>
+        <bm:field name="trncod" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="TRNCOD" prompt="DEMO_EBANK_HEADERS.TRNCOD"/>
+        <bm:field name="token" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="TOKEN" prompt="DEMO_EBANK_HEADERS.TOKEN"/>
+    </bm:fields>
+    <bm:features>
+        <o:sequence-pk/>
+    </bm:features>
+    <bm:primary-key>
+        <bm:pk-field name="header_id"/>
+    </bm:primary-key>
+</bm:model>

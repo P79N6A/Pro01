@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: hand  
+    $Date: 2012-9-14 下午1:19:20  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+select *
+  from (select '其他功能' as text,
+               ' ' as image_url,
+               ' ' as url,
+               'SECTION' as function_type,
+               '1' as order_field
+          from dual
+        union
+        select '员工查询' as text,
+               'bundle://man.png' as image_url,
+               'http://10.212.202.89:8080/modules/mobile/emp_employee.screen' as url,
+               'ITEM' as function_type,
+               '10' as order_field
+          from dual
+        union
+        select 'Timesheet' as text,
+               'bundle://newspaper.png' as image_url,
+               'http://10.212.202.89:8080/modules/mobile/emp_employee.screen' as url,
+               'ITEM' as function_type,
+               '20' as order_field
+          from dual
+        union
+        select 'Timesheet审批' as text,
+               'bundle://newspaper.png' as image_url,
+               'http://10.212.202.89:8080/modules/mobile/emp_employee.screen' as url,
+               'ITEM' as function_type,
+               '30' as order_field
+          from dual) t
+ order by t.order_field
+
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

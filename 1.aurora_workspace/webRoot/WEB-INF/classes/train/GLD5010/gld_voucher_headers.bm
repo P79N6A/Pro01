@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: xin.J  
+    $Date: 2017-8-10 下午11:57:10  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:f="aurora.database.features" xmlns:bm="http://www.aurora-framework.org/schema/bm" alias="t1" baseTable="GLD_VOUCHER_HEADERS">
+    <bm:fields>
+        <bm:field name="gld_voucher_header_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="GLD_VOUCHER_HEADER_ID" prompt="GLD_VOUCHER_HEADERS.GLD_VOUCHER_HEADER_ID"/>
+        <bm:field name="voucher_number" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="VOUCHER_NUMBER" prompt="GLD_VOUCHER_HEADERS.VOUCHER_NUMBER"/>
+        <bm:field name="voucher_create_date" databaseType="DATE" datatype="java.util.Date" physicalName="VOUCHER_CREATE_DATE" prompt="GLD_VOUCHER_HEADERS.VOUCHER_CREATE_DATE"/>
+        <bm:field name="period_name" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="PERIOD_NAME" prompt="GLD_VOUCHER_HEADERS.PERIOD_NAME"/>
+        <bm:field name="attachment" databaseType="NUMBER" datatype="java.lang.Long" physicalName="ATTACHMENT" prompt="GLD_VOUCHER_HEADERS.ATTACHMENT"/>
+        <bm:field name="currency_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="CURRENCY_CODE" prompt="GLD_VOUCHER_HEADERS.CURRENCY_CODE"/>
+        <bm:field name="exchange_rate_type" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="EXCHANGE_RATE_TYPE" prompt="GLD_VOUCHER_HEADERS.EXCHANGE_RATE_TYPE"/>
+        <bm:field name="exchange_rate" databaseType="NUMBER" datatype="java.lang.Long" physicalName="EXCHANGE_RATE" prompt="GLD_VOUCHER_HEADERS.EXCHANGE_RATE"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DESCRIPTION" prompt="GLD_VOUCHER_HEADERS.DESCRIPTION"/>
+        <bm:field name="status" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="STATUS" prompt="GLD_VOUCHER_HEADERS.STATUS"/>
+    </bm:fields>
+    <bm:features>
+        <f:standard-who/>
+    </bm:features>
+    <bm:primary-key>
+        <bm:pk-field name="gld_voucher_header_id"/>
+    </bm:primary-key>
+    <bm:operations>
+        <bm:operation name="insert">
+            <bm:update-sql><![CDATA[
+            begin
+            gld_account_voucher_pkg.gld_voucher_header_save(
+                   p_gld_voucher_header_id		=>   ${@gld_voucher_header_id},
+                   p_voucher_number				=>   ${@voucher_number},
+                   p_voucher_create_date			=>   to_date(${@voucher_create_date},'yyyy-mm-dd'),
+                   p_period_name					=>   ${@period_name},
+                   p_attachment						=>   ${@attachment},
+                   p_currency_code					=>   ${@currency_code},
+                   p_exchange_rate_type			=>   ${@exchange_rate_type},
+                   p_exchange_rate					=>   ${@exchange_rate},
+                   p_description						=>   ${@description},
+                   p_user_id							=>   ${/session/@user_id});
+                   
+            end;]]></bm:update-sql>
+            <bm:parameters>
+                <bm:parameter name="gld_voucher_header_id" dataType="java.lang.Long" input="true" inputPath="@gld_voucher_header_id" output="true" outputPath="@gld_voucher_header_id"/>
+                <bm:parameter name="voucher_number" dataType="java.lang.String" input="true" inputPath="@voucher_number" output="true" outputPath="@voucher_number"/>
+            </bm:parameters>
+        </bm:operation>
+        <bm:operation name="delete">
+            <bm:update-sql><![CDATA[
+            begin
+            gld_account_voucher_pkg.delete_gld_voucher_header(
+             			 		 ${@gld_voucher_header_id},
+                                 ${/session/@user_id}
+                                 );
+            end;]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

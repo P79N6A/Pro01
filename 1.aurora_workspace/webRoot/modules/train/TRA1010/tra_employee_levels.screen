@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <!-- lov from to
+符合表头 再嵌入一个column
+render,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+render 上面有greder 上面有一个超链接
+格式化数据rendertiaozuhann 
+列汇总只能汇总当前页的数据，无法汇总分页
+
+
+头行关联
+从 bindName   bindTarget 目标对象（主）
+
+result_ds 以键值对的形式传输 绑定到
+
+
+ -->
+    <a:view>
+        <script><![CDATA[
+            function gld5020_accunt_grid_editFun(record, name) {
+            
+                if (record.isNew) {
+                    if (name == 'level_series_id'||'employee_levels_code') {
+                        return 'gld5020_accunt_grid_tf';
+                    }
+                }
+                return '';
+            }
+            
+            function gld5020_accunt_query_ds_reset() {
+                $('gld5020_accunt_query_ds').reset();
+            
+            }
+            
+            function jsTiJiao1(){
+               /*  $('').submit; */
+            }
+            
+            function jsTiJiao2(){
+                
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="gld5020_account_type_ds" autoQuery="true" fetchAll="true" model="train.TRA1010.tra_employee_levels">
+                <a:field name="level_series" displayField="level_series" returnField="level_series"/>
+                <a:field name="description" displayField="description" returnField="description"/>
+                <a:field name="employee_levels_code" displayField="employee_levels_code" returnField="employee_levels_code"/>
+            </a:dataSet>
+            <!-- lookupCode系统代码有 只读 readonly,必输入required -->
+            <a:dataSet id="gld5020_accunt_query_ds">
+                <a:fields>
+                    <a:field name="employee_levels_code" lovAutoQuery="false" lovGridHeight="500" lovHeight="800" lovLabelWidth="80" lovService="train.TRA1010.tra_employee_levels_lov" lovWidth="800" title="HAP_QUERY">
+                        <!-- <a:mapping >
+                    		<a:map  from="employee_levels_code" to="employee_levels_code"  prompt="级别代码"   />
+                    		
+                    	</a:mapping> --><![CDATA[
+                        
+                        
+                        
+                    	
+                    ]]></a:field>
+                    <a:field name="level_series" displayField="level_series">
+                        <a:mapping>
+                            <a:map from="level_series_id" to="level_series_id"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="level_series_id"/>
+                    <a:field name="description"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="gld5020_accunt_ds" autoQuery="true" model="train.TRA1010.tra_employee_levels" queryDataSet="gld5020_accunt_query_ds" selectable="true">
+                <a:fields>
+                    <a:field name="level_series" displayField="level_series" options="gld5020_account_type_ds" returnField="level_series_id" valueField="level_series_id"/>
+                    <a:field name="level_series_id" displayField="level_series_id" options="gld5020_account_type_ds" returnField="level_series_id" valueField="level_series_id"/>
+                    <a:field name="employee_levels_code" displayField="employee_levels_code" options="gld5020_account_type_ds" returnField="employee_levels_code" valueField="employee_levels_code"/>
+                    <a:field name="description" displayField="description" options="gld5020_account_type_ds" returnField="description" valueField="description"/>
+                    <a:field name="enabled_flag" checkedValue="Y" defaultValue="Y" uncheckedValue="N"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="gld5020_accunt_query_ds_reset" text="重置"/>
+                <a:gridButton bind="gld5020_accunt_grid" type="add"/>
+                <!-- 提交方式 -->
+                <a:gridButton bind="gld5020_accunt_grid" click="jsTiJiao1" text="js保存1"/>
+                <a:gridButton bind="gld5020_accunt_grid" click="jsTiJiao2" text="js保存2"/>
+                <a:gridButton bind="gld5020_accunt_grid" type="save"/>
+                <a:gridButton bind="gld5020_accunt_grid" type="clear"/>
+                <a:gridButton bind="gld5020_accunt_grid" type="delete"/>
+            </a:screenTopToolbar>
+            <a:queryForm bindTarget="gld5020_accunt_query_ds" marginWidth="20">
+                <!-- form表单选择查询 -->
+                <a:formToolBar>
+                    <a:textField name="level_series" prompt="级别系列"/>
+                    <a:textField name="description" prompt="描述"/>
+                    <a:lov name="employee_levels_code" bindTarget="gld5020_accunt_query_ds" prompt="雇员级别代码"/>
+                </a:formToolBar>
+            </a:queryForm>
+            <!-- grid展示 -->
+            <a:grid id="gld5020_accunt_grid" bindTarget="gld5020_accunt_ds" marginHeight="180" marginWidth="20" navBar="true">
+                <a:columns>
+                    <!--  <a:column name="employee_levels_id" editorFunction="gld5020_accunt_grid_editFun" lock="true" prompt="employee_levels_id" sortable="true"/> -->
+                    <a:column name="employee_levels_code" editorFunction="gld5020_accunt_grid_editFun" lock="true" prompt="雇员级别代码 " sortable="true"/>
+                    <a:column name="description" editor="gld5020_accunt_grid_cmb" prompt="描述"/>
+                    <a:column name="level_series" editor="gld5020_accunt_grid_cmb" prompt="级别系列"/>
+                    <a:column name="level_series_id" editor="gld5020_accunt_grid_cmb" prompt="级别系列id"/>
+                    <a:column name="enabled_flag" editor="gld5020_accunt_grid_chk" prompt="启用"/>
+                </a:columns>
+                <a:editors>
+                    <a:textField id="gld5020_accunt_grid_tf"/>
+                    <a:comboBox id="gld5020_accunt_grid_cmb" autoSelect="true"/>
+                    <a:checkBox id="gld5020_accunt_grid_chk"/>
+                </a:editors>
+            </a:grid>
+        </a:screenBody>
+    </a:view>
+</a:screen>

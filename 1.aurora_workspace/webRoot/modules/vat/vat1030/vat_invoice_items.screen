@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure/>
+    <a:view>
+        <script><![CDATA[
+            function query() {
+                $('vat_invoice_items_result_ds').query();
+            }
+            
+            function resetquery() {
+                $('vat_invoice_items_query_ds').reset();
+            }
+            
+            function IsNew(record, name) {
+                if (record.isNew) {
+                    return 'VatTextField';
+                } else {
+                    return '';
+                }
+            }
+            
+            function returnBack() {
+                history.go(-1);
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="vat_invoice_category_ds" fetchAll="true" loadData="true" model="vat.vat1030.vat_invoice_category_query"/>
+            <a:dataSet id="vat_tax_rate_ds" fetchAll="true" loadData="true" model="vat.vat1030.vat_tax_rate_query"/>
+            <a:dataSet id="vat_invoice_items_query_ds" model="vat.vat1030.vat_invoice_items">
+                <a:fields>
+                    <a:field name="set_of_books_id" defaultValue="${/parameter/@set_of_books_id}"/>
+                    <a:field name="invoice_items_id"/>
+                    <a:field name="invoice_item_code"/>
+                    <a:field name="invoice_item_desc"/>
+                    <a:field name="invoice_category_id"/>
+                    <a:field name="invoice_category_name" displayField="invoice_category_name" options="vat_invoice_category_ds" returnField="invoice_category_id" valueField="invoice_category_id"/>
+                    <a:field name="tax_type_rate" displayField="tax_type_rate" options="vat_tax_rate_ds" returnField="tax_type_rate" valueField="tax_type_rate"/>
+                    <a:field name="enabled_flag" checkedValue="Y" defaultValue="Y" uncheckedValue="N"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="vat_invoice_items_result_ds" autoPageSize="true" autoQuery="true" fetchAll="false" model="vat.vat1030.vat_invoice_items" queryDataSet="vat_invoice_items_query_ds" selectable="true">
+                <a:fields>
+                    <a:field name="set_of_books_id" defaultValue="${/parameter/@set_of_books_id}"/>
+                    <a:field name="invoice_items_id"/>
+                    <a:field name="invoice_item_code" required="true"/>
+                    <a:field name="invoice_item_desc" required="true"/>
+                    <a:field name="invoice_category_id"/>
+                    <a:field name="invoice_category_name" displayField="invoice_category_name" options="vat_invoice_category_ds" required="true" returnField="invoice_category_id" valueField="invoice_category_id"/>
+                    <a:field name="tax_type_rate" displayField="tax_type_rate" options="vat_tax_rate_ds" required="true" returnField="tax_type_rate" valueField="tax_type_rate"/>
+                    <a:field name="enabled_flag" checkedValue="Y" defaultValue="Y" uncheckedValue="N"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="resetquery" text="HAP_RESET" width="80"/>
+                <a:toolbarButton click="returnBack" text="HAP_BACK" width="80"/>
+                <a:gridButton bind="vat_invoice_items_gird" type="add" width="80"/>
+                <a:gridButton bind="vat_invoice_items_gird" type="clear" width="80"/>
+                <a:gridButton bind="vat_invoice_items_gird" type="delete" width="80"/>
+                <a:gridButton bind="vat_invoice_items_gird" type="save" width="80"/>
+            </a:screenTopToolbar>
+            <a:queryForm bindTarget="vat_invoice_items_query_ds" resultTarget="vat_invoice_items_result_ds" style="width:100%;border:none">
+                <a:formToolBar>
+                    <a:textField name="invoice_item_code" bindTarget="vat_invoice_items_query_ds" typeCase="upper">
+                        <a:events>
+                            <a:event name="enterdown" handler="query"/>
+                        </a:events>
+                    </a:textField>
+                    <a:textField name="invoice_item_desc" bindTarget="vat_invoice_items_query_ds">
+                        <a:events>
+                            <a:event name="enterdown" handler="query"/>
+                        </a:events>
+                    </a:textField>
+                    <a:comboBox name="invoice_category_name" bindTarget="vat_invoice_items_query_ds">
+                        <a:events>
+                            <a:event name="enterdown" handler="query"/>
+                        </a:events>
+                    </a:comboBox>
+                    <a:comboBox name="tax_type_rate" bindTarget="vat_invoice_items_query_ds">
+                        <a:events>
+                            <a:event name="enterdown" handler="query"/>
+                        </a:events>
+                    </a:comboBox>
+                </a:formToolBar>
+            </a:queryForm>
+            <a:grid id="vat_invoice_items_gird" bindTarget="vat_invoice_items_result_ds" marginHeight="121" marginWidth="42" navBar="true">
+                <a:columns>
+                    <a:column name="invoice_item_code" align="center" editorFunction="IsNew" sortable="true"/>
+                    <a:column name="invoice_item_desc" align="left" editor="VatTextFieldDesc" width="200"/>
+                    <a:column name="invoice_category_name" editor="VatcomboBox"/>
+                    <a:column name="tax_type_rate" align="right" editor="VatcomboBox" sortable="true"/>
+                    <a:column name="enabled_flag" editor="VatcheckBox"/>
+                </a:columns>
+                <a:editors>
+                    <a:textField id="VatTextField" typecase="upper"/>
+                    <a:textField id="VatTextFieldDesc"/>
+                    <a:comboBox id="VatcomboBox"/>
+                    <a:checkBox id="VatcheckBox"/>
+                </a:editors>
+            </a:grid>
+        </a:screenBody>
+        <script purpose="auto_resize"><![CDATA[
+            function vat_invoice_items_info_infoInitSize() {
+                //描述宽度
+                var labelWidth = 75;
+                //标签宽度,5 = 3padding + 2border-spacing
+                var tagWidth = 150 + 5;
+                //页面宽度、高度
+                var vw = $A.getViewportWidth();
+                var vh = $A.getViewportHeight();
+                //留白宽度
+                var marginWidth = 35;
+                //自适应宽度
+                var autoWidth = vw - marginWidth;
+                //Form内部宽度，-2border
+                var formInnerWidth = autoWidth - 2;
+                //所占列数
+                var colSpan = 4;
+                //设置组件的自适应宽度
+                $('vat_invoice_items_gird').setWidth(autoWidth);
+                //设置TextArea的自适应宽度
+            }
+            //Ext.fly(window).on('resize', vat_invoice_items_info_infoInitSize);
+            vat_invoice_items_info_infoInitSize();
+        ]]></script>
+    </a:view>
+</a:screen>
