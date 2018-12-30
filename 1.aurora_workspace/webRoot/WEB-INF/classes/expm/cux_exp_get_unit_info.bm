@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: wqw  
+    $Date: 2013-5-17 上午11:43:22  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+            select u.* from EXP_EMPLOYEE_ASSIGNS e, exp_org_position p, exp_org_unit_vl u
+            where e.position_id = p.position_id
+              and p.unit_id = u.unit_id
+	]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

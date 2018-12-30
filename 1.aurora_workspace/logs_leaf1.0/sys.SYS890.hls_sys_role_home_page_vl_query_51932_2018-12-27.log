@@ -1,0 +1,38 @@
+2018-12-27 10:26:10.114 [uncertain.proc] [CONFIG] Enter procedure pre-service
+2018-12-27 10:26:10.115 [leaf.application.session_check] [CONFIG] Session data copied to context
+2018-12-27 10:26:10.115 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:10.115 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:10.115 [leaf.application.session_check] [CONFIG] Checking BM access sys.SYS890.hls_sys_role_home_page_vl for operation query
+2018-12-27 10:26:10.117 [leaf.application.session_check] [CONFIG] Result from leaf.bm.DefaultAccessChecker@51b5887d is true
+2018-12-27 10:26:10.117 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-27 10:26:10.119 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:10.119 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:10.119 [uncertain.proc] [CONFIG] [action] CheckServiceLock
+2018-12-27 10:26:10.119 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-27 10:26:10.119 [uncertain.proc] [CONFIG] [action] ValidateInput
+2018-12-27 10:26:10.119 [uncertain.proc] [CONFIG] [action] InvokeService
+2018-12-27 10:26:10.119 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:10.120 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.SYS890.hls_sys_role_home_page_vl==============================
+2018-12-27 10:26:10.132 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:10.133 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:10.133 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:10.134 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:10.134 [uncertain.proc] [CONFIG] [action] CreatequeryStatement
+2018-12-27 10:26:10.134 [uncertain.proc] [CONFIG] [action] PopulatequeryStatement
+2018-12-27 10:26:10.134 [uncertain.proc] [CONFIG] [action] CreatequerySql
+2018-12-27 10:26:10.134 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:10.148 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:10.149 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:10.150 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+SELECT t1.ROLE_HOME_PAGE_ID,t1.HOME_PAGE_ID,t1.ORDER_SEQUENCE,t1.ENABLED_FLAG,t1.ROLE_ID,(select a.role_code from sys_role_vl a where a.role_id=t1.role_id) AS role_code,(select a.role_name from sys_role_vl a where a.role_id=t1.role_id) AS role_name,(select a.function_code from hls_sys_home_page a where a.home_page_id=t1.home_page_id) AS function_code,(select B.function_name from hls_sys_home_page a,sys_function_v B where a.home_page_id=t1.home_page_id AND B.function_code=A.FUNCTION_CODE) AS function_name
+FROM HLS_SYS_ROLE_HOME_PAGE t1
+WHERE t1.role_id=?
+ORDER BY (select a.role_code from sys_role_vl a where a.role_id=t1.role_id),order_sequence
+---------------------Binding info---------------------
+No.1	Access path:@role_id	Data type of passed value :java.lang.String	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:10.150 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:10.150 [uncertain.proc] [CONFIG] [action] CreateSuccessResponse

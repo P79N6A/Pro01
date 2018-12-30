@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+				SELECT v.class_id,
+				       v.class_code,
+				       nvl(v.description, v.class_code) class_name,
+				       (v.salvage_value_rate * 100) salvage_value_rate,
+				       v.depreciate_flag,
+				       v.depreciation_months,
+				       v.prorate_convention_code,
+				       decode(v.prorate_convention_code,
+				              'NMP',
+				              to_char(gld_common_pkg.get_period_last_date(${/session/@company_id},
+				                                                  gld_common_pkg.get_period_name(${/session/@company_id},
+				                                                                                                  gld_common_pkg.get_period_last_date(${/session/@company_id},
+				                                                                                                                                                      gld_common_pkg.get_period_name(${/session/@company_id},
+				                                                                                                                                                                                                      h.start_use_date)) + 1)),'YYYY-MM-DD'),
+				              'CMP',
+				              
+				              TO_CHAR(gld_common_pkg.get_period_last_date(${/session/@company_id},
+				                                                  gld_common_pkg.get_period_name(${/session/@company_id},
+				                                                                                                  h.start_use_date)),'YYYY-MM-DD'),
+				              null) start_depreciatite_date
+				  FROM eam_asset_fin_classes_vl v,
+				       eam_asset_headers        h,
+				       eam_asset_categories_vl  vl
+				 WHERE v.asset_category_id = vl.category_id
+				   AND h.asset_book_id = vl.asset_book_id
+				   AND h.category_id = vl.category_id
+				   AND v.enabled_flag = 'Y'
+				   AND vl.enabled_flag = 'Y'
+				   AND h.asset_id = nvl(${/parameter/@asset_id}, ${@asset_id})
+				   and v.class_id = nvl(${@class_id}, v.class_id)
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="class_id"/>
+        <bm:field name="class_code"/>
+        <bm:field name="class_name"/>
+        <bm:field name="depreciate_flag"/>
+        <bm:field name="depreciation_months"/>
+        <bm:field name="salvage_value_rate"/>
+        <bm:field name="prorate_convention_code"/>
+        <bm:field name="start_depreciatite_date"/>
+    </bm:fields>
+</bm:model>

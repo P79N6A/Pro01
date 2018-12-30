@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893
+    $Date: 2013-4-18 上午10:46:57  
+    $Revision: 1.0  
+    $Purpose: 盘点计划明细页面 –差异分析
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm" xmlns:f="aurora.database.features" alias="t1" baseTable="EAM_COUNTING_ANALYSIS_RESULTS">
+    <bm:fields>
+        <bm:field name="counting_plan_header_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="COUNTING_PLAN_HEADER_ID" prompt="EAM_COUNTING_ANALYSIS_RESULTS.COUNTING_PLAN_HEADER_ID"/>
+        <bm:field name="analysis_result_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="ANALYSIS_RESULT_ID" prompt="EAM_COUNTING_ANALYSIS_RESULTS.ANALYSIS_RESULT_ID"/>
+        <bm:field name="asset_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="ASSET_ID" prompt="EAM_COUNTING_ANALYSIS_RESULTS.ASSET_ID"/>
+        <bm:field name="asset_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ASSET_CODE" prompt="EAM_COUNTING_ANALYSIS_RESULTS.ASSET_CODE"/>
+        <bm:field name="current_location_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="CURRENT_LOCATION_ID" prompt="EAM_COUNTING_ANALYSIS_RESULTS.CURRENT_LOCATION_ID"/>
+        <bm:field name="current_location_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="CURRENT_LOCATION_CODE" prompt="EAM_COUNTING_ANALYSIS_RESULTS.CURRENT_LOCATION_CODE"/>
+        <bm:field name="current_quantity" databaseType="NUMBER" datatype="java.lang.Long" physicalName="CURRENT_QUANTITY" prompt="EAM_COUNTING_ANALYSIS_RESULTS.CURRENT_QUANTITY"/>
+        <bm:field name="counted_tag_number" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="COUNTED_TAG_NUMBER" prompt="EAM_COUNTING_ANALYSIS_RESULTS.COUNTED_TAG_NUMBER"/>
+        <bm:field name="act_location_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ACT_LOCATION_CODE" prompt="EAM_COUNTING_ANALYSIS_RESULTS.ACT_LOCATION_CODE"/>
+        <bm:field name="act_location_name" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ACT_LOCATION_NAME" prompt="EAM_COUNTING_ANALYSIS_RESULTS.ACT_LOCATION_NAME"/>
+        <bm:field name="act_quantity" databaseType="NUMBER" datatype="java.lang.Long" physicalName="ACT_QUANTITY" prompt="EAM_COUNTING_ANALYSIS_RESULTS.ACT_QUANTITY"/>
+        <bm:field name="diff_flag" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DIFF_FLAG" prompt="EAM_COUNTING_ANALYSIS_RESULTS.DIFF_FLAG"/>
+        <bm:field name="diff_type" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DIFF_TYPE" prompt="EAM_COUNTING_ANALYSIS_RESULTS.DIFF_TYPE"/>
+        <bm:field name="result_status" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="RESULT_STATUS" prompt="EAM_COUNTING_ANALYSIS_RESULTS.RESULT_STATUS"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DESCRIPTION" prompt="EAM_COUNTING_ANALYSIS_RESULTS.DESCRIPTION"/>
+        <bm:field name="line_number" databaseType="NUMBER" datatype="java.lang.Long" physicalName="LINE_NUMBER" prompt="EAM_COUNTING_ANALYSIS_RESULTS.LINE_NUMBER"/>
+    </bm:fields>
+    <bm:features>
+        <f:standard-who/>
+    </bm:features>
+    <bm:primary-key>
+        <bm:pk-field name="analysis_result_id"/>
+    </bm:primary-key>
+</bm:model>

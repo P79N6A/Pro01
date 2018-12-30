@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-7-2 下午10:40:53  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    v.set_of_books_id value,
+                    v.set_of_books_code name,
+                    v.set_of_books_code
+                    || '-'
+                    || v.set_of_books_name value_name
+                FROM
+                    gld_set_of_books_vl v
+                WHERE
+                    v.enabled_flag = 'Y'
+                ORDER BY
+                    v.set_of_books_code
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

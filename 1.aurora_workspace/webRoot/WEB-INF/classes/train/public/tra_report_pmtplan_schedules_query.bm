@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Tank 
+    $Date: 2017-3-7 上午10:44:26  
+    $Revision: 1.0  
+    $Purpose: 计划付款行查询bm
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    vv.*
+                FROM
+                    (SELECT
+                        *
+                    FROM
+                        (SELECT
+                            b.code_value_name payee_type,
+                            ss.frozen_flag,
+                            ss.company_id,
+                            fv.company_short_name company_name,
+                            b.code_value payee_type_value,
+                            ss.description,
+                            ss.payment_schedule_line_id,
+                            ss.schedule_line_number line_num,
+                            gl.currency_name,
+                            ss.due_amount,
+                            TO_CHAR(ss.schedule_start_date, 'YYYY-MM-DD') schedule_start_date,
+                            TO_CHAR(ss.schedule_due_date, 'YYYY-MM-DD') schedule_due_date,
+                            ss.tra_report_header_id,
+                            ss.currency,
+                            ss.bank_code,
+                            ss.bank_name,
+                            ss.bank_location_code,
+                            ss.bank_location_name,
+                            ss.province_code,
+                            ss.province_name,
+                            ss.city_code,
+                            ss.city_name,
+                            ss.usedes,
+                            (SELECT
+                                usedes_id
+                            FROM
+                                csh_payment_usedes_vl vvv
+                            WHERE
+                                vvv.usedes_code = ss.usedes
+                            ) usedes_id,
+                            (SELECT
+                                v.description
+                            FROM
+                                csh_payment_usedes_vl v
+                            WHERE
+                                v.usedes_code = ss.usedes
+                            ) usedes_name,
+                            (SELECT
+                                ccf.description
+                            FROM
+                                csh_cash_flow_items_vl ccf
+                            WHERE
+                                ccf.cash_flow_item_id = ss.cash_flow_code
+                            ) cash_flow_item_description,
+                            ss.cash_flow_code,
+                            ss.payee_id,
+                            DECODE(b.code_value, 'EMPLOYEE',
+                            (SELECT ees.name FROM exp_employees ees WHERE ees.employee_id = ss.payee_id
+                            ), 'VENDER',
+                            (SELECT
+                                pv.description
+                            FROM
+                                pur_system_venders_vl pv
+                            WHERE
+                                pv.vender_id = ss.payee_id
+                            ), 'CUSTOMER',
+                            (SELECT
+                                ov.description
+                            FROM
+                                ord_system_customers_vl ov
+                            WHERE
+                                ov.customer_id = ss.payee_id
+                            )) payee_partner_name,
+                            (SELECT
+                                NVL(SUM(w.csh_write_off_amount), 0)
+                            FROM
+                                csh_write_off w
+                            WHERE
+                                w.document_source    = 'EXPENSE_REPORT' AND
+                                w.document_header_id = ss.tra_report_header_id AND
+                                w.document_line_id   = ss.payment_schedule_line_id
+                            ) payed_amount,
+                            ss.due_amount need_payment_amount,
+                            ss.account_number,
+                            ss.account_name,
+                            (SELECT
+                                c.description
+                            FROM
+                                csh_payment_methods_vl c
+                            WHERE
+                                c.payment_method_id = ss.payment_type_id
+                            ) payment_method,
+                            ss.payment_type_id
+                        FROM
+                            tra_report_pmt_schedules ss,
+                            sys_code_values_vl b,
+                            sys_codes a,
+                            gld_currency_vl gl,
+                            fnd_companies_vl fv #WHERE_CLAUSE#
+                        )
+                    ) vv
+                ORDER BY
+                    payee_type_value,
+                    payee_partner_name
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="payee_type" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="CODE_VALUE_NAME"/>
+        <bm:field name="company_name" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="COMPANY_NAME"/>
+        <bm:field name="payee_type_value" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DESCRIPTION"/>
+        <bm:field name="payment_schedule_line_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="PAYMENT_SCHEDULE_LINE_ID"/>
+        <bm:field name="currency_name" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="CURRENCY_NAME"/>
+        <bm:field name="due_amount" databaseType="NUMBER" datatype="java.lang.Double" physicalName="DUE_AMOUNT"/>
+        <bm:field name="schedule_start_date" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="SCHEDULE_START_DATE"/>
+        <bm:field name="schedule_due_date" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="SCHEDULE_DUE_DATE"/>
+        <bm:field name="tra_report_header_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="tra_report_header_id"/>
+        <bm:field name="payee_partner_name" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DESCRIPTION_NAME"/>
+        <bm:field name="currency"/>
+        <bm:field name="payee_id" datatype="java.lang.Long"/>
+        <bm:field name="company_id"/>
+        <bm:field name="payment_method"/>
+        <bm:field name="payment_type_id" datatype="java.lang.Long"/>
+        <bm:field name="account_number"/>
+        <bm:field name="account_name"/>
+        <bm:field name="bank_code"/>
+        <bm:field name="bank_name"/>
+        <bm:field name="bank_location_code"/>
+        <bm:field name="bank_location_name"/>
+        <bm:field name="city_code"/>
+        <bm:field name="city_name"/>
+        <bm:field name="province_code"/>
+        <bm:field name="province_name"/>
+        <bm:field name="usedes"/>
+        <bm:field name="usedes_name"/>
+        <bm:field name="frozen_flag"/>
+        <bm:field name="usedes_id"/>
+        <bm:field name="payed_amount"/>
+        <bm:field name="cash_flow_item_description"/>
+        <bm:field name="cash_flow_code"/>
+        <bm:field name="line_num"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field name="frozen_flag" queryExpression=" ss.frozen_flag=${@frozen_flag}"/>
+        <bm:query-field name="can_req_flag" queryExpression=" (ss.due_amount - (select nvl(sum(w.csh_write_off_amount), 0) from csh_write_off w where w.document_source = &apos;EXPENSE_REPORT&apos; and w.document_header_id = ss.tra_report_header_id and w.document_line_id = ss.payment_schedule_line_id) - (select decode(sum(l.amount), null, 0, sum(l.amount)) from acp_acp_requisition_lns l,acp_acp_requisition_hds h where  l.ref_document_id = ss.tra_report_header_id and l.ref_document_line_id =  ss.payment_schedule_line_id and l.payment_status = &apos;NEVER&apos; and l.acp_requisition_header_id = h.acp_requisition_header_id and h.status in (&apos;SUBMITED&apos;,&apos;APPROVED&apos;))) &gt; 0"/>
+    </bm:query-fields>
+    <bm:data-filters>
+        <bm:data-filter enforceOperations="query" expression="b.code_id = a.code_id and a.code = &apos;PAYMENT_OBJECT&apos; and ss.payee_category = b.code_value and ss.currency = gl.currency_code and ss.company_id = fv.company_id and ss.tra_report_header_id = ${@tra_report_header_id}"/>
+    </bm:data-filters>
+</bm:model>

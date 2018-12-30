@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-4-25 上午11:29:35  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    t.*,
+                    v.code_value_name taxpayer_type_display
+                FROM
+                    vat_company_tax_info t,
+                    sys_code_values_v v
+                WHERE
+                    v.code          = 'TYPE_OF_TAXPAYER' AND
+                    t.taxpayer_type = v.code_value AND
+                    t.company_id    = ${@company_id} AND
+                    t.company_code  = ${@company_code}
+            ]]></bm:query-sql>
+        </bm:operation>
+        <bm:operation name="insert">
+            <bm:update-sql><![CDATA[
+				
+					begin
+					    vat_company_tax_info_pkg.insert_company_tax_info(p_company_id              =>${@company_id},
+					                                                     p_company_code            =>${@company_code},
+					                                                     p_address                 =>${@address},
+						                                                 p_taxpayer_type           =>${@taxpayer_type},
+						                                                 p_taxpayer_number         =>${@taxpayer_number},
+						                                                 p_taxpayer_bank           =>${@taxpayer_bank},
+						                                                 p_enabled_flag            =>${@enabled_flag},
+						                                                 p_user_id                 =>${/session/@user_id});
+					end;
+				
+			]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="update">
+            <bm:update-sql><![CDATA[
+				
+					begin
+					    vat_company_tax_info_pkg.update_company_tax_info(p_company_tax_info_id       =>${@company_tax_info_id},
+						                                                 p_address                   =>${@address},
+						                                                 p_taxpayer_type             =>${@taxpayer_type},
+						                                                 p_taxpayer_number           =>${@taxpayer_number},
+						                                                 p_taxpayer_bank             =>${@taxpayer_bank},
+						                                                 p_enabled_flag              =>${@enabled_flag},
+						                                                 p_user_id                   =>${/session/@user_id});
+					end;
+				
+			]]></bm:update-sql>
+        </bm:operation>
+        <bm:operation name="delete">
+            <bm:update-sql><![CDATA[
+                BEGIN
+                    vat_company_tax_info_pkg.delete_company_tax_info(p_company_tax_info_id     =>${@company_tax_info_id},
+                                                                     p_user_id                 =>${/session/@user_id});
+                END; 
+            ]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="company_tax_info_id" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="company_id" databaseType="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="company_code" databaseType="VARCHAR2" datatype="java.lang.String" prompt="COMPANY_CODE"/>
+        <bm:field name="address" databaseType="VARCHAR2" datatype="java.lang.String" prompt="FND_COMPANIES.ADDRESS"/>
+        <bm:field name="taxpayer_type_display" databaseType="VARCHAR2" datatype="java.lang.String" prompt="FND_COMPANIES.TAXPAYER_TYPE_DISPLAY"/>
+        <bm:field name="taxpayer_type" databaseType="VARCHAR2" datatype="java.lang.String" lookupCode="TYPE_OF_TAXPAYER" lookupField="taxpayer_type_display"/>
+        <bm:field name="taxpayer_number" databaseType="VARCHAR2" datatype="java.lang.String" prompt="FND_COMPANIES.TAXPAYER_NUMBER"/>
+        <bm:field name="taxpayer_bank" databaseType="VARCHAR2" datatype="java.lang.String" prompt="FND_COMPANIES.TAXPAYER_BANK"/>
+        <bm:field name="enabled_flag" databaseType="VARCHAR2" datatype="java.lang.String" prompt="FND_COMPANIES.ENABLED_FLAG"/>
+    </bm:fields>
+</bm:model>

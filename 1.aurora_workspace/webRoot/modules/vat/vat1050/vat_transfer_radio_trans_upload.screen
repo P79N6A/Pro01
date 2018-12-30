@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure>
+        <a:model-query model="vat.vat1050.vat_get_sys_import_header_id" rootPath="header_id"/>
+        <a:import-excel header_id="${/model/header_id/record/@header_id}" separator="," status_field="/parameter/@ImportSuccess" template_code="EXPIMPORT" user_id="${/session/@user_id}"/>
+        <a:model-query defaultWhereClause="header_id=${/model/header_id/record/@header_id} and TEMPLATE_CODE=&apos;EXPIMPORT&apos;" model="vat.vat1050.vat_transfer_ratio_get_import_status" rootPath="status"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="vat_transfer_ratio_load_main_link" url="${/request/@context_path}/modules/vat/vat1050/vat_transfer_ratio_load.screen"/>
+        <a:link id="vat_transfer_ratio_save_to_interface" url="${/request/@context_path}/modules/vat/vat1050/vat_transfer_ratio_save_to_interface.svc"/>
+        <script><![CDATA[
+            function loadComplete() {
+                if ("${/model/status/record/@status}" == "NEW") {
+                    var param = {};
+                    param['batch_id'] = "${/parameter/@batch_id}";
+                    param['header_id'] = "${/model/header_id/record/@header_id}";
+                    Aurora.request({
+                        lockMessage: '${l:HAP_WAITING}',
+                        lockMessage: '${l:HAP_WAITING}',
+                        url: $('vat_transfer_ratio_save_to_interface').getUrl(),
+                        para: param,
+                        success: function() {
+                            dispatchToMain();
+                        },
+                        scope: this
+                    });
+                }
+            }
+            
+            function dispatchToMain() {
+                window.location.href = $('vat_transfer_ratio_load_main_link').getUrl();
+                window.close();
+            }
+            
+            function back() {
+                window.location.href = $('vat_transfer_ratio_load_main_link').getUrl();
+            }
+        ]]></script>
+        <a:screenBody>
+            <a:hBox>
+                <a:button click="back" text="HAP_BACK"/>
+            </a:hBox>
+        </a:screenBody>
+        <script><![CDATA[
+        	loadComplete();
+		]]></script>
+    </a:view>
+</a:screen>

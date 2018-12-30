@@ -1,0 +1,745 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:c="aurora.application.action" xmlns:p="uncertain.proc" xmlns:a="http://www.aurora-framework.org/application" tag="exp_report" trace="true">
+    <a:init-procedure>
+        <a:model-query autoCount="false" defaultWhereClause="document_type=&apos;EXP_REPORT&apos; and document_id = ${/parameter/@exp_report_header_id}" fetchAll="true" model="expm.exp_report_bgt_check_log_count_query" rootPath="log_count"/>
+        <a:model-query autoCount="false" fetchAll="true" model="expm.exp_report_head_wfl" rootPath="head_root"/>
+        <a:model-query autocount="false" fetchall="true" model="expm.exp_report_head_dimension" rootpath="head_dimension"/>
+        <a:model-query autocount="false" fetchall="true" model="expm.exp_report_head_object" rootpath="head_object"/>
+        <a:model-query autocount="false" defaultWhereClause="exists (select 1 from exp_rep_ref_dim_detail rdd where rdd.expense_report_type_id = vv.expense_report_type_id and rdd.dimension_id = vv.dimension_id and rdd.travel_line_category = &apos;TRANSPORTATION&apos; and rdd.enabled_flag = &apos;Y&apos;)" fetchall="true" model="expm.exp_report_line_dimension" rootpath="transportation_line_dimension"/>
+        <a:model-query autocount="false" defaultWhereClause="exists (select 1 from exp_rep_ref_obj_detail rod where rod.expense_report_type_id = v.expense_report_type_id and rod.EXPENSE_OBJECT_TYPE_ID = v.expense_object_type_id and rod.travel_line_category = &apos;TRANSPORTATION&apos; and rod.enabled_flag = &apos;Y&apos;)" fetchall="true" model="expm.exp_report_line_object" rootpath="transportation_line_object"/>
+        <a:model-query autocount="false" defaultWhereClause="exists (select 1 from exp_rep_ref_dim_detail rdd where rdd.expense_report_type_id = vv.expense_report_type_id and rdd.dimension_id = vv.dimension_id and rdd.travel_line_category = &apos;ACCOMMODATION&apos; and rdd.enabled_flag = &apos;Y&apos;)" fetchall="true" model="expm.exp_report_line_dimension" rootpath="accommodation_line_dimension"/>
+        <a:model-query autocount="false" defaultWhereClause="exists (select 1 from exp_rep_ref_obj_detail rod where rod.expense_report_type_id = v.expense_report_type_id and rod.EXPENSE_OBJECT_TYPE_ID = v.expense_object_type_id and rod.travel_line_category = &apos;ACCOMMODATION&apos; and rod.enabled_flag = &apos;Y&apos;)" fetchall="true" model="expm.exp_report_line_object" rootpath="accommodation_line_object"/>
+        <a:model-query autocount="false" defaultWhereClause="exists (select 1 from exp_rep_ref_dim_detail rdd where rdd.expense_report_type_id = vv.expense_report_type_id and rdd.dimension_id = vv.dimension_id and rdd.travel_line_category = &apos;OTHER&apos; and rdd.enabled_flag = &apos;Y&apos;)" fetchall="true" model="expm.exp_report_line_dimension" rootpath="other_line_dimension"/>
+        <a:model-query autocount="false" defaultWhereClause="exists (select 1 from exp_rep_ref_obj_detail rod where rod.expense_report_type_id = v.expense_report_type_id and rod.EXPENSE_OBJECT_TYPE_ID = v.expense_object_type_id and rod.travel_line_category = &apos;OTHER&apos; and rod.enabled_flag = &apos;Y&apos;)" fetchall="true" model="expm.exp_report_line_object" rootpath="other_line_object"/>
+        <a:model-query fetchAll="true" model="expm.expm_get_policy_enabled" rootpath="policy_enabled"/>
+        <a:model-query autoCount="false" fetchAll="true" model="expm.exp_rep_att_exist" rootPath="att_flag"/>
+        <a:model-query autocount="true" model="expm.get_travel_plan_header_id_by_exp_report" rootPath="travel_plan"/>
+        <a:model-query autoCount="true" model="expm.exp_report_get_check_log_count" rootPath="check_log_count"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="check_uploadFile_link_9" url="${/request/@context_path}/check_uploadFile.screen"/>
+        <a:link id="exp_report_pmtplan_schedules_readonly_for_wfl_link" url="${/request/@context_path}/modules/wfl/WFL1001/exp_report_pmtplan_schedules_readonly_for_wfl.screen"/>
+        <a:link id="exp_report_query_history_for_wfl_link" url="${/request/@context_path}/modules/wfl/WFL1001/exp_report_query_history_for_wfl.screen"/>
+        <a:link id="exp_report_budget_check_log_for_wfl_link" url="${/request/@context_path}/modules/wfl/WFL1001/exp_report_budget_check_log_for_wfl.screen"/>
+        <a:link id="exp_prepayment_post_readonly_link" url="${/request/@context_path}/modules/expm/public/exp_prepayment_post.screen"/>
+        <a:link id="exp_document_req_policy_query_link" url="${/request/@context_path}/modules/expm/public/exp_document_policy_query.screen"/>
+        <a:link id="exp_bank_assign_link" url="${/request/@context_path}/modules/exp/EXP1050/exp_bank_assign_pmt_schedule_readonly.screen"/>
+        <a:link id="exp_readonly_dept_bgtdetail_link_2" url="${/request/@context_path}/modules/expm/public/exp_readonly_dept_bgtdetail.screen"/>
+        <a:link id="exp_travel_plan_view_link" url="${/request/@context_path}/modules/expm/public/exp_travel_plan_readonly_wfl.screen"/>
+        <a:link id="exp_travel_plan_query_link" url="${/request/@context_path}/modules/expm/public/exp_report_released_tp_query.screen"/>
+        <script><![CDATA[
+            function policyFunction() {
+                var record = $('exp_report_head').getAt(0);
+                // if(records.length != 1){
+                // Aurora.showMessage('${l:PROMPT}','${l:CHOOSE_ONE_RECORD}');
+                // return;
+                // }
+                new Aurora.Window({
+                    url: $('exp_document_req_policy_query_link').getUrl() + '?exp_report_header_id=' + record.get('exp_report_header_id'),
+                    title: '${l:PROMPT.VIEW_POLICIES}',
+                    id: 'exp_document_policy_query_screen',
+                    fullScreen: true
+                });
+            }
+            
+            
+            function seeLog() {
+                var url = $('exp_report_budget_check_log_for_wfl_link').getUrl() + '?exp_report_header_id=${/parameter/@exp_report_header_id}&exp_requisition_header_id=${/parameter/@exp_report_header_id}&document_type=EXP_REPORT&doc_header_id=${/parameter/@head_id}&instance_id=${/parameter/@instance_id}';
+                new Aurora.Window({
+                    id: 'exp_budget_check_log_screen',
+                    url: url,
+                    title: '${l:EXP_REQUESTION_CREATE_SERVICE.LOG}',
+                    fullScreen: true
+                });
+            }
+            
+            function seeHistory() {
+                var url = $('exp_report_query_history_for_wfl_link').getUrl() + '?head_id=${/parameter/@exp_report_header_id}&instance_id=${/parameter/@instance_id}';
+                new Aurora.Window({
+                    id: 'exp_report_history_window',
+                    url: url,
+                    title: '${l:REC_REQUISITION_HISTORY}',
+                    fullScreen: true
+                });
+            }
+            
+            function uploadFile() {
+                var url = $('check_uploadFile_link_9').getUrl() + '?table_name=EXP_REPORT_HEADERS&header_id=${/parameter/@exp_report_header_id}';
+                new Aurora.Window({
+                    url: url,
+                    title: '${l:PROMPT.VIEW_ATTACHMENT}',
+                    id: 'check_upload_file_screen',
+                    width: 600,
+                    height: 400
+                });
+            }
+            
+            function printFunction() {
+                var reportName = $('exp_report_head').getAt(0).get('report_name');
+                var reportParamName = $('exp_report_head').getAt(0).get('report_param_name');
+            
+                if (!reportName) {
+                    Aurora.showInfoMessage('${l:PROMPT}', '${l:SYS_REPORT_NOT_ASSIGN}');
+                    return;
+                }
+            
+                if (!reportParamName) {
+                    Aurora.showInfoMessage('${l:PROMPT}', '${l:SYS_REPORT_PARAM_NOT_DEFINED}');
+                    return;
+                }
+            
+                window.open('${/request/@context_path}/reports?__report=' + reportName + '&' + reportParamName + '=' + $('exp_report_head').getAt(0).get('exp_report_header_id') + '&__format=pdf');
+            }
+            
+            function edit_function_grop(value, record, name) {
+                var url = $('exp_prepayment_post_readonly_link').getUrl() + '?payment_schedule_line_id=' + record.get('payment_schedule_line_id');
+                if (!record.isNew) {
+                    if (record.get('un_write_off_flag') == 'N') {
+                        return '<a style="color:red" href="javascript:view_doc(\'' + url + '\')">' + '${l:EXP_REPORT_PMTPLAN_SCHEDULES.VERIFICATION_LOAN}' + '</a>';
+                    } else {
+                        return '<a href="javascript:view_doc(\'' + url + '\')">' + '${l:EXP_REPORT_PMTPLAN_SCHEDULES.VERIFICATION_LOAN}' + '</a>';
+                    }
+                }
+            }
+            
+            function view_doc(url) {
+                //window.open(url,'','fullscreen=no,resizable=yes,width=800,height=500');
+                new Aurora.Window({
+                    url: url,
+                    fullScreen: true,
+                    title: '',
+                    id: 'exp_prepayment_post_screen',
+                    width: 960,
+                    height: 640
+                });
+            }
+            
+            function line_number(value, record, name) {
+                return $('pmtplan_schedules_ds').indexOf(record) * 10 + 10;
+            }
+            
+            function pmtQuery() {
+                $('pmtplan_schedules_ds').query();
+            }
+            
+            // 查款关联的差旅计划
+            
+            
+            function viewReleatedTravelPlan() {
+                if('${/model/travel_plan/@totalCount}'==0)
+                {
+                     Aurora.showInfoMessage('${l:PROMPT}', '${l:REPORT_REF_TP.UNRELEATED_TRAVEL_PLAN}');
+                    return;
+                }
+                else if('${/model/travel_plan/@totalCount}'==1)
+                {
+                     new Aurora.Window({
+                    url: $('exp_travel_plan_view_link').getUrl() + '?travel_plan_header_id=${/model/travel_plan/record/@travel_plan_header_id}&canviewreport=N',
+                    title: '${l:REPORT_REF_TP.VIEW_TP}',
+                    id: 'exp_travel_plan_window',
+                    fullScreen: true,
+                    width: 1000,
+                    height: 600
+                });
+                }
+                else
+                {
+                new Aurora.Window({
+                    url: $('exp_travel_plan_query_link').getUrl() + '?exp_report_header_id=${/parameter/@exp_report_header_id}&exp_report_number='+$('exp_report_head').getAt(0).get('exp_report_number')+'&report_date='+$('exp_report_head').getAt(0).get('exp_report_data'),
+                    title: '${l:REPORT_REF_TP.VIEW_TP}',
+                    id: 'exp_tp_query_report_screen',
+                    fullScreen: true,
+                    width: 1000,
+                    height: 600
+                });
+                }
+            }
+            
+            function bankAssign(value, record, name) {
+                var pmtLineIndex = $('pmtplan_schedules_ds').indexOf(record);
+                return '<a href="javascript:bankAssignInfo(' + pmtLineIndex + ')">${l:CSH_PAYMENT.BANK_ACCOUNT_CODE}</a>';
+            }
+            
+            
+            function bankAssignInfo(pmtLineIndex) {
+                new Aurora.Window({
+                    id: 'exp_bank_assign_window',
+                    url: $('exp_bank_assign_link').getUrl() + '?line_index=' + pmtLineIndex + '&ds_name=pmtplan_schedules_ds',
+                    title: '${l:CSH_PAYMENT.BANK_ACCOUNT_CODE}',
+                    fullScreen: true
+                });
+            }
+            
+            function bgtdetail() {
+                var unit_id = $('exp_report_head').getAt(0).get('unit_id');
+                new Aurora.Window({
+                    url: $('exp_readonly_dept_bgtdetail_link_2').getUrl() + '?head_id=${/parameter/@exp_report_header_id}&document_type=' + 'EXP_REPORT' + '&unit_id=' + unit_id,
+                    title: '预算进度',
+                    id: 'exp_readonly_dept_bgtdetail.screen',
+                    fullScreen: true
+                });
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="exp_report_head" submitUrl="${/request/@context_path}/modules/expm/public/exp_report_save.svc">
+                <a:datas dataSource="/model/head_root"/>
+                <a:fields>
+                    <a:field name="exp_report_header_id" readOnly="true"/>
+                    <a:field name="exp_report_type_name" prompt="EXP_REPORT_HEADERS.EXP_REPORT_TYPE_ID" readOnly="true"/>
+                    <a:field name="exp_report_type_id" readOnly="true"/>
+                    <a:field name="company_id" readOnly="true"/>
+                    <a:field name="company_name" readOnly="true"/>
+                    <a:field name="payment_flag" readOnly="true"/>
+                    <a:field name="responsibility_center_name" readOnly="true"/>
+                    <a:field name="responsibility_center_id" readOnly="true"/>
+                    <a:field name="unit_id" readOnly="true"/>
+                    <a:field name="unit_name" readOnly="true"/>
+                    <a:field name="employee_id" readOnly="true"/>
+                    <a:field name="employee_name" readOnly="true"/>
+                    <a:field name="position_id" readOnly="true"/>
+                    <a:field name="position_name" readOnly="true"/>
+                    <a:field name="sum_amount" prompt="CON_CONTRACT_HEADERS.SUM_AMOUNT" readOnly="true"/>
+                    <a:field name="exp_report_number" prompt="EXP_REPORT_HEADERS.REPORT_NUMBER" readOnly="true"/>
+                    <a:field name="exp_report_data" prompt="EXP_REPORT_HEADERS.REPORT_DATE" readOnly="true"/>
+                    <a:field name="exp_report_period" prompt="EXP_REPORT_HEADERS.PERIOD_NAME" readOnly="true"/>
+                    <a:field name="exp_report_employee_name" prompt="EXP_REPORT_HEADERS.EMPLOYEE_NAME" readOnly="true"/>
+                    <a:field name="exp_report_payment_method" prompt="EXP_REPORT_HEADERS.PAYMENT_METHOD" readOnly="true"/>
+                    <a:field name="exp_report_position" prompt="EXP_REPORT_HEADERS.POSITION" readOnly="true"/>
+                    <a:field name="exp_report_payee_category_name" prompt="EXP_REPORT_HEADERS.PAYEE_CATEGORY" readOnly="true"/>
+                    <a:field name="exp_report_payee_category" readOnly="true"/>
+                    <a:field name="exp_report_payee_name" prompt="EXP_REPORT_HEADERS.PAYEE_ID" readOnly="true"/>
+                    <a:field name="exp_report_payee_id" readOnly="true"/>
+                    <a:field name="exp_report_currency_name" prompt="EXP_REPORT_HEADERS.CURRENCY_CODE" readOnly="true"/>
+                    <a:field name="exp_report_currency_code" readOnly="true"/>
+                    <a:field name="exp_report_rate" prompt="EXP_REPORT_HEADERS.EXCHANGE_RATE" readOnly="true"/>
+                    <a:field name="exp_report_rate_type_name" prompt="EXP_REPORT_HEADERS.EXCHANGE_RATE_TYPE" readOnly="true"/>
+                    <a:field name="rate_method_code" readOnly="true"/>
+                    <a:field name="functional_currency_code" readOnly="true"/>
+                    <a:field name="exp_report_rate_type" readOnly="true"/>
+                    <a:field name="exp_report_rate_quotation_name" prompt="EXP_REPORT_HEADERS.EXCHANGE_RATE_QUOTATION" readOnly="true"/>
+                    <a:field name="exp_report_rate_quotation" readOnly="true"/>
+                    <a:field name="exp_report_description" prompt="EXP_REPORT_HEADERS.DESCRIPTION" readOnly="true"/>
+                    <a:field name="exp_report_attach_id" prompt="EXP_REPORT_HEADERS.ATTACH_ID" readOnly="true"/>
+                    <a:field name="exp_report_status" prompt="EXP_REPORT_HEADERS.REPORT_STATUS" readOnly="true"/>
+                    <a:field name="exp_report_create_by" prompt="EXP_REPORT_HEADERS.CREATE_BY" readOnly="true"/>
+                    <a:field name="exp_report_audit_date" prompt="EXP_REPORT_HEADERS.AUDIT_DATE" readOnly="true"/>
+                    <a:field name="payment_method_id" readOnly="true"/>
+                    <a:field name="period_name" readOnly="true"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="exp_report_head_dimension" autoCreate="true">
+                <a:fields>
+                    <a:placeHolder id="dynamicHeadFields"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="exp_report_head_object" autoCreate="true">
+                <a:fields>
+                    <a:placeHolder id="dynamicHeadObjects"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="transportation_exp_report_lines" autoQuery="true" bindName="transportation_lines" bindTarget="exp_report_head" fetchAll="true" model="expm.exp_report_lines" pageSize="1000" queryUrl="${/request/@context_path}/modules/expm/public/exp_report_line_query_travel_wfl.svc?exp_report_header_id=${/parameter/@exp_report_header_id}&amp;_ban_remind=Y&amp;travel_line_category=TRANSPORTATION" selectable="true">
+                <a:fields>
+                    <a:field name="exp_report_header_id"/>
+                    <a:field name="exp_report_line_id"/>
+                    <a:field name="company_id"/>
+                    <a:field name="company_name"/>
+                    <a:field name="unit_name"/>
+                    <a:field name="responsibility_center_name"/>
+                    <a:field name="position_name"/>
+                    <a:field name="employee_name"/>
+                    <a:field name="position_primary"/>
+                    <a:field name="currency_code"/>
+                    <a:field name="exchange_rate_type"/>
+                    <a:field name="exchange_rate_type_name"/>
+                    <a:field name="exchange_rate_quotation"/>
+                    <a:field name="exchange_rate_quotation_name"/>
+                    <a:field name="exchange_rate"/>
+                    <a:field name="line_number"/>
+                    <a:field name="description"/>
+                    <a:field name="city"/>
+                    <a:field name="place"/>
+                    <a:field name="place_type"/>
+                    <a:field name="date_from"/>
+                    <a:field name="date_to"/>
+                    <a:field name="expense_type_name"/>
+                    <a:field name="exp_req_item_name"/>
+                    <a:field name="price"/>
+                    <a:field name="primary_quantity"/>
+                    <a:field name="report_amount"/>
+                    <a:field name="report_functional_amount"/>
+                    <a:field name="period_name"/>
+                    <a:field name="payment_flag" checkedvalue="Y" uncheckedvalue="N"/>
+                    <a:field name="contract_header_code"/>
+                    <a:field name="payment_schedule_line_code"/>
+                    <!-- <a:field name="tax_type_desc"/> -->
+                    <a:placeHolder id="transportation_dynamicLineFields"/>
+                    <a:placeHolder id="transportation_dynamicLineFieldsObj"/>
+                    <a:field name="transportation_desc" prompt="EXP_REPORT_TRAVEL_LINES.TRANSPORTATION"/>
+                    <a:field name="departure_place" prompt="EXP_REPORT_TRAVEL_LINES.DEPARTURE_PLACE"/>
+                    <a:field name="departure_date" prompt="EXP_REPORT_TRAVEL_LINES.DEPARTURE_DATE"/>
+                    <a:field name="arrival_place" prompt="EXP_REPORT_TRAVEL_LINES.ARRIVAL_PLACE"/>
+                    <a:field name="arrival_place_id" prompt="EXP_REPORT_TRAVEL_LINES.ARRIVAL_PLACE"/>
+                    <a:field name="arrival_date" prompt="EXP_REPORT_TRAVEL_LINES.ARRIVAL_DATE"/>
+                    <a:field name="travel_line_category"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="accommodation_exp_report_lines" autoQuery="true" bindName="accommodation_lines" bindTarget="exp_report_head" fetchAll="true" model="expm.exp_report_lines" pageSize="1000" queryUrl="${/request/@context_path}/modules/expm/public/exp_report_line_query_travel_wfl.svc?exp_report_header_id=${/parameter/@exp_report_header_id}&amp;_ban_remind=Y&amp;travel_line_category=ACCOMMODATION" selectable="true">
+                <a:fields>
+                    <a:field name="company_name"/>
+                    <a:field name="unit_name"/>
+                    <a:field name="responsibility_center_name"/>
+                    <a:field name="position_name"/>
+                    <a:field name="employee_name"/>
+                    <a:field name="position_primary"/>
+                    <a:field name="currency_code"/>
+                    <a:field name="exchange_rate_type"/>
+                    <a:field name="exchange_rate_type_name"/>
+                    <a:field name="exchange_rate_quotation"/>
+                    <a:field name="exchange_rate_quotation_name"/>
+                    <a:field name="exchange_rate"/>
+                    <a:field name="line_number"/>
+                    <a:field name="description"/>
+                    <a:field name="city"/>
+                    <a:field name="date_from"/>
+                    <a:field name="date_to"/>
+                    <a:field name="expense_type_name"/>
+                    <a:field name="exp_req_item_name"/>
+                    <a:field name="price"/>
+                    <a:field name="primary_quantity"/>
+                    <a:field name="report_amount"/>
+                    <a:field name="report_functional_amount"/>
+                    <a:field name="period_name" prompt="EXP_REQUISITION_LINES.PERIOD_NAME"/>
+                    <a:field name="payment_flag" checkedvalue="Y" uncheckedvalue="N"/>
+                    <a:field name="contract_header_code" prompt="CON_CONTRACT_HEADERS.CONTRACT_NUMBER"/>
+                    <a:field name="payment_schedule_line_code" prompt="CON_PAYMENT_SCHEDULES.PAYMENT_SCHEDULE_LINE_NUMBER"/>
+                    <!-- <a:field name="tax_type_desc" prompt="FND_TAX_TYPE_CODES.TAX_TYPE_RATE"/> -->
+                    <a:placeHolder id="accommodation_dynamicLineFields"/>
+                    <a:placeHolder id="accommodation_dynamicLineFieldsObj"/>
+                    <a:field name="place" prompt="EXP_REQUISITION_LINES.PLACE_ID"/>
+                    <a:field name="place_id"/>
+                    <a:field name="place_type" prompt="EXP_REQUISITION_LINES.PLACE_TYPE_ID"/>
+                    <a:field name="accommodation_date_from" prompt="EXP_REPORT_TRAVEL_LINES.ACCOMMODATION_DATE_FROM"/>
+                    <a:field name="accommodation_date_to" prompt="EXP_REPORT_TRAVEL_LINES.ACCOMMODATION_DATE_TO"/>
+                    <a:field name="accommodation_days" prompt="EXP_REPORT_TRAVEL_LINES.ACCOMMODATION_DAYS"/>
+                    <a:field name="travel_line_category"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="other_exp_report_lines" autoQuery="true" bindName="other_lines" bindTarget="exp_report_head" fetchAll="true" model="expm.exp_report_lines" pageSize="1000" queryUrl="${/request/@context_path}/modules/expm/public/exp_report_line_query_travel_wfl.svc?exp_report_header_id=${/parameter/@exp_report_header_id}&amp;_ban_remind=Y&amp;travel_line_category=OTHER" selectable="true">
+                <a:fields>
+                    <a:field name="company_name"/>
+                    <a:field name="unit_name"/>
+                    <a:field name="responsibility_center_name"/>
+                    <a:field name="position_name"/>
+                    <a:field name="employee_name"/>
+                    <a:field name="position_primary"/>
+                    <a:field name="currency_code"/>
+                    <a:field name="exchange_rate_type"/>
+                    <a:field name="exchange_rate_type_name"/>
+                    <a:field name="exchange_rate_quotation"/>
+                    <a:field name="exchange_rate_quotation_name"/>
+                    <a:field name="exchange_rate"/>
+                    <a:field name="line_number"/>
+                    <a:field name="description"/>
+                    <a:field name="city"/>
+                    <a:field name="place" prompt="EXP_REQUISITION_LINES.PLACE_ID"/>
+                    <a:field name="place_type" prompt="EXP_REQUISITION_LINES.PLACE_TYPE_ID"/>
+                    <a:field name="date_from"/>
+                    <a:field name="date_to"/>
+                    <a:field name="expense_type_name"/>
+                    <a:field name="exp_req_item_id"/>
+                    <a:field name="exp_req_item_name"/>
+                    <a:field name="price"/>
+                    <a:field name="primary_quantity"/>
+                    <a:field name="report_amount"/>
+                    <a:field name="report_functional_amount"/>
+                    <a:field name="period_name" prompt="EXP_REQUISITION_LINES.PERIOD_NAME"/>
+                    <a:field name="payment_flag" checkedvalue="Y" uncheckedvalue="N"/>
+                    <a:field name="contract_header_code" prompt="CON_CONTRACT_HEADERS.CONTRACT_NUMBER"/>
+                    <a:field name="payment_schedule_line_code" prompt="CON_PAYMENT_SCHEDULES.PAYMENT_SCHEDULE_LINE_NUMBER"/>
+                    <!-- <a:field name="tax_type_desc" prompt="FND_TAX_TYPE_CODES.TAX_TYPE_RATE"/> -->
+                    <a:placeHolder id="other_dynamicLineFields"/>
+                    <a:placeHolder id="other_dynamicLineFieldsObj"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="pmtplan_schedules_ds" autoQuery="true" bindName="pmtplan" bindTarget="exp_report_head" fetchAll="true" model="expm.exp_report_pmtplan_schedules_query" queryUrl="${/request/@context_path}/autocrud/expm.exp_report_pmtplan_schedules_query/query?exp_report_header_id=${/parameter/@exp_report_header_id}" selectable="true" submitUrl="${/request/@context_path}/autocrud/expm.update_exp_rep_pmt_schedules/batch_update">
+                <a:fields>
+                    <a:field name="company_name" prompt="EXP_REPORT_PMT_SCHEDULES.COMPANY_ID"/>
+                    <a:field name="description" prompt="EXP_REPORT_PMT_SCHEDULES.DESCRIPTION"/>
+                    <a:field name="currency_name" prompt="EXP_REPORT_PMT_SCHEDULES.CURRENCY"/>
+                    <a:field name="due_amount" prompt="EXP_REPORT_PMT_SCHEDULES.DUE_AMOUNT"/>
+                    <a:field name="company_short_name" prompt="EXP_REPORT_PMT_SCHEDULES.COMPANY_ID"/>
+                    <a:field name="contract_number" prompt="CON_CONTRACT_HEADERS.CONTRACT_NUMBER"/>
+                    <a:field name="line_number" prompt="CON_PAYMENT_SCHEDULES.PAYMENT_SCHEDULE_LINE_NUMBER"/>
+                    <a:field name="payment_method" prompt="ACP.DESCRIPTION_METHOD"/>
+                    <a:field name="account_name" prompt="EXP_EMPLOYEE_ACCOUNTS.BANK_ACCOUNT_NAME"/>
+                    <a:field name="frozen_flag" checkedValue="Y" defaultValue="N" prompt="SYS_USER.FROZEN_FLAG" uncheckedValue="N"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton id="policy" click="policyFunction" text="PROMPT.VIEW_POLICIES" width="80"/>
+                <a:toolbarButton click="seeHistory" text="PROMPT.HISTORY" width="80"/>
+                <a:toolbarButton id="seeLog" click="seeLog" text="PROMPT.VIEW_LOG" width="80"/>
+                <a:toolbarButton click="printFunction" text="PROMPT.PRINT" width="80"/>
+                <a:placeHolder id="uploadFilePlace"/>
+                <a:toolbarButton id="bgtdetail" click="bgtdetail" text="REPORT_REF_TP.BGT_DETAIL" width="80"/>
+                <a:toolbarButton id="viewReleatedTravelPlan" click="viewReleatedTravelPlan" text="REPORT_REF_TP.VIEW_TP" width="140"/>
+            </a:screenTopToolbar>
+            <a:form id="exp_rep_mt_standard_head_form" title="EXP_REPORT_CREATE.TITEL">
+                <a:box id="exp_rep_mt_standard_normal_box" column="4" style="width:100%">
+                    <a:textField name="exp_report_number" bindtarget="exp_report_head"/>
+                    <a:textField name="exp_report_type_name" bindtarget="exp_report_head"/>
+                    <a:datePicker name="exp_report_data" bindtarget="exp_report_head"/>
+                    <a:numberField name="sum_amount" allowDecimals="true" allowFormat="true" bindTarget="exp_report_head"/>
+                    <a:textField name="exp_report_employee_name" bindtarget="exp_report_head"/>
+                    <a:comboBox name="exp_report_position" bindtarget="exp_report_head"/>
+                    <a:textField name="exp_report_currency_name" bindtarget="exp_report_head"/>
+                    <a:numberField name="exp_report_attach_id" allowDecimals="false" bindtarget="exp_report_head"/>
+                    <a:textField name="exp_report_create_by" bindtarget="exp_report_head"/>
+                    <a:comboBox name="exp_report_payment_method" bindtarget="exp_report_head"/>
+                    <a:comboBox name="exp_report_payee_category_name" bindtarget="exp_report_head"/>
+                    <a:lov name="exp_report_payee_name" bindtarget="exp_report_head"/>
+                    <a:lov name="exp_report_rate_type_name" bindtarget="exp_report_head"/>
+                    <a:comboBox name="exp_report_rate_quotation_name" bindtarget="exp_report_head"/>
+                    <a:numberField name="exp_report_rate" bindTarget="exp_report_head"/>
+                    <a:textField name="exp_report_status" bindtarget="exp_report_head"/>
+                    <a:placeHolder id="dynamicHeadColumn"/>
+                    <a:placeHolder id="dynamicHeadObject"/>
+                </a:box>
+                <a:box id="exp_rep_mt_standard_ta_box" style="width:100%">
+                    <a:textArea name="exp_report_description" id="exp_rep_mt_standard_desc_ta" bindtarget="exp_report_head"/>
+                </a:box>
+            </a:form>
+            <a:tabPanel id="line_tab" marginHeight="325">
+                <a:tabs>
+                    <a:tab prompt="HEC.EXP_REPORT_TRANSPORTATION_LINE_INFO" width="150">
+                        <a:grid id="transportation_grid" bindTarget="transportation_exp_report_lines" marginHeight="377" navBar="true" style="margin-top:5px;margin-left:5px;">
+                            <a:toolBar>
+                                <a:label/>
+                            </a:toolBar>
+                            <a:columns>
+                                <a:column name="line_number" align="center" width="50"/>
+                                <a:column name="description" align="left" width="150"/>
+                                <a:column name="transportation_desc" align="left" width="120"/>
+                                <a:column name="departure_place" align="left" width="120"/>
+                                <a:column name="departure_date" align="center" renderer="Aurora.formatDate" width="100"/>
+                                <a:column name="arrival_place" align="left" width="120"/>
+                                <a:column name="arrival_date" align="center" renderer="Aurora.formatDate" width="100"/>
+                                <a:column name="company_name" align="left" width="120"/>
+                                <a:column name="expense_type_name" align="left" width="120"/>
+                                <a:column name="exp_req_item_name" align="left" width="120"/>
+                                <a:column name="price" align="right" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="primary_quantity" align="right" width="100"/>
+                                <a:column name="report_amount" align="right" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="report_functional_amount" align="right" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="period_name" align="left" width="80"/>
+                                <a:column name="responsibility_center_name" align="left" width="120"/>
+                                <a:column name="unit_name" align="left" width="120"/>
+                                <a:column name="employee_name" align="left" width="120"/>
+                                <a:column name="position_name" align="left" width="120"/>
+                                <a:placeHolder id="transportation_dynamicLineColumn"/>
+                                <a:placeHolder id="transportation_dynamicLineColumnObj"/>
+                            </a:columns>
+                        </a:grid>
+                    </a:tab>
+                    <a:tab prompt="HEC.EXP_REPORT_ACCOMMODATION_LINE_INFO" width="150">
+                        <a:grid id="accommodation_grid" bindTarget="accommodation_exp_report_lines" marginHeight="377" navBar="true" style="margin-top:5px;margin-left:5px;">
+                            <a:toolBar>
+                                <a:label/>
+                            </a:toolBar>
+                            <a:columns>
+                                <a:column name="line_number" align="center" width="50"/>
+                                <a:column name="description" align="left" width="150"/>
+                                <a:column name="place" align="left" width="120"/>
+                                <a:column name="accommodation_date_from" align="center" renderer="Aurora.formatDate" width="100"/>
+                                <a:column name="accommodation_date_to" align="center" renderer="Aurora.formatDate" width="100"/>
+                                <a:column name="accommodation_days" align="center" width="80"/>
+                                <a:column name="company_name" align="left" width="120"/>
+                                <a:column name="expense_type_name" align="left" width="120"/>
+                                <a:column name="exp_req_item_name" align="left" width="120"/>
+                                <a:column name="price" align="right" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="primary_quantity" align="right" width="100"/>
+                                <a:column name="report_amount" align="right" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="report_functional_amount" align="right" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="period_name" align="left" width="80"/>
+                                <a:column name="responsibility_center_name" align="left" width="120"/>
+                                <a:column name="unit_name" align="left" width="120"/>
+                                <a:column name="employee_name" align="left" width="120"/>
+                                <a:column name="position_name" align="left" width="120"/>
+                                <a:placeHolder id="accommodation_dynamicLineColumn"/>
+                                <a:placeHolder id="accommodation_dynamicLineColumnObj"/>
+                            </a:columns>
+                        </a:grid>
+                    </a:tab>
+                    <a:tab prompt="HEC.EXP_REPORT_OTHER_LINE_INFO" width="150">
+                        <a:grid id="other_grid" bindTarget="other_exp_report_lines" marginHeight="377" navBar="true" style="margin-top:5px;margin-left:5px;">
+                            <a:toolBar>
+                                <a:label/>
+                            </a:toolBar>
+                            <a:columns>
+                                <a:column name="line_number" align="center" width="50"/>
+                                <a:column name="description" align="left" width="150"/>
+                                <a:column name="company_name" align="left" width="120"/>
+                                <a:column name="expense_type_name" align="left" width="120"/>
+                                <a:column name="exp_req_item_name" align="left" width="120"/>
+                                <a:column name="price" align="right" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="primary_quantity" align="right" width="100"/>
+                                <a:column name="report_amount" align="right" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="report_functional_amount" align="right" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="period_name" align="left" width="80"/>
+                                <a:column name="responsibility_center_name" align="left" width="120"/>
+                                <a:column name="unit_name" align="left" width="120"/>
+                                <a:column name="employee_name" align="left" width="120"/>
+                                <a:column name="position_name" align="left" width="120"/>
+                                <a:placeHolder id="other_dynamicLineColumn"/>
+                                <a:placeHolder id="other_dynamicLineColumnObj"/>
+                            </a:columns>
+                        </a:grid>
+                    </a:tab>
+                    <a:tab prompt="HEC.EXP_REPORT_PMT_LINE_INFO" width="150">
+                        <a:grid id="pmt_grid" bindTarget="pmtplan_schedules_ds" marginHeight="377" navBar="true" style="margin-top:5px;margin-left:5px;">
+                            <a:toolBar>
+                                <a:label/>
+                            </a:toolBar>
+                            <a:columns>
+                                <a:column name="line_num" align="center" prompt="CSH_CASH_PLAN_LINES.LINE_NUMBER" renderer="line_number" width="50"/>
+                                <a:column name="verification_loan" align="center" prompt="EXP_REPORT_PMTPLAN_SCHEDULES.VERIFICATION_LOAN" renderer="edit_function_grop" width="80"/>
+                                <a:column name="write_off_amount" align="right" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="description" align="left" width="150"/>
+                                <a:column name="due_amount" align="right" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="payee_type" align="left" prompt="EXP_REPORT_HEADERS.PAYEE_CATEGORY" width="120"/>
+                                <a:column name="payee_partner_name" align="left" prompt="ACP_INVOICE_HEADERS.PAYEE_ID" width="120"/>
+                                <a:column name="account_number" align="left" prompt="EXP_EMPLOYEE.BANK_ACCOUNT" width="120"/>
+                                <a:column name="account_name" align="left" prompt="CSH_BANK_BALANCES.BANK_ACCOUNT_ID" width="120"/>
+                                <a:column name="payment_method" align="left" prompt="EXP_REPORT_HEADERS.PAYMENT_METHOD" width="120"/>
+                                <a:column name="usedes_name" align="left" prompt="CSH_PAYMENT_USEDS.USEDS_CODE" width="120"/>
+                                <a:column name="contract_number" align="left" width="120"/>
+                                <a:column name="line_number" align="left" width="120"/>
+                                <a:column name="frozen_flag" align="center" width="50"/>
+                                <a:column name="bank_id" align="center" prompt="CSH_PAYMENT.BANK_ACCOUNT_CODE" renderer="bankAssign" width="80"/>
+                            </a:columns>
+                        </a:grid>
+                    </a:tab>
+                </a:tabs>
+            </a:tabPanel>
+        </a:screenBody>
+        <script purpose="auto_resize"><![CDATA[
+            function expRepWFLInitSize() {
+                //描述宽度
+                var labelWidth = 75;
+                //标签宽度,5 = 3padding + 2border-spacing
+                var tagWidth = 150 + 5;
+                //页面宽度、高度
+                var vw = $A.getViewportWidth();
+                //留白宽度
+                var marginWidth = 35;
+                //自适应宽度
+                var autoWidth = vw - marginWidth;
+                //Form内部宽度，-2border
+                var formInnerWidth = autoWidth - 2;
+                //所占列数
+                var colSpan = 4;
+                //设置组件的自适应宽度
+                Ext.get('exp_rep_mt_standard_head_form').setWidth(autoWidth + 4);
+                $('line_tab').setWidth(autoWidth + 4);
+                $('transportation_grid').setWidth(autoWidth + 4 - 17);
+                $('accommodation_grid').setWidth(autoWidth + 4 - 17);
+                $('other_grid').setWidth(autoWidth + 4 - 17);
+                $('pmt_grid').setWidth(autoWidth + 4 - 17);
+                //设置TextArea的自适应宽度,别问我最后那个6是哪里来的，试出来的
+                Ext.get('exp_rep_mt_standard_desc_ta').setWidth(formInnerWidth - (formInnerWidth / colSpan - labelWidth - tagWidth) - labelWidth - 6);
+            }
+            //Ext.fly(window).on('resize', expRepWFLInitSize);
+            expRepWFLInitSize();
+            
+            if ('${/parameter/@canviewtp}' == 'N') {
+                $('viewReleatedTravelPlan').hide();
+            }
+            
+            new function() {
+                if ('${/model/check_log_count/record/@check_count}' > 0) {
+                    $('seeLog').el.setStyle('color', 'red');
+                } else {
+                    $('seeLog').el.setStyle('color', '');
+                }
+            }();
+        ]]></script>
+    </a:view>
+    <a:view-config>
+        <c:batch-config source="/model/head_dimension" targetId="dynamicHeadColumn">
+            <a:label name="${@dimension_code}" bindTarget="exp_report_head_dimension"/>
+        </c:batch-config>
+        <c:create-config targetId="dynamicHeadFields">
+            <p:loop source="/model/head_dimension">
+                <c:process-config>
+                    <a:field name="${@dimension_code}" defaultValue="${@value_description}" prompt="${@description}" readOnly="true"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:batch-config source="/model/head_object" targetId="dynamicHeadObject">
+            <a:label name="${@expense_object_type_code}" bindTarget="exp_report_head_object"/>
+        </c:batch-config>
+        <c:create-config targetId="dynamicHeadObjects">
+            <p:loop source="/model/head_object">
+                <c:process-config>
+                    <a:field name="${@expense_object_type_code}" defaultValue="${@default_object_desc}" prompt="${@description}" readOnly="true"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:batch-config source="/model/transportation_line_dimension" targetId="transportation_dynamicLineColumn">
+            <a:column name="${@dimension_code}" align="center" prompt="${@description}"/>
+        </c:batch-config>
+        <c:create-config targetId="transportation_dynamicLineFields">
+            <p:loop source="/model/transportation_line_dimension">
+                <c:process-config>
+                    <a:field name="${@dimension_code}" defaultValue="${@value_description}" lovGridHeight="320" lovHeight="450" lovService="expm.EXP2110.exp_rep_ref_dimension_dvc_lov?dimension_id=${@dimension_id}&amp;enabled_flag=Y" lovWidth="500" prompt="${@description}" title="${@description}">
+                        <a:mapping>
+                            <a:map from="dimension_value_code" to="dimension_value_code"/>
+                            <a:map from="dimension_value_id" to="${@dimension_code1}"/>
+                            <a:map from="description" to="${@dimension_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@dimension_code1}" defaultValue="${@default_dim_value_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="transportation_dynamicLineFieldsObj">
+            <p:loop source="/model/transportation_line_object">
+                <c:process-config>
+                    <a:field name="${@expense_object_type_code}" defaultValue="${@default_object_desc}" lovGridHeight="320" lovHeight="450" lovUrl="${/request/@context_path}/modules/expm/public/exp_req_ref_obj_sql_query_lov.screen?expense_object_type_id=${@expense_object_type_id}" lovWidth="500" prompt="${@description}" title="${@description}">
+                        <a:mapping>
+                            <a:map from="id" to="${@forname}"/>
+                            <a:map from="description" to="${@expense_object_type_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@forname}" defaultValue="${@default_object_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="transportation_dynamicLineColumnObj">
+            <p:loop source="/model/transportation_line_object">
+                <p:switch test="@expense_object_method">
+                    <p:case value="VALUE_LIST">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="SQL_TEXT">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="DESC_TEXT">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center"/>
+                        </c:process-config>
+                    </p:case>
+                </p:switch>
+            </p:loop>
+        </c:create-config>
+        <c:batch-config source="/model/accommodation_line_dimension" targetId="accommodation_dynamicLineColumn">
+            <a:column name="${@dimension_code}" align="center" prompt="${@description}"/>
+        </c:batch-config>
+        <c:create-config targetId="accommodation_dynamicLineFields">
+            <p:loop source="/model/accommodation_line_dimension">
+                <c:process-config>
+                    <a:field name="${@dimension_code}" defaultValue="${@value_description}" lovGridHeight="320" lovHeight="450" lovService="expm.EXP2110.exp_rep_ref_dimension_dvc_lov?dimension_id=${@dimension_id}&amp;enabled_flag=Y" lovWidth="500" prompt="${@description}" title="${@description}">
+                        <a:mapping>
+                            <a:map from="dimension_value_code" to="dimension_value_code"/>
+                            <a:map from="dimension_value_id" to="${@dimension_code1}"/>
+                            <a:map from="description" to="${@dimension_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@dimension_code1}" defaultValue="${@default_dim_value_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="accommodation_dynamicLineFieldsObj">
+            <p:loop source="/model/accommodation_line_object">
+                <c:process-config>
+                    <a:field name="${@expense_object_type_code}" defaultValue="${@default_object_desc}" lovGridHeight="320" lovHeight="450" lovUrl="${/request/@context_path}/modules/expm/public/exp_req_ref_obj_sql_query_lov.screen?expense_object_type_id=${@expense_object_type_id}" lovWidth="500" prompt="${@description}" title="${@description}">
+                        <a:mapping>
+                            <a:map from="id" to="${@forname}"/>
+                            <a:map from="description" to="${@expense_object_type_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@forname}" defaultValue="${@default_object_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="accommodation_dynamicLineColumnObj">
+            <p:loop source="/model/accommodation_line_object">
+                <p:switch test="@expense_object_method">
+                    <p:case value="VALUE_LIST">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="SQL_TEXT">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="DESC_TEXT">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center"/>
+                        </c:process-config>
+                    </p:case>
+                </p:switch>
+            </p:loop>
+        </c:create-config>
+        <c:batch-config source="/model/other_line_dimension" targetId="other_dynamicLineColumn">
+            <a:column name="${@dimension_code}" align="center" prompt="${@description}"/>
+        </c:batch-config>
+        <c:create-config targetId="other_dynamicLineFields">
+            <p:loop source="/model/other_line_dimension">
+                <c:process-config>
+                    <a:field name="${@dimension_code}" defaultValue="${@value_description}" lovGridHeight="320" lovHeight="450" lovService="expm.EXP2110.exp_rep_ref_dimension_dvc_lov?dimension_id=${@dimension_id}&amp;enabled_flag=Y" lovWidth="500" prompt="${@description}" title="${@description}">
+                        <a:mapping>
+                            <a:map from="dimension_value_code" to="dimension_value_code"/>
+                            <a:map from="dimension_value_id" to="${@dimension_code1}"/>
+                            <a:map from="description" to="${@dimension_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@dimension_code1}" defaultValue="${@default_dim_value_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="other_dynamicLineFieldsObj">
+            <p:loop source="/model/other_line_object">
+                <c:process-config>
+                    <a:field name="${@expense_object_type_code}" defaultValue="${@default_object_desc}" lovGridHeight="320" lovHeight="450" lovUrl="${/request/@context_path}/modules/expm/public/exp_req_ref_obj_sql_query_lov.screen?expense_object_type_id=${@expense_object_type_id}" lovWidth="500" prompt="${@description}" title="${@description}">
+                        <a:mapping>
+                            <a:map from="id" to="${@forname}"/>
+                            <a:map from="description" to="${@expense_object_type_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@forname}" defaultValue="${@default_object_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="other_dynamicLineColumnObj">
+            <p:loop source="/model/other_line_object">
+                <p:switch test="@expense_object_method">
+                    <p:case value="VALUE_LIST">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="SQL_TEXT">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="DESC_TEXT">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center"/>
+                        </c:process-config>
+                    </p:case>
+                </p:switch>
+            </p:loop>
+        </c:create-config>
+    </a:view-config>
+</a:screen>

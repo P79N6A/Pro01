@@ -1,0 +1,110 @@
+2018-12-27 10:26:12.713 [uncertain.proc] [CONFIG] Enter procedure pre-service
+2018-12-27 10:26:12.714 [leaf.application.session_check] [CONFIG] Session data copied to context
+2018-12-27 10:26:12.714 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.714 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.714 [leaf.application.session_check] [CONFIG] Checking BM access zjwfl.ZJWFL5110.sdic_wfl_instance_node_recipient for operation query
+2018-12-27 10:26:12.716 [leaf.application.session_check] [CONFIG] Result from leaf.bm.DefaultAccessChecker@463df751 is true
+2018-12-27 10:26:12.716 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-27 10:26:12.718 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.718 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.718 [uncertain.proc] [CONFIG] [action] CheckServiceLock
+2018-12-27 10:26:12.718 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-27 10:26:12.719 [uncertain.proc] [CONFIG] [action] ValidateInput
+2018-12-27 10:26:12.719 [uncertain.proc] [CONFIG] [action] InvokeService
+2018-12-27 10:26:12.719 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.719 [leaf.database] [CONFIG] ===================================== prepare to run model-query zjwfl.ZJWFL5110.sdic_wfl_instance_node_recipient==============================
+2018-12-27 10:26:12.734 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.735 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.735 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:12.735 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.735 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:12.735 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:12.735 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:12.752 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:12.768 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:12.768 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+    			select t1.* from (select s.instance_id,
+               s.approve_count,
+               s.submitted_by,
+               s.submitted_by_name,
+               s.node_id,
+               s.node_desc,
+               s.hierarchy_record_id,
+               s.seq_number,
+               s.user_id,
+               s.date_limit,
+               s.record_id,
+               s.commision_by,
+               s.commision_desc,
+               s.last_notify_date,
+               s.workflow_id,
+               s.workflow_code,
+               s.workflow_desc,
+               s.workflow_desc || '-' || s.node_desc as workflow_info,
+               s.document_info,
+               to_char(s.creation_date, 'yyyy-mm-dd hh24:mi:ss') as creation_date_format,
+               CAST(sysdate AS TIMESTAMP) - CAST(s.creation_date AS TIMESTAMP)  || '' as residence_date_format,
+               s.urgent_type,
+               (select e.position_code from exp_emp_assign_e_v e where e.user_id=s.user_id and e.primary_position_flag='Y' and e.company_id=? and rownum=1)position_code,
+               (select sequence_num
+          from zj_wfl_workflow_node n
+         where n.node_id = s.node_id) node_sequence_num,
+                       s.record_type,
+                'SYS_WFL' LIST_TYPE,
+                null url_link,
+                s.creation_date,
+                null winid
+          from zj_wfl_instance_node_rcpt_v s
+          where s.user_id=?
+          union  ALL
+          SELECT
+          S1.WFL_TO_DO_LIST_ID instance_id,
+          NULL approve_count,
+          S1.SUBMIT_BY,
+          (SELECT SU.DESCRIPTION FROM SYS_USER SU WHERE SU.USER_ID=S1.SUBMIT_BY) 
+          submitted_by_name,
+          NULL node_id,
+          NULL node_desc,
+          NULL hierarchy_record_id,
+          NULL node_desc,
+          NULL USER_ID,
+          NULL date_limit,
+           NULL record_id,
+               NULL commision_by,
+               NULL commision_desc,
+               NULL last_notify_date,
+               NULL workflow_id,
+               NULL workflow_code,
+               NULL workflow_desc,
+              s1.list_desc as workflow_info,
+               s1.document_info,
+               to_char(s1.create_date, 'yyyy-mm-dd hh24:mi:ss') as creation_date_format,
+               CAST(sysdate AS TIMESTAMP) - CAST(s1.creation_date AS TIMESTAMP)  || '' as residence_date_format,
+               'dai' urgent_type,
+               null position_code,
+               null node_sequence_num,
+               null     record_type,
+               'NO_SYS_WFL' LIST_TYPE,
+               s1.url url_link,
+               s1.creation_date,
+               s1.winid
+           FROM SDIC_WFL_TO_DO_LIST S1
+           where (exists(select 1 from dual where ?  =s1.user_id)
+           or exists(select 1 from dual where ?  =s1.role_id)
+           )
+           and s1.DONE_FLAG='N')  t1
+				    
+				 order by t1.urgent_type, t1.creation_date desc
+    		
+---------------------Binding info---------------------
+No.1	Access path:/session/@company_id	Data type of passed value :java.lang.Long	Value:2145	Output:false	Database Type:null	
+No.2	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.3	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.4	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:12.768 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.768 [uncertain.proc] [CONFIG] [action] CreateSuccessResponse

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+        <style>
+        .pagecount{
+            text-align: center;
+            margin-bottom: 5px;
+            padding:15px 15px 20px 0;
+        }
+        .pagecount span{
+            display: inline-block;
+            background: #ddd;
+            margin:0 0 0 5px;
+            width:40px;
+            text-align: center;
+            padding:2px 8px 2px 8px;
+            border:1px solid #eee;
+            color: #666;
+        }
+        .pagecount span a{
+            color:#333;
+        }
+        .pagecount span a:hover{
+            text-decoration: underline;
+        }
+
+    </style>
+    <script>
+        var curPage = 1; //当前页码
+        var total,pageSize,totalPage; //总记录数，每页显示数，总页数
+        getData(1);
+        $("#pagecount").on('click','span a',function(){
+            var rel = $(this).attr("rel");
+            if(rel){
+                getData(rel);
+            }
+        });
+        function getData(page){
+            $.ajax({
+                url:'/UserController/page',
+                type:'GET',
+                data: {'pageNum':page-1,"pageSize":5},
+                beforeSend:function(){
+                },
+                success:function(json){
+                    console.log(json);
+                    total = json.total; //总记录数
+                    // pageSize = json.pageSize; //每页显示条数
+                    pageSize=5;
+                    curPage = page; //当前页
+                    totalPage = json.totalPage; //总页数
+                    var ul=$('.theme_body').find('*').remove();
+                    string='';
+                    $.each(json.list,function(index,array){ //遍历json数据列
+                        // string += "<tr>" + "<td>" +
+                        //     "<input type='checkbox' value='check'></td>" +
+                        //     "<td contentEditable='true'>"+array['userId']+"</td>" +
+                        //     "<td>"+array['userName']+"</td>" +
+                        //     "<td>"+array['password']+"" + "</td>" +
+                        //     "<td>"+array['sex']+"" + "</td>" +
+                        //     "<td>"+array['age']+"" + "</td>" +
+                        //     "<td>"+array['phoneNumber']+"" + "</td>" +
+                        //     "<td>"+array['creationDate']+"" + "</td>" +
+                        //     "<td>"+array['lastUpdateDate']+"" + "</td>" +
+                        //     "<td>"+array['comments']+"" + "</td>" +
+                        //
+                        //     "<td><select id='permission' name='type'>" +
+                        //     "<option value ='present'>"+array['permission']+
+                        //     "</option>" +
+                        //     "<option value ='none'>无权限</option>" +
+                        //     "<option value ='all'>管理员</option>" +
+                        //     "<option value ='order'>订单管理</option>" +
+                        //     "<option value ='customer'>客户管理</option>" +
+                        //     "<option value ='supplier'>供应商管理</option>" +
+                        //     "<option value ='company'>车辆管理</option>" +
+                        //     "<option value ='warehouse'>仓库管理</option>" +
+                        //     "</select></td></tr>";
+                        string+='';
+
+                    });
+                    $('.theme_body').append(string);
+
+                },
+                complete:function(){ //生成分页条
+                    getPageBar();
+                },
+                error:function(){
+                    alert("数据加载失败");
+                }
+            });
+        }
+        //获取分页条
+        function getPageBar(){
+            $("#pagecount").find('*').remove();
+            //页码大于最大页数
+            if(curPage>totalPage) curPage=totalPage;
+            //页码小于1
+            if(curPage<1) curPage=1;
+            pageStr = "<span>共"+total+"条</span><span>"+curPage+"/"+totalPage+"</span>";
+
+            //如果是第一页
+            if(curPage==1){
+                pageStr += "<span>首页</span><span>上一页</span>";
+            }else{
+                pageStr += "<span><a href='javascript:void(0)' rel='1'>首页</a></span><span><a href='javascript:void(0)' rel='"+(curPage-1)+"'>上一页</a></span>";
+            }
+
+            //如果是最后页
+            if(curPage>=totalPage){
+                pageStr += "<span>下一页</span><span>尾页</span>";
+            }else{
+                pageStr += "<span><a href='javascript:void(0)' rel='"+(parseInt(curPage)+1)+"'>下一页</a></span><span><a href='javascript:void(0)' rel='"+totalPage+"'>尾页</a></span>";
+            }
+            $("#pagecount").append(pageStr);
+        }
+    </script>
+</head>
+<body>
+<div><ul class="theme_body"></ul></div><div id="pagecount"class="pagecount"></div>
+</body>
+</html>

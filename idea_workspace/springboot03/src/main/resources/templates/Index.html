@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主页面</title>
+    <link type="text/css" rel="stylesheet" href="css/index.css">
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/js/myJsAllUserInfo.js"></script>
+    <script type="text/javascript" src="/js/myUserCRUDOption.js"></script>
+</head>
+<body>
+<div id="pagecount"class="pagecount"></div>
+<button id="first" onclick="clickFirst()">首页</button>
+<button id="pre" onclick="clickPre()">上一页</button>
+<button id="next" onclick="clickNext()">下一页</button>
+<button id="end" onclick="clickEnd()">末页</button>
+<!--<button id="userManager" onclick="window.location='http://localhost:8090/userManager'">用户管理</button>-->
+<button id="itemManager" onclick="window.location='http://localhost:8090/ItemALlManager'">前往事件管理页面</button>
+<div id="divTable1">
+<table class="indexTable1">
+    <thead class="table_thread">
+    <tr align="center">
+        <th width="50" class="td2">选择</th>
+        <th width="50" class="td2">id</th>
+        <th width="50" class="td2">用户名</th>
+        <th width="50" class="td2">密码</th>
+        <th width="50" height="33" class="td2">性别</th>
+        <th width="50" class="td2">年龄</th>
+        <th width="50" class="td2">电话</th>
+        <th width="100" class="td2">创建日期</th>
+        <th width="100" class="td2">更新日期</th>
+        <th width="50" class="td2">描述</th>
+    </tr>
+    </thead>
+    <tbody class="theme_body" align="center">
+    </tbody>
+</table>
+</div>
+
+<table>
+    <tr><td><button id="select" onclick="selectFun()">根据Id查询个人信息</button></td></tr>
+    <tr><td><button id="insert" onclick="insertFun()">增加一个用户</button></td></tr>
+    <tr><td><button id="delete" onclick="deleteFun()">根据Id删除个用户</button></td></tr>
+    <tr><td><button id="update" onclick="updateFun()">根据Id更新一个用户</button></td></tr>
+    <tr> <td><input type="text" id="text1" placeholder="请在这里输入用户ID"></td></tr>
+    <tr> <td><input type="text" id="text2" placeholder="请在这里输入用户名"></td></tr>
+    <tr> <td><input type="text" id="text3" placeholder="请在这里输入密码"></td></tr>
+    <tr> <td><input type="text" id="text4" placeholder="请在这里输入性别"></td></tr>
+    <tr> <td><input type="text" id="text5" placeholder="请在这里输入年龄"></td></tr>
+    <tr><td><input type="text" id="text6" placeholder="请在这里输入电话号码"></td> </tr>
+    <tr><td><input type="text" id="text7" placeholder="附加描述"></td></tr>
+    <tr><td><input type="text" id="text8" placeholder="创建日期"></td> </tr>
+    <tr><td><input type="text" id="text9" placeholder="修改日期"></td></tr>
+</table>
+</body>
+</html>

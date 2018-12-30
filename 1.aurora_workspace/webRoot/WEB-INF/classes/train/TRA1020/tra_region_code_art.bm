@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[ 
+            select * from (
+            select 
+            region_code,
+            description 
+            from 
+            fnd_region_code_vl 
+            where 
+            region_code not like '__00__') temp2 #WHERE_CLAUSE# #ORDER_BY_CLAUSE#
+]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <!--  <bm:fields>
+        <bm:field name="region_code" databaseType="VARCHAR2" datatype="java.lang.String"  physicalName="REGION_CODE" required="true"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String"  physicalName="DESCRIPTION"/>
+    </bm:fields> -->
+    <!-- 过滤条件方式一 -->
+    <!--   <bm:data-filters>
+    	<bm:data-filter  enforceOperations="query" expression="region_code not like '__00__' and 1=1"  />
+    </bm:data-filters> -->
+    <!-- 过滤条件方式一 -->
+    <bm:query-fields>
+        <bm:query-field name="region_code" queryExpression="substr(temp2.region_code, 0, 2)=substr(${@region_code}, 0, 2)"/>
+    </bm:query-fields>
+</bm:model>

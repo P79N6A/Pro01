@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <a:init-procedure>
+        <a:model-query model="vat.vat1130.vat_invoice_import_get_batch_id" rootPath="batch_id"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="vat_invoice_import_submit_link" model="vat.vat1130.vat_invoice_interface" modelaction="update"/>
+        <a:link id="vat_invoice_import_upload_link" url="${/request/@context_path}/modules/vat/vat1130/vat_invoice_import_upload.screen"/>
+        <a:link id="vat_invoice_import_link" url="${/request/@context_path}/modules/vat/vat1130/vat_invoice_import.screen"/>
+        <script><![CDATA[
+            function loadComplete() {
+                $('result_ds').setQueryParameter('batch_id', '${/model/batch_id/record/@batch_id}');
+                $('result_ds').setQueryParameter("import_flag", "Y");
+                $('result_ds').query();
+            }
+            
+            function loadData() {
+                new Aurora.Window({
+                    url: $('vat_invoice_import_upload_link').getUrl() + '?batch_id=${/model/batch_id/record/@batch_id}',
+                    width: 420,
+                    height: 275
+                });
+            }
+            
+            function submitData() {
+                var allData = $('result_ds').getAll();
+                if (allData.length == 0) {
+                    Aurora.showMessage('${l:PROMPT}', '${l:BGT_BUDGET_ITEMS_INTERFACE.CHECK2}');
+                } else {
+                    var param = {};
+                    param['batch_id'] = '${/model/batch_id/record/@batch_id}';
+                    Aurora.request({
+                        url: $('vat_invoice_import_submit_link').getUrl(),
+                        para: param,
+                        success: function() {
+                            Aurora.showMessage('${l:PROMPT}', '导入成功！');
+                            $('result_ds').setQueryParameter('batch_id', '${/model/batch_id/record/@batch_id}');
+                            $('result_ds').query();
+                        },
+                        scope: this
+                    });
+                    loadComplete();
+                }
+            }
+            
+            function back() {
+                window.location.href = $('vat_invoice_import_link').getUrl();
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="result_ds" autoPageSize="true" fetchAll="false" model="vat.vat1130.vat_invoice_interface"/>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="loadData" text="PROMPT.LOADDATA" width="80"/>
+                <a:toolbarButton click="submitData" text="HAP_SUBMIT" width="80"/>
+                <a:gridButton bind="vat_invoice_load_gird" type="excel" width="80"/>
+                <a:gridButton click="back" text="HAP_BACK" width="80"/>
+            </a:screenTopToolbar>
+            <a:grid id="vat_invoice_load_gird" bindTarget="result_ds" marginHeight="100" marginWidth="30" navBar="true">
+                <a:columns>
+                    <a:column name="invoice_code" align="center" width="150"/>
+                    <a:column name="invoice_number" align="center" width="120"/>
+                    <a:column name="invoice_date" align="center" renderer="Aurora.formatDate" width="120"/>
+                    <a:column name="amount" align="center" width="89"/>
+                    <a:column name="tax_amount" align="center" width="80"/>
+                    <a:column name="status" align="center" width="100"/>
+                </a:columns>
+            </a:grid>
+            <script><![CDATA[
+                loadComplete();
+            ]]></script>
+        </a:screenBody>
+    </a:view>
+</a:screen>

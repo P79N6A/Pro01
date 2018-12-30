@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+            
+            SELECT v.*,
+            gld_exchange_rate_pkg.get_exchange_rate(${/session/@company_id},
+						                            ${@from_currency},
+						                            null,
+						                            'PERIOD',
+						                            to_date(${@exchange_date}, 'yyyy-mm-dd'),
+						                            gld_common_pkg.get_gld_period_name(${/session/@company_id},to_date(${@exchange_date},'yyyy-mm-dd')),
+						                            ${/session/@user_id})exchange_rate,
+                             gld_common_pkg.get_gld_period_name(${/session/@company_id}, to_date(v.journal_date, 'yyyy-mm-dd')) period_name 
+    FROM (SELECT nvl((SELECT to_char(l.accptn_check_date,
+                          'yyyy-mm-dd')
+             FROM eam_requisition_lines l
+            WHERE l.requisition_line_id = ${@requisition_line_id}),
+           to_char(SYSDATE,
+                   'yyyy-mm-dd')) AS journal_date,
+       (SELECT f.currency_code FROM eam_asset_finance_info f WHERE f.asset_id = ${@asset_id}) AS currency_code,
+        gld_common_pkg.get_company_currency_code(${/session/@company_id}) cpy_currency_code,
+       nvl(${@requisition_line_id},
+           0) requisition_line_id
+  FROM dual) v
+  
+  ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="journal_date"/>
+        <bm:field name="currency_code"/>
+        <bm:field name="cpy_currency_code"/>
+        <bm:field name="exchange_rate"/>
+        <bm:field name="requisition_line_id"/>
+    </bm:fields>
+</bm:model>

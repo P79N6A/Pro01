@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[select *
+  from (SELECT ENV.CLASS_ID,
+               ENV.CLASS_CODE,
+               ENV.DESCRIPTION,
+               C.ASSET_BOOK_ID,
+               C.CATEGORY_ID asset_category_id,
+               C.DESCRIPTION asset_category_name
+          FROM EAM_ASSET_ENTITY_CLASSES_VL ENV, EAM_ASSET_CATEGORIES_VL C
+         WHERE ENV.ASSET_CATEGORY_ID = C.CATEGORY_ID
+           AND ENV.ENABLED_FLAG = 'Y') V
+                	 #WHERE_CLAUSE# 
+                 order by  V.CLASS_CODE]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="class_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="CLASS_ID"/>
+        <bm:field name="class_code" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="CLASS_CODE" prompt="EAM_ASSET_ENTITY_CLASSES.CLASS_CODE"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" forDisplay="true" forQuery="true" physicalName="DESCRIPTION" prompt="EAM_ASSET_ENTITY_CLASSES.DESCRIPTION"/>
+        <bm:field name="asset_book_id" databasetype="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="asset_category_id" databasetype="NUMBER" datatype="java.lang.Long"/>
+        <bm:field name="asset_category_name" databasetype="VARCHAR2" datatype="java.lang.String"/>
+    </bm:fields>
+    <bm:query-fields>
+        <bm:query-field field="class_id" queryOperator="like"/>
+        <bm:query-field field="class_code" queryOperator="="/>
+        <bm:query-field field="description" queryOperator="="/>
+    </bm:query-fields>
+</bm:model>

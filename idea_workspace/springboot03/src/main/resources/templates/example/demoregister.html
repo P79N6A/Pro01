@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>js_pageusers.html</title>
+
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <script type="text/javascript" src="pageuser.js"></script>
+</head>
+
+<body>
+<div id="one" align="center">
+    <div>
+        用户名: <input type="text" id="userName" />
+        性别： <input type="text" id="userSex" /> 职业： <input type="text" id="userRole" /> <br /> <br />
+        <input type="button" id="addUsers" value="添加用户" />
+        <input type="button" id="updateUsers" value="更新用户" />
+    </div>
+    <br /> <br />
+    <div>
+        <table border="1px" cellpadding="0" cellspacing="0" width="500px;">
+            <thead>
+            <th>用户名</th>
+            <th>性别</th>
+            <th>职业</th>
+            </thead>
+            <tbody id="showUsers"></tbody>
+        </table>
+
+        <div>
+            <input type="button" id="firstPage" value="首页" /> <input
+                type="button" id="backPage" value="上一页" /> <input type="button"
+                                                                  id="nextPage" value="下一页" /> <input type="button" id="lastPage"
+                                                                                                      value="末页" /> <span id="msg"></span>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

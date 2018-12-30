@@ -1,0 +1,103 @@
+2018-12-20 09:28:04.892 [aurora.application.session_check] [CONFIG] Session data copied to context
+2018-12-20 09:28:04.892 [aurora.application.session_check] [CONFIG] Access check result for modules/homepage/quickpage/sys_favorite_function_view_quick.screen => success
+2018-12-20 09:28:04.892 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-20 09:28:04.919 [uncertain.proc] [CONFIG] [action] InitService
+2018-12-20 09:28:04.919 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-20 09:28:04.919 [uncertain.proc] [CONFIG] [action] CreateModel
+2018-12-20 09:28:04.920 [aurora.database] [CONFIG] ===================================== prepare to run model-query wfl.WFL1001.wfl_instance_node_recipient_user_count==============================
+2018-12-20 09:28:04.922 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-20 09:28:04.923 [uncertain.proc] [FINE] aurora.database.service.BusinessModelService.onDecideSqlGenerationMode
+2018-12-20 09:28:04.923 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-20 09:28:04.923 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-20 09:28:04.923 [uncertain.proc] [FINE] aurora.database.features.OrderByClauseCreator.onPopulateOperationSql
+2018-12-20 09:28:04.923 [uncertain.proc] [FINE] aurora.database.features.WhereClauseCreator.onPopulateOperationSql
+2018-12-20 09:28:04.923 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-20 09:28:04.923 [uncertain.proc] [FINE] aurora.bm.QuerySqlCreator.onExecuteQuery
+2018-12-20 09:28:04.924 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-20 09:28:04.924 [uncertain.proc] [FINE] aurora.database.features.AutoQueryCounter.onQueryFinish
+2018-12-20 09:28:04.924 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-20 09:28:04.924 [uncertain.proc] [FINE] aurora.database.features.CacheBasedLookUpField.postFetchResultSet
+2018-12-20 09:28:04.924 [aurora.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+            select count(1) num
+			  from WFL_WORKFLOW_INSTANCE i, wfl_instance_node_recipient r ,wfl_workflow w
+			 where i.instance_id = r.instance_id
+			   and w.workflow_id =i .workflow_id
+			   and r.user_id = ?
+                                 
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-20 09:28:04.924 [aurora.database] [CONFIG] ===================================== prepare to run model-query wfl.WFL1001.wfl_instance_node_recipient_notification_count==============================
+2018-12-20 09:28:04.926 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-20 09:28:04.926 [uncertain.proc] [FINE] aurora.database.service.BusinessModelService.onDecideSqlGenerationMode
+2018-12-20 09:28:04.926 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-20 09:28:04.926 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-20 09:28:04.926 [uncertain.proc] [FINE] aurora.database.features.OrderByClauseCreator.onPopulateOperationSql
+2018-12-20 09:28:04.926 [uncertain.proc] [FINE] aurora.database.features.WhereClauseCreator.onPopulateOperationSql
+2018-12-20 09:28:04.926 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-20 09:28:04.926 [uncertain.proc] [FINE] aurora.bm.QuerySqlCreator.onExecuteQuery
+2018-12-20 09:28:04.927 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-20 09:28:04.927 [uncertain.proc] [FINE] aurora.database.features.AutoQueryCounter.onQueryFinish
+2018-12-20 09:28:04.927 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-20 09:28:04.927 [uncertain.proc] [FINE] aurora.database.features.CacheBasedLookUpField.postFetchResultSet
+2018-12-20 09:28:04.927 [aurora.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+               
+               select count(*) as num from wfl_instance_node_recipient r
+							  where r.date_limit is not null and r.date_limit <= sysdate 
+							    and  r.user_id = ?
+               
+               
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-20 09:28:04.928 [uncertain.proc] [CONFIG] [action] CreateView
+2018-12-20 09:28:04.928 [uncertain.proc] [CONFIG] [action] BuildOutputContent
+2018-12-20 09:28:04.928 [aurora.presentation.buildsession] [CONFIG] Start build session
+2018-12-20 09:28:04.928 [aurora.presentation.buildsession] [CONFIG] building view: <html-page> -> aurora.presentation.component.HtmlPage@7970dca1
+2018-12-20 09:28:04.929 [aurora.presentation.buildsession] [CONFIG] building view: <link> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.929 [aurora.presentation.buildsession] [CONFIG] building view: <link> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.929 [aurora.presentation.buildsession] [CONFIG] building view: <link> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.930 [aurora.presentation.buildsession] [CONFIG] building view: <link> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.930 [aurora.presentation.buildsession] [CONFIG] building view: <link> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.931 [aurora.presentation.buildsession] [CONFIG] building view: <link> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.931 [aurora.presentation.buildsession] [CONFIG] building view: <link> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.931 [aurora.presentation.buildsession] [CONFIG] building view: <script> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.932 [aurora.presentation.buildsession] [CONFIG] building view: <dataSets> -> aurora.application.features.DataSetInit@496a6498
+2018-12-20 09:28:04.932 [aurora.presentation.buildsession] [CONFIG] building view: <dataSet> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.946 [aurora.presentation.buildsession] [CONFIG] building view: <screenBody> -> aurora.presentation.component.std.ScreenBody@54506ac4
+2018-12-20 09:28:04.946 [aurora.presentation.buildsession] [CONFIG] building view: <fieldSet> -> aurora.presentation.component.std.FieldSet@2293c47c
+2018-12-20 09:28:04.946 [aurora.presentation.buildsession] [CONFIG] building view: <table> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.946 [aurora.presentation.buildsession] [CONFIG] building view: <tr> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.946 [aurora.presentation.buildsession] [CONFIG] building view: <td> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.946 [aurora.presentation.buildsession] [CONFIG] building view: <img> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.947 [aurora.presentation.buildsession] [CONFIG] building view: <td> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.947 [aurora.presentation.buildsession] [CONFIG] building view: <td> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.947 [aurora.presentation.buildsession] [CONFIG] building view: <img> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.947 [aurora.presentation.buildsession] [CONFIG] building view: <td> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.947 [aurora.presentation.buildsession] [CONFIG] building view: <grid> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.947 [aurora.presentation.buildsession] [CONFIG] building view: <navBar> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.948 [aurora.presentation.buildsession] [CONFIG] building view: <button> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.948 [aurora.presentation.buildsession] [CONFIG] building view: <button> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.948 [aurora.presentation.buildsession] [CONFIG] building view: <separator> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.949 [aurora.presentation.buildsession] [CONFIG] building view: <div> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.949 [aurora.presentation.buildsession] [CONFIG] building view: <numberField> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.949 [aurora.presentation.buildsession] [CONFIG] building view: <div> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.949 [aurora.presentation.buildsession] [CONFIG] building view: <separator> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.949 [aurora.presentation.buildsession] [CONFIG] building view: <button> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.950 [aurora.presentation.buildsession] [CONFIG] building view: <button> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.950 [aurora.presentation.buildsession] [CONFIG] building view: <button> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.952 [aurora.presentation.buildsession] [CONFIG] building view: <separator> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.953 [aurora.presentation.buildsession] [CONFIG] building view: <div> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.953 [aurora.presentation.buildsession] [CONFIG] building view: <comboBox> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.954 [aurora.presentation.buildsession] [CONFIG] building view: <div> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.954 [aurora.presentation.buildsession] [CONFIG] building view: <separator> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:28:04.954 [aurora.presentation.buildsession] [CONFIG] building view: <div> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:28:04.956 [aurora.presentation.buildsession] [CONFIG] End build session

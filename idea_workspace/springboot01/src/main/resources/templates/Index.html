@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+
+    <!--<script src="https://cdn.bootcss.com/react/15.4.2/react.min.js"></script>-->
+    <!--<script src="https://cdn.bootcss.com/react/15.4.2/react-dom.min.js"></script>-->
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.cookie.js"></script>
+    <!--<script type="text/javascript" src="/js/babel.min.js"></script>-->
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script type="text/javascript" src="/js/fyexample.js"></script>
+<link rel="stylesheet" href="css/index.css">
+
+<script type="text/javascript">
+function getCookie(){
+$("#userName").val($.cookie("userName"));//val()这种写法有时会失效,特别是他的父元素是dosplay:none时
+$("#password").val($.cookie("password"));
+// document.getElementById("userName").value=$.cookie("userName");//js原始写法
+// $("#userName").attr("id",$.cookie("userName"));//推荐这种写法,可正常赋值,我试了没用
+}
+</script>
+</head>
+<body style="background: lightblue;">
+<div id="example"></div>
+<div class="box" id="box"></div>
+
+
+<div style="text-align: center;margin-top: 200px">
+<form id="form1" onsubmit="return false" action="##" method="post">
+    <p>用户名：<input name="userName" type="text" id="userName"  size="20" value=""/></p>
+    <p>密　码：<input name="password" type="password" id="password"  size="20" value=""/></p>
+    <p><input type="button" value="登录" onclick="getCookie()">&nbsp;&nbsp;&nbsp;<input type="reset" value="重置"></p>
+</form>
+</div>
+</body>
+
+</html>

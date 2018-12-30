@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:e="aurora.service.exception" xmlns:bm="http://www.aurora-framework.org/schema/bm" alias="t1" baseTable="DEMO_WS_USER_ACCOUNT" needAccessControl="false">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+    			SELECT
+    			    (SELECT
+    			        ee.name
+    			    FROM
+    			        sys_user su,
+    			        exp_employees ee
+    			    WHERE
+    			        su.employee_id = ee.employee_id AND
+    			        su.user_id     = i.created_by
+    			    ) AS employee_name,
+    			    TO_CHAR(i.creation_date, 'YYYY-MM-DD HH24:MI:SS') AS creation_date,
+    			    (SELECT
+    			        ee.name
+    			    FROM
+    			        sys_user su,
+    			        exp_employees ee
+    			    WHERE
+    			        su.employee_id = ee.employee_id AND
+    			        su.user_id     = r.created_by
+    			    ) AS approver,
+    			    nv.description AS node_name,
+    			    av.action_title,
+    			    r.comment_text,
+    			    TO_CHAR(r.creation_date, 'YYYY-MM-DD HH24:MI:SS') AS approve_date
+    			FROM
+    			    wfl_workflow_instance i,
+    			    wfl_approve_record r,
+    			    wfl_workflow_node_vl nv,
+    			    wfl_workflow_action_vl av
+    			WHERE
+    			    i.document_number = ${@barcode} AND
+    			    i.instance_id     = r.instance_id AND
+    			    r.node_id         = nv.node_id AND
+    			    r.action_taken    = av.action_id
+			]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="employee_name"/>
+        <bm:field name="creation_date"/>
+        <bm:field name="approver"/>
+        <bm:field name="node_name"/>
+        <bm:field name="action_title"/>
+        <bm:field name="comment_text"/>
+        <bm:field name="approve_date"/>
+    </bm:fields>
+</bm:model>

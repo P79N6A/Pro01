@@ -1,0 +1,26 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Body>
+      <soapenv:soapResponse>
+         <result>
+            <record>
+               <submiter>朱凡</submiter>
+               <senddate>2014-06-09 17:29:52</senddate>
+               <matcher>陈柳竹</matcher>
+               <matchrole/>
+               <suggestion>同意</suggestion>
+               <handledate>2014-06-09 17:32:06</handledate>
+               <remark/>
+            </record>
+            <record>
+               <submiter>朱凡</submiter>
+               <senddate>2014-06-09 17:29:52</senddate>
+               <matcher>陈柳竹</matcher>
+               <matchrole/>
+               <suggestion>同意</suggestion>
+               <handledate>2014-06-09 17:32:06</handledate>
+               <remark/>
+            </record>
+         </result>
+      </soapenv:soapResponse>
+   </soapenv:Body>
+</soapenv:Envelope>

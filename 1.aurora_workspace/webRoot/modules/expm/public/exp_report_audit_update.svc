@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:service xmlns:a="http://www.aurora-framework.org/application" trace="true">
+    <a:init-procedure>
+        <a:batch-apply sourcepath="/parameter/datas">
+            <a:model-update model="expm.audit_update_invoice_info"/>
+            <a:model-update model="expm.save_report_invoice_info"/>
+        </a:batch-apply>
+        <a:model-update model="vat.vat1040.vat_account_adjust"/>
+    </a:init-procedure>
+</a:service>

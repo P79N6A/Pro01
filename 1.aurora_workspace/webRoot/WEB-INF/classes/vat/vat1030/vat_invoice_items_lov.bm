@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-7-10 下午4:20:20  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:ns2="aurora.database.local.oracle" xmlns:f="aurora.database.features" xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        t.*,
+                        t.description invoice_item_desc
+                    FROM
+                        vat_invoice_items_vl t
+                    WHERE
+                        NVL(t.enabled_flag,'N')='Y' AND
+                        t.set_of_books_id      =
+                        (SELECT
+                            fc.set_of_books_id
+                        FROM
+                            fnd_companies_vl fc
+                        WHERE
+                            fc.company_id = ${/session/@company_id}
+                        ) AND
+                        t.invoice_category_id =
+                        (SELECT
+                            c.invoice_category_id
+                        FROM
+                            vat_invoice_category c
+                        WHERE
+                            c.invoice_category_code = ${@invoice_category_code} AND
+                            NVL(c.enabled_flag,'N') ='Y'
+                        ) AND
+                        t.tax_type_rate = ${@tax_type_rate}
+                    ) v
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="invoice_item_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="INVOICE_ITEM_ID"/>
+        <bm:field name="set_of_books_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="SET_OF_BOOKS_ID"/>
+        <bm:field name="invoice_item_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="INVOICE_ITEM_CODE"/>
+        <bm:field name="invoice_item_desc" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="invoice_category_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="INVOICE_CATEGORY_ID"/>
+        <bm:field name="tax_type_rate" databaseType="NUMBER" datatype="java.lang.Long" physicalName="TAX_TYPE_RATE"/>
+        <bm:field name="enabled_flag" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ENABLED_FLAG"/>
+    </bm:fields>
+    <bm:primary-key>
+        <bm:pk-field name="invoice_item_id"/>
+    </bm:primary-key>
+    <bm:features>
+        <ns2:sequence-pk/>
+        <f:standard-who/>
+    </bm:features>
+</bm:model>

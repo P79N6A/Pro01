@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sch="http://www.aurora-framework.org/schema">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <sch:param>
+         <sch:barcode>1000EXP14060005</sch:barcode>
+         <sch:Type></sch:Type>
+         <sch:attrone></sch:attrone>
+         <sch:attrtwo></sch:attrtwo>
+      </sch:param>
+   </soapenv:Body>
+</soapenv:Envelope>

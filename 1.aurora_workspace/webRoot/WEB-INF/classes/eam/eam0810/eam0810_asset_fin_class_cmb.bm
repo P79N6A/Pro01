@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893
+    $Date: 2013-2-28 下午5:13:46  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[SELECT FV.CLASS_ID, FV.CLASS_CODE, FV.DESCRIPTION
+  FROM EAM_ASSET_FIN_CLASSES_VL FV
+ WHERE FV.ENABLED_FLAG = 'Y'
+ AND FV.ASSET_CATEGORY_ID = ${@category_id}
+]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="class_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="CLASS_ID"/>
+        <bm:field name="class_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="CLASS_CODE"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DESCRIPTION"/>
+    </bm:fields>
+</bm:model>

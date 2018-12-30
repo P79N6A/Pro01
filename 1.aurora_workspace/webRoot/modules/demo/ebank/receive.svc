@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:service xmlns:s="aurora.plugin.script" xmlns:a="http://www.aurora-framework.org/application" xmlns:p="uncertain.proc" trace="true">
+    <a:init-procedure>
+        <s:server-script import="composite_map_util.js"/>
+        <s:server-script import="ebank_util.js"/>
+        <s:server-script><![CDATA[
+            var ebankUtil = new EbankUtil();
+            var cmUtil = new CmUtil();
+            
+            var context = $ctx.getData();
+            context.putString('soapResponseFullControl', 'Y');
+            
+            var Envelope = cmUtil.addChild($ctx, {
+                prefix: 'soapenv',
+                namespace: 'http://schemas.xmlsoap.org/soap/envelope/',
+                tag: 'Envelope'
+            });
+            
+            var Header = cmUtil.addChild(Envelope, {
+                prefix: 'soapenv',
+                namespace: 'http://schemas.xmlsoap.org/soap/envelope/',
+                tag: 'Header'
+            });
+            
+            var Body = cmUtil.addChild(Envelope, {
+                prefix: 'soapenv',
+                namespace: 'http://schemas.xmlsoap.org/soap/envelope/',
+                tag: 'Body'
+            });
+            
+            var bocb2e = cmUtil.addChild(Body, {
+                tag: 'bocb2e'
+            });
+            
+            function main() {
+                try {
+                    //获取上下文，并设置当前的soap为全手动设置
+                    var paramData = context.getObject('/parameter');
+                    var param = $ctx.parameter;
+                    var head = $ctx.get('/parameter/head');
+                    var trans = $ctx.get('/parameter/trans');
+                    ebankUtil.validateFormat(param);
+                    var trncod = head.get('trncod').getText();
+                    $ctx.parameter.termid = head.get('termid').getText();
+                    $ctx.parameter.trnid = head.get('trnid').getText();
+                    $ctx.parameter.custid = head.get('custid').getText();
+                    $ctx.parameter.cusopr = head.get('cusopr').getText();
+                    $ctx.parameter.trncod = head.get('trncod').getText();
+                    $ctx.parameter.token = head.get('token').getText();
+                    $bm('demo.demo_ebank_headers').insert();
+                    var header_id = $ctx.parameter.header_id;
+            
+            
+                    if (trncod == 'b2e0009') {
+                        //对公交易
+                        var trnB2e0009Req = trans.get('trn-b2e0009-rq');
+                        var ceitinfo = trnB2e0009Req.get('ceitinfo').getText();
+                        var transtype = trnB2e0009Req.get('transtype').getText();
+            
+                        var trnB2e0009ReqChildren = trnB2e0009Req.getChildren();
+                        var b2e0009Reqs = [];
+                        for (var i = 0;i < trnB2e0009ReqChildren.length;i++) {
+                            if (trnB2e0009ReqChildren[i].getName() == 'b2e0009-rq') {
+                                b2e0009Reqs.push(trnB2e0009ReqChildren[i]);
+                            }
+                        }
+            
+                        for (var i = 0;i < b2e0009Reqs.length;i++) {
+                            var b2e0009Req = b2e0009Reqs[i];
+                            $ctx.parameter.header_id = header_id;
+                            $ctx.parameter.ceitinfo = ceitinfo;
+                            $ctx.parameter.transtype = transtype;
+                            $ctx.parameter.insid = b2e0009Req.get('insid').getText();
+                            $ctx.parameter.obssid = b2e0009Req.get('obssid').getText();
+                            $ctx.parameter.fractn_fribkn = b2e0009Req.get('fractn/fribkn').getText();
+                            $ctx.parameter.fractn_actacn = b2e0009Req.get('fractn/actacn').getText();
+                            $ctx.parameter.fractn_actnam = b2e0009Req.get('fractn/actnam').getText();
+                            $ctx.parameter.toactn_toibkn = b2e0009Req.get('toactn/toibkn').getText();
+                            $ctx.parameter.toactn_actacn = b2e0009Req.get('toactn/actacn').getText();
+                            $ctx.parameter.toactn_toname = b2e0009Req.get('toactn/toname').getText();
+                            $ctx.parameter.toactn_toaddr = b2e0009Req.get('toactn/toaddr').getText();
+                            $ctx.parameter.toactn_tobknm = b2e0009Req.get('toactn/tobknm').getText();
+                            $ctx.parameter.trnamt = b2e0009Req.get('trnamt').getText();
+                            $ctx.parameter.trncur = b2e0009Req.get('trncur').getText();
+                            $ctx.parameter.priolv = b2e0009Req.get('priolv').getText();
+                            $ctx.parameter.furinfo = b2e0009Req.get('furinfo').getText();
+                            $ctx.parameter.trfdate = b2e0009Req.get('trfdate').getText();
+                            $ctx.parameter.trftime = b2e0009Req.get('trftime').getText();
+                            $ctx.parameter.comacn = b2e0009Req.get('comacn').getText();
+            
+                            //尾号为9--支付传送网络超时
+                            if (/^.*9$/g.test($ctx.parameter.toactn_toibkn)) {
+                                java.lang.Thread.sleep(999999999);
+                            }
+            
+                            $bm('demo.demo_ebank_lines').insert();
+                        }
+                        
+                        var status = cmUtil.addChild(head, {
+                            tag: 'status'
+                        });
+                        cmUtil.addChild(status, {
+                            tag: 'rspcod'
+                        }).setText('B001');
+                        cmUtil.addChild(status, {
+                            tag: 'rspmsg'
+                        }).setText('传送成功');
+                        cmUtil.appendChild(bocb2e, head);
+                    } else if (trncod == 'b2e0061') {
+                        //对私交易
+                        var trnB2e0061Req = trans.get('trn-b2e0061-rq');
+                        var ceitinfo = trnB2e0061Req.get('ceitinfo').getText();
+                        var transtype = trnB2e0061Req.get('transtype').getText();
+            
+                        var trnB2e0061ReqChildren = trnB2e0061Req.getChildren();
+                        var b2e0061Reqs = [];
+                        for (var i = 0;i < trnB2e0061ReqChildren.length;i++) {
+                            if (trnB2e0061ReqChildren[i].getName() == 'b2e0061-rq') {
+                                b2e0061Reqs.push(trnB2e0061ReqChildren[i]);
+                            }
+                        }
+                        for (var i = 0;i < b2e0061Reqs.length;i++) {
+                            var b2e0061Req = b2e0061Reqs[i];
+                            $ctx.parameter.header_id = header_id;
+                            $ctx.parameter.ceitinfo = ceitinfo;
+                            $ctx.parameter.transtype = transtype;
+                            $ctx.parameter.insid = b2e0061Req.get('insid').getText();
+                            $ctx.parameter.obssid = b2e0061Req.get('obssid').getText();
+                            $ctx.parameter.fractn_fribkn = b2e0061Req.get('fractn/fribkn').getText();
+                            $ctx.parameter.fractn_actacn = b2e0061Req.get('fractn/actacn').getText();
+                            $ctx.parameter.fractn_actnam = b2e0061Req.get('fractn/actnam').getText();
+                            $ctx.parameter.toactn_toibkn = b2e0061Req.get('toactn/toibkn').getText();
+                            $ctx.parameter.toactn_actacn = b2e0061Req.get('toactn/actacn').getText();
+                            $ctx.parameter.toactn_toname = b2e0061Req.get('toactn/toname').getText();
+                            $ctx.parameter.toactn_toaddr = b2e0061Req.get('toactn/toaddr').getText();
+                            $ctx.parameter.toactn_tobknm = b2e0061Req.get('toactn/tobknm').getText();
+                            $ctx.parameter.trnamt = b2e0061Req.get('trnamt').getText();
+                            $ctx.parameter.trncur = b2e0061Req.get('trncur').getText();
+                            $ctx.parameter.priolv = b2e0061Req.get('priolv').getText();
+                            $ctx.parameter.furinfo = b2e0061Req.get('furinfo').getText();
+                            $ctx.parameter.trfdate = b2e0061Req.get('trfdate').getText();
+                            $ctx.parameter.trftime = b2e0061Req.get('trftime').getText();
+                            $ctx.parameter.comacn = b2e0061Req.get('comacn').getText();
+            
+                            //尾号为9--支付传送网络超时
+                            if (/^.*9$/g.test($ctx.parameter.toactn_toibkn)) {
+                                java.lang.Thread.sleep(999999999);
+                            }
+            
+                            $bm('demo.demo_ebank_lines').insert();
+                        }
+            
+                        var status = cmUtil.addChild(head, {
+                            tag: 'status'
+                        });
+                        cmUtil.addChild(status, {
+                            tag: 'rspcod'
+                        }).setText('B001');
+                        cmUtil.addChild(status, {
+                            tag: 'rspmsg'
+                        }).setText('传送成功');
+                        cmUtil.appendChild(bocb2e, head);
+                    } else if (trncod == 'b2e0007') {
+                        //查询交易
+                        //根据收款方银行账户尾号进行支付结果判断
+                        //尾号为0--支付成功，B001
+                        //尾号为1--交易失败，B999
+                        //尾号为2--首次查询交易中,第二次查询支付成功,B002->B001
+                        //尾号为3--首次查询交易中,第二次查询支付失败,B002->B999
+                        //尾号为4--交易不存在，B052
+                        //尾号为5--首次查询支付成功，第二次查询支付退票,B001->RC09
+                        //尾号为6--首次查询支付退票，RC09
+                        cmUtil.appendChild(bocb2e, head);
+                        var rsTrans = cmUtil.addChild(bocb2e, {
+                            tag: 'trans'
+                        });
+                        var trnB2e0007Rs = cmUtil.addChild(rsTrans, {
+                            tag: 'trn-b2e0007-rs'
+                        });
+                        var trnB2e0007RsStatus = cmUtil.addChild(trnB2e0007Rs, {
+                            tag: 'status'
+                        });
+                        cmUtil.addChild(trnB2e0007RsStatus, {
+                            tag: 'rspcod'
+                        }).setText('B001');
+                        cmUtil.addChild(trnB2e0007RsStatus, {
+                            tag: 'rspmsg'
+                        }).setText('OK');
+            
+                        var trnB2e0007Req = trans.get('trn-b2e0007-rq');
+                        var trnB2e0007ReqChildren = trnB2e0007Req.getChildren();
+                        var b2e0007Reqs = [];
+                        for (var i = 0;i < trnB2e0007ReqChildren.length;i++) {
+                            if (trnB2e0007ReqChildren[i].getName() == 'b2e0007-rq') {
+                                b2e0007Reqs.push(trnB2e0007ReqChildren[i]);
+                            }
+                        }
+                        for (var i = 0;i < b2e0007Reqs.length;i++) {
+                            var b2e0007Rs = cmUtil.addChild(trnB2e0007Rs, {
+                                tag: 'b2e0007-rs'
+                            });
+                            var b2e0007Req = b2e0007Reqs[i];
+                            $ctx.parameter.insid = b2e0007Req.get('insid').getText();
+                            var resultMap = $bm('demo.demo_ebank_lines').queryAsMap();
+                            var resultArr = resultMap.getChildren();
+                            //查询结果为空，返回B052，交易不存在
+                            if (!resultArr || resultArr.length == 0) {
+                                var b2e0007RsStatus = cmUtil.addChild(b2e0007Rs, {
+                                    tag: 'status'
+                                });
+                                cmUtil.addChild(b2e0007RsStatus, {
+                                    tag: 'rspcod'
+                                }).setText('B052');
+                                cmUtil.addChild(b2e0007RsStatus, {
+                                    tag: 'rspmsg'
+                                }).setText('交易不存在');
+                                //跳转下一个查询
+                                continue;
+                            }
+            
+                            var result = resultArr[0];
+            
+                            if (/^.*0$/g.test(result.toactn_toibkn)) {
+                                //尾号为0，交易成功
+                                var b2e0007RsStatus = cmUtil.addChild(b2e0007Rs, {
+                                    tag: 'status'
+                                });
+                                cmUtil.addChild(b2e0007RsStatus, {
+                                    tag: 'rspcod'
+                                }).setText('B001');
+                                cmUtil.addChild(b2e0007RsStatus, {
+                                    tag: 'rspmsg'
+                                }).setText('支付成功');
+                            } else if (/^.*1$/g.test(result.toactn_toibkn)) {
+                                //尾号为1，交易失败
+                                var b2e0007RsStatus = cmUtil.addChild(b2e0007Rs, {
+                                    tag: 'status'
+                                });
+                                cmUtil.addChild(b2e0007RsStatus, {
+                                    tag: 'rspcod'
+                                }).setText('B999');
+                                cmUtil.addChild(b2e0007RsStatus, {
+                                    tag: 'rspmsg'
+                                }).setText('支付失败');
+                            } else if (/^.*2$/g.test(result.toactn_toibkn)) {
+                                //尾号为2--首次查询查询交易中,第二次查询支付成功,B002->B001
+                                if (!result.query_count) {
+                                    var b2e0007RsStatus = cmUtil.addChild(b2e0007Rs, {
+                                        tag: 'status'
+                                    });
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspcod'
+                                    }).setText('B002');
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspmsg'
+                                    }).setText('交易中');
+                                } else {
+                                    var b2e0007RsStatus = cmUtil.addChild(b2e0007Rs, {
+                                        tag: 'status'
+                                    });
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspcod'
+                                    }).setText('B001');
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspmsg'
+                                    }).setText('支付成功');
+                                }
+                            } else if (/^.*3$/g.test(result.toactn_toibkn)) {
+                                //尾号为3--首次查询查询交易中,第二次查询支付失败,B002->B999
+                                if (!result.query_count) {
+                                    var b2e0007RsStatus = cmUtil.addChild(b2e0007Rs, {
+                                        tag: 'status'
+                                    });
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspcod'
+                                    }).setText('B002');
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspmsg'
+                                    }).setText('交易中');
+                                } else {
+                                    var b2e0007RsStatus = cmUtil.addChild(b2e0007Rs, {
+                                        tag: 'status'
+                                    });
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspcod'
+                                    }).setText('B999');
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspmsg'
+                                    }).setText('支付失败');
+                                }
+                            } else if (/^.*4$/g.test(result.toactn_toibkn)) {
+                                //尾号为4--交易不存在，B052
+                                var b2e0007RsStatus = cmUtil.addChild(b2e0007Rs, {
+                                    tag: 'status'
+                                });
+                                cmUtil.addChild(b2e0007RsStatus, {
+                                    tag: 'rspcod'
+                                }).setText('B052');
+                                cmUtil.addChild(b2e0007RsStatus, {
+                                    tag: 'rspmsg'
+                                }).setText('交易不存在');
+                            } else if (/^.*5$/g.test(result.toactn_toibkn)) {
+                                //尾号为5--首次查询查询支付成功,第二次查询支付成功,B001->RC09
+                                if (!result.query_count) {
+                                    var b2e0007RsStatus = cmUtil.addChild(b2e0007Rs, {
+                                        tag: 'status'
+                                    });
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspcod'
+                                    }).setText('B001');
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspmsg'
+                                    }).setText('支付成功');
+                                } else {
+                                    var b2e0007RsStatus = cmUtil.addChild(b2e0007Rs, {
+                                        tag: 'status'
+                                    });
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspcod'
+                                    }).setText('RC09');
+                                    cmUtil.addChild(b2e0007RsStatus, {
+                                        tag: 'rspmsg'
+                                    }).setText('支付退票');
+                                }
+                            } else if (/^.*6$/g.test(result.toactn_toibkn)) {
+                                //尾号为4--交易不存在，B052
+                                var b2e0007RsStatus = cmUtil.addChild(b2e0007Rs, {
+                                    tag: 'status'
+                                });
+                                cmUtil.addChild(b2e0007RsStatus, {
+                                    tag: 'rspcod'
+                                }).setText('RC09');
+                                cmUtil.addChild(b2e0007RsStatus, {
+                                    tag: 'rspmsg'
+                                }).setText('支付退票');
+                            } else if (/^.*8$/g.test($ctx.parameter.toactn_toibkn)) {
+                                //尾号为8--结果查询网络超时
+                                java.lang.Thread.sleep(999999999);
+                            }
+            
+                            $ctx.parameter.line_id = result.line_id;
+                            $ctx.parameter.query_count = !result.query_count ? 1 : parseInt(result.query_count) + 1;
+                            $bm('demo.demo_ebank_lines').update();
+                        }
+                    }
+                } catch (e) {
+                    //清理掉当前生成的body内容
+                    cmUtil.removeChild(Body, 'bocb2e');
+                    bocb2e = cmUtil.addChild(Body, {
+                        tag: 'bocb2e'
+                    });
+            
+                    var errorCode = e.message;
+                    var errorMsg = ebankUtil.getErrorMsg(e.message);
+            
+                    if (!errorMsg) {
+                        errorMsg = 'line' + e.lineNumber + ':' + errorCode;
+                        errorCode = 'ERROR';
+            
+                    }
+                    var status = cmUtil.addChild(head, {
+                        tag: 'status'
+                    });
+                    var rspCod = cmUtil.addChild(status, {
+                        tag: 'rspcod'
+                    });
+                    rspCod.setText(errorCode);
+                    var rspMsg = cmUtil.addChild(status, {
+                        tag: 'rspmsg'
+                    });
+                    rspMsg.setText(errorMsg);
+                    cmUtil.appendChild(bocb2e, head);
+                }
+            }
+            
+            main();
+        ]]></s:server-script>
+    </a:init-procedure>
+    <a:service-output output="/Envelope"/>
+</a:service>

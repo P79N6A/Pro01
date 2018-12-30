@@ -1,0 +1,24 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sch="http://www.aurora-framework.org/schema">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <sch:param>
+         <sch:barcode>?</sch:barcode>
+         <sch:Type>?</sch:Type>
+         <sch:Billtype>?</sch:Billtype>
+         <sch:serino>?</sch:serino>
+         <sch:opuserpk>?</sch:opuserpk>
+         <sch:opuseraccount>?</sch:opuseraccount>
+         <sch:opusername>?</sch:opusername>
+         <sch:opuserdatetime>?</sch:opuserdatetime>
+         <sch:gfsh>?</sch:gfsh>
+         <sch:xfsh>?</sch:xfsh>
+         <sch:fpdm>?</sch:fpdm>
+         <sch:fphm>?</sch:fphm>
+         <sch:je>?</sch:je>
+         <sch:se>?</sch:se>
+         <sch:kprq>?</sch:kprq>
+         <sch:zje>?</sch:zje>
+         <sch:state>?</sch:state>
+      </sch:param>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <a:view>
+        <script><![CDATA[
+            function ds_query() {
+                $('gl_account_entry_ds').query();
+            }
+            
+            function ds_reset() {
+                $('gl_account_entry_query_ds').reset();
+            }
+            
+            function queryDsUpdate(dataSet, record, name, value, oldvalue) {
+                if(name == 'period_set_code'){
+                    record.getMeta().getField('period_name_from').setLovPara('period_set_code', record.get('period_set_code'));
+                    record.getMeta().getField('period_name_to').setLovPara('period_set_code', record.get('period_set_code'));
+                    record.set('period_name_from', '');
+                    record.set('period_name_to', '');
+                } else if(name == 'set_of_books_code'){
+                    record.getMeta().getField('company_code').setLovPara('set_of_books_code', record.get('set_of_books_code'));
+                    record.set('company_code', '');
+                } else if(name == 'account_set_id'){
+                    record.getMeta().getField('account_description_from').setLovPara('account_set_id',record.get('account_set_id'));
+                    record.getMeta().getField('account_description_to').setLovPara('account_set_id',record.get('account_set_id'));
+                } else if (name == 'period_name_from' || name == 'period_name_to') {
+                    var start_date = record.get('period_name_from');
+                    var end_date = record.get('period_name_to');
+                    if ( !! end_date) { //由于结束日期非必填，只有在结束日期填了才进行比较
+                        if (start_date > end_date) {
+                            Aurora.showInfoMessage('${l:PROMPT}', '${l:START_GREATER_THAN_END}');
+                            record.set('period_name_to', '');
+                            return false;
+                        }
+                    }
+                    return true; //校验通过返回true
+                } else if (name == 'transaction_date_from' || name == 'transaction_date_to') {
+                    var start_date = record.get('transaction_date_from');
+                    var end_date = record.get('transaction_date_to');
+                    if ( !! end_date) { //由于结束日期非必填，只有在结束日期填了才进行比较
+                        if (start_date > end_date) {
+                            Aurora.showInfoMessage('${l:PROMPT}', '${l:START_GREATER_THAN_END}');
+                            record.set('transaction_date_to', '');
+                            return false;
+                        }
+                    }
+                    return true; //校验通过返回true
+                }
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="imported_flag_ds">
+                <a:datas>
+                    <a:record name="N" value="N"/>
+                    <a:record name="P" value="P"/>
+                </a:datas>
+            </a:dataSet>
+            <a:dataSet id="transaction_type_ds" lookupCode="GL_DOCUMENT_CATEGORY"/>
+            <a:dataSet id="hec_sob_code_list_ds" autoQuery="true" fetchAll="true" model="gl.GL2010.gld_set_of_books_vl"><![CDATA[
+        
+        ]]></a:dataSet>
+            <a:dataSet id="gld_currency_code_list_ds" autoQuery="true" fetchAll="true" model="gld.gld_currency_vl"/>
+            <a:dataSet id="gl_account_entry_query_ds">
+                <a:fields>
+                    <a:field name="company_code" lovGridHeight="300" lovHeight="430" lovService="gl.GL2010.fnd_companies_vl" lovWidth="450" title="FND_COMPANIES_VL.COMPANY_CODE">
+                        <a:mapping>
+                            <a:map from="company_code" to="company_code"/>
+                            <a:map from="company_id" to="company_id"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="company_id"/>
+                    <a:field name="hec_sob_code" displayField="set_of_books_name" options="hec_sob_code_list_ds" required="true">
+                        <a:mapping>
+                            <a:map from="account_set_id" to="account_set_id"/>
+                            <a:map from="period_set_code" to="period_set_code"/>
+                            <a:map from="set_of_books_code" to="set_of_books_code"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="account_set_id"/>
+                    <a:field name="period_set_code"/>
+                    <a:field name="set_of_books_code"/>
+                    <a:field name="transaction_type_desc" displayField="code_value_name" options="transaction_type_ds" returnField="transaction_type" valueField="code_value"/>
+                    <a:field name="transaction_type"/>
+                    <a:field name="transaction_number"/>
+                    <a:field name="period_name_from" lovGridHeight="300" lovHeight="430" lovService="gl.GL2010.gld_period_status_lov" lovWidth="280" title="PROMPT.PERIOD_NAME_FROM">
+                        <a:mapping>
+                            <a:map from="period_name" to="period_name_from"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="period_name_to" lovGridHeight="300" lovHeight="430" lovService="gl.GL2010.gld_period_status_lov" lovWidth="280" title="PROMPT.PERIOD_NAME_TO">
+                        <a:mapping>
+                            <a:map from="period_name" to="period_name_to"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="transaction_date_from"/>
+                    <a:field name="transaction_date_to"/>
+                    <a:field name="accounting_date"/>
+                    <a:field name="account_description_from" lovGridHeight="300" lovHeight="440" lovService="gl.GL2010.gld_account_lov" lovWidth="500" title="GL_ACCOUNT_ENTRY.ACCOUNT_CODE_FROM">
+                        <a:mapping>
+                            <a:map from="account_code" to="account_code_from"/>
+                            <a:map from="account_description" to="account_description_from"/>
+                            <a:map from="account_id" to="account_id_from"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="account_id_from"/>
+                    <a:field name="account_description_to" lovGridHeight="300" lovHeight="440" lovService="gl.GL2010.gld_account_lov" lovWidth="500" title="GL_ACCOUNT_ENTRY.ACCOUNT_CODE_TO">
+                        <a:mapping>
+                            <a:map from="account_code" to="account_code_to"/>
+                            <a:map from="account_description" to="account_description_to"/>
+                            <a:map from="account_id" to="account_id_to"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="account_id_to"/>
+                    <a:field name="account_code_from"/>
+                    <a:field name="account_code_to"/>
+                    <a:field name="currency_name" displayField="currency_name" options="gld_currency_code_list_ds" returnField="currency_code" valueField="currency_code"/>
+                    <a:field name="currency_code"/>
+                    <a:field name="batch_code"/>
+                    <a:field name="imported_flag" displayField="name" options="imported_flag_ds" returnField="imported_flag" valueField="value"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="update" handler="queryDsUpdate"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="gl_account_entry_ds" autoPageSize="true" model="gl.GL2010.gl_account_entry" queryDataSet="gl_account_entry_query_ds">
+                <a:fields><![CDATA[
+           
+            ]]></a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="ds_reset" text="HAP_RESET" width="80"/>
+            </a:screenTopToolbar>
+            <a:queryForm bindTarget="gl_account_entry_query_ds" resultTarget="gl_account_entry_ds" style="width:100%;border:none">
+                <a:formToolBar labelWidth="100">
+                    <a:comboBox name="hec_sob_code" bindTarget="gl_account_entry_query_ds" prompt="FND_COMPANIES.SET_OF_BOOKS"/>
+                    <a:lov name="company_code" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.COMPANY_CODE"/>
+                    <a:comboBox name="transaction_type_desc" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.TRANSACTION_TYPE"/>
+                </a:formToolBar>
+                <a:formBody column="4">
+                    <a:textField name="transaction_number" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.TRANSACTION_NUMBER"/>
+                    <a:lov name="period_name_from" bindTarget="gl_account_entry_query_ds" prompt="PROMPT.PERIOD_NAME_FROM"/>
+                    <a:lov name="period_name_to" bindTarget="gl_account_entry_query_ds" prompt="PROMPT.PERIOD_NAME_TO"/>
+                    <a:datePicker name="transaction_date_from" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.TRANSACTION_DATE_F"/>
+                    <a:datePicker name="transaction_date_to" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.TRANSACTION_DATE_T"/>
+                    <a:datePicker name="accounting_date" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.TRANSACTION_DATE"/>
+                    <a:lov name="account_description_from" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.ACCOUNT_CODE_FROM"/>
+                    <a:lov name="account_description_to" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.ACCOUNT_CODE_TO"/>
+                    <a:comboBox name="currency_name" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.CURRENCY_CODE"/>
+                    <a:textField name="batch_code" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.BATCH_CODE"/>
+                    <a:comboBox name="imported_flag" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.IMPORTED_FLAG"/>
+                    <a:datePicker name="import_date" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.IMPORT_DATE"/>
+                    <a:textField name="journal_number" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.JOURNAL_NUMBER"/>
+                    <a:textField name="error_code" bindTarget="gl_account_entry_query_ds" prompt="GL_ACCOUNT_ENTRY.ERROR_CODE"/>
+                </a:formBody>
+            </a:queryForm>
+            <a:grid id="gl_account_entry_grid" bindTarget="gl_account_entry_ds" marginHeight="122" navBar="true">
+                <a:columns>
+                    <a:column name="hec_sob_code" align="center" autoAdjust="" width="100"/>
+                    <a:column name="company_code" align="center" width="100"/>
+                    <a:column name="transaction_type" align="center" width="150"/>
+                    <a:column name="transaction_type_desc" align="center" width="100"/>
+                    <a:column name="transaction_number" align="center" width="150"/>
+                    <a:column name="period_name" align="center" width="100"/>
+                    <a:column name="transaction_date" align="center" renderer="Aurora.formatDate" width="100"/>
+                    <a:column name="accounting_date" align="center" renderer="Aurora.formatDate" width="100"/>
+                    <a:column name="account_code" align="center" width="100"/>
+                    <a:column name="currency_name" align="center" width="100"/>
+                    <a:column name="entered_amount_dr" width="100"/>
+                    <a:column name="entered_amount_cr" width="100"/>
+                    <a:column name="functional_amount_dr" width="100"/>
+                    <a:column name="functional_amount_dr" width="100"/>
+                    <a:column name="currency_name" align="center" width="100"/>
+                    <a:column name="segment_desc1" align="center" width="100"/>
+                    <a:column name="segment_desc2" align="center" width="100"/>
+                    <a:column name="segment_desc3" align="center" width="100"/>
+                    <a:column name="segment_desc4" align="center" width="100"/>
+                    <a:column name="segment_desc5" align="center" width="100"/>
+                    <a:column name="segment_desc6" align="center" width="100"/>
+                    <a:column name="segment_desc7" align="center" width="100"/>
+                    <a:column name="segment_desc8" align="center" width="100"/>
+                    <a:column name="segment_desc9" align="center" width="100"/>
+                    <a:column name="segment_desc10" align="center" width="100"/>
+                    <a:column name="segment_desc11" align="center" width="100"/>
+                    <a:column name="segment_desc12" align="center" width="100"/>
+                    <a:column name="segment_desc13" align="center" width="100"/>
+                    <a:column name="segment_desc14" align="center" width="100"/>
+                    <a:column name="segment_desc15" align="center" width="100"/>
+                    <a:column name="segment_desc16" align="center" width="100"/>
+                    <a:column name="segment_desc17" align="center" width="100"/>
+                    <a:column name="segment_desc18" align="center" width="100"/>
+                    <a:column name="segment_desc19" align="center" width="100"/>
+                    <a:column name="segment_desc20" align="center" width="100"/>
+                    <a:column name="batch_code" align="center" width="100"/>
+                    <a:column name="imported_flag" align="center" width="100"/>
+                    <a:column name="imported_flag" align="center" width="100"/>
+                    <a:column name="import_date" align="center" width="100"/>
+                    <a:column name="journal_number" align="center" width="100"/>
+                    <a:column name="error_code" align="center" width="100"/>
+                </a:columns>
+            </a:grid>
+        </a:screenBody>
+        <script purpose="auto_resize"><![CDATA[
+
+            function gldAccountEntryInitSize() {
+                //描述宽度
+            　　    var labelWidth = 75;
+            　　    //标签宽度,5 = 3padding + 2border-spacing
+            　　    var tagWidth = 150 + 5;
+            　　    //页面宽度、高度
+            　　    var vw = $A.getViewportWidth();
+            　　    var vh = $A.getViewportHeight();
+            　　    //留白宽度
+            　　    var marginWidth = 35;
+            　　    //自适应宽度
+            　　    var autoWidth = vw - marginWidth;
+            　　    //Form内部宽度，-2border
+            　　    var formInnerWidth = autoWidth - 2;
+            　　    //所占列数
+            　　    var colSpan = 4;
+            　　    //设置组件的自适应宽度
+            	   $('gl_account_entry_grid').setWidth(autoWidth);
+            }
+            //Ext.fly(window).on('resize', gldAccountEntryInitSize);
+            gldAccountEntryInitSize();
+        ]]></script>
+    </a:view>
+</a:screen>

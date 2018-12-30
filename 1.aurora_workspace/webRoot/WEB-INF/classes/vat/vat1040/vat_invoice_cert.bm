@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-7-16 下午2:38:29  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        h.exp_report_header_id,
+                        h.exp_report_number,
+                        h.company_id,
+                        (SELECT
+                            fc.company_short_name
+                        FROM
+                            fnd_companies_vl fc
+                        WHERE
+                            fc.company_id = h.company_id
+                        ) company_short_name,
+                        h.employee_id,
+                        (SELECT ee.name FROM exp_employees ee WHERE ee.employee_id = h.employee_id
+                        ) employee_name,
+                        (SELECT
+                            SUM(t.report_amount)
+                        FROM
+                            exp_report_lines t
+                        WHERE
+                            t.exp_report_header_id = h.exp_report_header_id
+                        ) report_amount,
+                        TO_CHAR(h.report_date, 'yyyy-mm-dd') report_date,
+                        h.exp_report_type_id,
+                        (SELECT
+                            eertv.description
+                        FROM
+                            exp_expense_report_types_vl eertv
+                        WHERE
+                            eertv.expense_report_type_id = h.exp_report_type_id
+                        ) exp_report_type_desc
+                    FROM
+                        exp_report_headers h
+                    WHERE
+                        h.company_id          = ${/session/@company_id} AND
+                        h.report_status       = 'COMPLETELY_APPROVED' AND
+                        h.audit_flag          = 'Y' AND
+                        h.authenticating_flag = 'N'
+                    ) v #WHERE_CLAUSE#
+                ORDER BY
+                    exp_report_header_id DESC
+            ]]></bm:query-sql>
+        </bm:operation>
+        <bm:operation name="execute">
+            <bm:update-sql><![CDATA[
+				
+	   				begin
+	   					vat_report_invoice_pkg.vat_invoice_cert(p_head_id         => ${@exp_report_header_id},
+					   					                        p_auth_status     => ${@auth_status},
+														   	    p_user_id         => ${/session/@user_id},
+														   		p_comment         => ${@comment});
+	   				end;
+	   			   			
+   			]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:query-fields>
+        <bm:query-field name="exp_report_number" queryexpression="v.exp_report_number like &apos;%&apos;||${@exp_report_number}||&apos;%&apos;"/>
+        <bm:query-field name="exp_report_type_id" queryexpression="v.exp_report_type_id = ${@exp_report_type_id}"/>
+        <bm:query-field name="employee_id" queryexpression="v.employee_id =${@employee_id}"/>
+    </bm:query-fields>
+</bm:model>

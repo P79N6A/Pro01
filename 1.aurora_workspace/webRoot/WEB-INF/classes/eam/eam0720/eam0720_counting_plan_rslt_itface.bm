@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893
+    $Date: 2013-4-19 上午10:55:05  
+    $Revision: 1.0  
+    $Purpose: 导入盘点结果 –临时表
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm" xmlns:f="aurora.database.features" alias="t1" baseTable="EAM_COUNTING_PLAN_RSLT_ITFACE">
+    <bm:fields>
+        <bm:field name="header_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="HEADER_ID" prompt="EAM_COUNTING_PLAN_RSLT_ITFACE.HEADER_ID"/>
+        <bm:field name="seq" databaseType="NUMBER" datatype="java.lang.Long" physicalName="SEQ" prompt="EAM_COUNTING_PLAN_RSLT_ITFACE.SEQ"/>
+        <bm:field name="asset_tag_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ASSET_TAG_CODE" prompt="EAM_COUNTING_PLAN_RSLT_ITFACE.ASSET_TAG_CODE"/>
+        <bm:field name="asset_name" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ASSET_NAME" prompt="EAM_COUNTING_PLAN_RSLT_ITFACE.ASSET_NAME"/>
+        <bm:field name="act_location_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ACT_LOCATION_CODE" prompt="EAM_COUNTING_PLAN_RSLT_ITFACE.ACT_LOCATION_CODE"/>
+        <bm:field name="act_location_name" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ACT_LOCATION_NAME" prompt="EAM_COUNTING_PLAN_RSLT_ITFACE.ACT_LOCATION_NAME"/>
+        <bm:field name="act_quantity" databaseType="NUMBER" datatype="java.lang.Long" physicalName="ACT_QUANTITY" prompt="EAM_COUNTING_PLAN_RSLT_ITFACE.ACT_QUANTITY"/>
+        <bm:field name="result_description" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="RESULT_DESCRIPTION" prompt="EAM_COUNTING_PLAN_RSLT_ITFACE.RESULT_DESCRIPTION"/>
+    </bm:fields>
+    <bm:features>
+        <f:standard-who/>
+    </bm:features>
+</bm:model>

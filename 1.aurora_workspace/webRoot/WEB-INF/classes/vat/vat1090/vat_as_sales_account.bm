@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-7-20 下午6:39:48  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    *
+                FROM
+                    (SELECT
+                        t.process_id,
+                        t.je_line_id,
+                        t.description,
+                        TO_CHAR(t.journal_date, 'yyyy-mm-dd') journal_date,
+                        t.period_name,
+                        (SELECT
+                            fc.company_code
+                        FROM
+                            fnd_companies_vl fc
+                        WHERE
+                            fc.company_id = t.company_id
+                        )company_code,
+                        (SELECT
+                            fc.company_short_name
+                        FROM
+                            fnd_companies_vl fc
+                        WHERE
+                            fc.company_id = t.company_id
+                        )company_name,
+                        (SELECT
+                            frc.responsibility_center_code
+                        FROM
+                            fnd_responsibility_centers_vl frc
+                        WHERE
+                            frc.responsibility_center_id = t.responsibility_center_id
+                        ) responsibility_center_code,
+                        (SELECT
+                            frc.responsibility_center_name
+                        FROM
+                            fnd_responsibility_centers_vl frc
+                        WHERE
+                            frc.responsibility_center_id = t.responsibility_center_id
+                        ) responsibility_center_name,
+                        (SELECT
+                            gav.account_code
+                        FROM
+                            gld_accounts_vl gav
+                        WHERE
+                            gav.account_id = t.account_id
+                        ) account_code,
+                        (SELECT
+                            gav.description
+                        FROM
+                            gld_accounts_vl gav
+                        WHERE
+                            gav.account_id = t.account_id
+                        ) account_desc,
+                        t.entered_amount_dr,
+                        t.entered_amount_cr,
+                        t.functional_amount_dr,
+                        t.functional_amount_cr,
+                        t.account_segment1,
+                        t.account_segment2,
+                        t.account_segment3,
+                        t.account_segment4,
+                        t.account_segment5,
+                        t.account_segment6,
+                        t.account_segment7,
+                        t.account_segment8,
+                        t.account_segment9,
+                        t.account_segment10,
+                        t.account_segment11,
+                        t.account_segment12,
+                        t.account_segment13,
+                        t.account_segment14,
+                        t.account_segment15,
+                        t.account_segment16,
+                        t.account_segment17,
+                        t.account_segment18,
+                        t.account_segment19,
+                        t.account_segment20
+                    FROM
+                        vat_as_sales_accounts t
+                    WHERE
+                        t.process_id = ${@process_id}
+                    ) v
+                ORDER BY
+                    v.je_line_id
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_AS_SALES_ACCOUNTS.DESCRIPTION"/>
+        <bm:field name="period_name" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_AS_SALES_ACCOUNTS.PERIOD_NAME"/>
+        <bm:field name="company_code" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_AS_SALES_ACCOUNTS.COMPANY_CODE"/>
+        <bm:field name="company_name" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_AS_SALES_ACCOUNTS.COMPANY_NAME"/>
+        <bm:field name="responsibility_center_code" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_AS_SALES_ACCOUNTS.RESPONSIBILITY_CENTER_CODE"/>
+        <bm:field name="responsibility_center_name" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_AS_SALES_ACCOUNTS.RESPONSIBILITY_CENTER_NAME"/>
+        <bm:field name="account_code" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_AS_SALES_ACCOUNTS.ACCOUNT_CODE"/>
+        <bm:field name="account_desc" databaseType="VARCHAR2" datatype="java.lang.String" prompt="VAT_AS_SALES_ACCOUNTS.ACCOUNT_DESC"/>
+        <bm:field name="entered_amount_dr" databaseType="NUMBER" datatype="java.lang.Double" prompt="VAT_AS_SALES_ACCOUNTS.ENTERED_AMOUNT_DR"/>
+        <bm:field name="entered_amount_cr" databaseType="NUMBER" datatype="java.lang.Double" prompt="VAT_AS_SALES_ACCOUNTS.ENTERED_AMOUNT_CR"/>
+        <bm:field name="functional_amount_dr" databaseType="NUMBER" datatype="java.lang.Double" prompt="VAT_AS_SALES_ACCOUNTS.FUNCTIONAL_AMOUNT_DR"/>
+        <bm:field name="functional_amount_cr" databaseType="NUMBER" datatype="java.lang.Double" prompt="VAT_AS_SALES_ACCOUNTS.FUNCTIONAL_AMOUNT_CR"/>
+        <bm:field name="account_segment1" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment2" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment3" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment4" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment5" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment6" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment7" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment8" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment9" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment10" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment11" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment12" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment13" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment14" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment15" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment16" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment17" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment18" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment19" databaseType="VARCHAR2" datatype="java.lang.String"/>
+        <bm:field name="account_segment20" databaseType="VARCHAR2" datatype="java.lang.String"/>
+    </bm:fields>
+</bm:model>

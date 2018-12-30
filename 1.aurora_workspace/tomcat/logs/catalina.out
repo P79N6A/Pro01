@@ -1,0 +1,603 @@
+Mar 21, 2017 9:44:36 AM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Mar 21, 2017 9:44:36 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Mar 21, 2017 9:44:37 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Mar 21, 2017 9:44:37 AM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 1774 ms
+Mar 21, 2017 9:44:37 AM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Mar 21, 2017 9:44:37 AM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Mar 21, 2017 9:44:37 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Mar 21, 2017 9:44:38 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Mar 21, 2017 9:44:52 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Mar 21, 2017 9:44:52 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Mar 21, 2017 9:44:52 AM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Mar 21, 2017 9:44:52 AM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Mar 21, 2017 9:44:52 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 14909 ms
+Mar 22, 2017 9:26:59 AM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Mar 22, 2017 9:27:00 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Mar 22, 2017 9:27:01 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Mar 22, 2017 9:27:01 AM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 3605 ms
+Mar 22, 2017 9:27:01 AM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Mar 22, 2017 9:27:01 AM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Mar 22, 2017 9:27:02 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Mar 22, 2017 9:27:04 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Mar 22, 2017 12:53:34 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Mar 22, 2017 12:53:35 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Mar 22, 2017 12:53:35 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Mar 22, 2017 12:53:35 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 1860 ms
+Mar 22, 2017 12:53:35 PM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Mar 22, 2017 12:53:35 PM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Mar 22, 2017 12:53:36 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Mar 22, 2017 12:53:36 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Mar 22, 2017 12:53:51 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Mar 22, 2017 12:53:51 PM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Mar 22, 2017 12:53:51 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Mar 22, 2017 12:53:51 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Mar 22, 2017 12:53:51 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 15663 ms
+Jul 04, 2017 3:31:19 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Jul 04, 2017 3:31:19 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Jul 04, 2017 3:31:20 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Jul 04, 2017 3:31:20 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 2197 ms
+Jul 04, 2017 3:31:20 PM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Jul 04, 2017 3:31:20 PM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Jul 04, 2017 3:31:21 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Jul 04, 2017 3:31:21 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Jul 04, 2017 3:31:28 PM org.apache.catalina.core.StandardContext start
+SEVERE: Error listenerStart
+Jul 04, 2017 3:31:28 PM org.apache.catalina.core.StandardContext start
+SEVERE: Context [/hec3dev] startup failed due to previous errors
+Jul 04, 2017 3:31:28 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Jul 04, 2017 3:31:28 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [oracle.jdbc.driver.OracleDriver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Jul 04, 2017 3:31:29 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Jul 04, 2017 3:31:29 PM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Jul 04, 2017 3:31:29 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Jul 04, 2017 3:31:29 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Jul 04, 2017 3:31:29 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 9049 ms
+Jul 04, 2017 3:32:56 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8080
+Jul 04, 2017 3:32:56 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8493
+Jul 04, 2017 3:32:57 PM org.apache.catalina.core.StandardService stop
+INFO: Stopping service Catalina
+Jul 04, 2017 3:32:57 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8080
+Jul 04, 2017 3:32:57 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8493
+Jul 04, 2017 5:29:36 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Jul 04, 2017 5:29:37 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Jul 04, 2017 5:29:38 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Jul 04, 2017 5:29:38 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 2511 ms
+Jul 04, 2017 5:29:38 PM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Jul 04, 2017 5:29:38 PM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Jul 04, 2017 5:29:38 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Jul 04, 2017 5:29:38 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Jul 04, 2017 5:30:08 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Jul 04, 2017 5:30:08 PM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Jul 04, 2017 5:30:08 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Jul 04, 2017 5:30:08 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Jul 04, 2017 5:30:08 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 30527 ms
+Jul 05, 2017 10:59:02 AM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Jul 05, 2017 10:59:02 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Jul 05, 2017 10:59:04 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Jul 05, 2017 10:59:04 AM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 3085 ms
+Jul 05, 2017 10:59:04 AM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Jul 05, 2017 10:59:04 AM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Jul 05, 2017 10:59:04 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Jul 05, 2017 10:59:04 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Jul 05, 2017 10:59:34 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Jul 05, 2017 10:59:34 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Jul 05, 2017 10:59:34 AM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Jul 05, 2017 10:59:34 AM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Jul 05, 2017 10:59:35 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 30954 ms
+Jul 05, 2017 2:19:58 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Jul 05, 2017 2:19:58 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Jul 05, 2017 2:19:58 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Jul 05, 2017 2:19:58 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 725 ms
+Jul 05, 2017 2:19:58 PM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Jul 05, 2017 2:19:58 PM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Jul 05, 2017 2:19:58 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Jul 05, 2017 2:19:58 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Jul 05, 2017 2:20:23 PM org.apache.catalina.core.StandardContext start
+SEVERE: Error listenerStart
+Jul 05, 2017 2:20:23 PM org.apache.catalina.core.StandardContext start
+SEVERE: Context [/hec3dev] startup failed due to previous errors
+Jul 05, 2017 2:20:23 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Jul 05, 2017 2:20:23 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [oracle.jdbc.driver.OracleDriver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Jul 05, 2017 2:20:24 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Jul 05, 2017 2:20:24 PM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Jul 05, 2017 2:20:24 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Jul 05, 2017 2:20:24 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Jul 05, 2017 2:20:24 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 26016 ms
+Jul 05, 2017 2:22:03 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8080
+Jul 05, 2017 2:22:03 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8493
+Jul 05, 2017 2:22:04 PM org.apache.catalina.core.StandardService stop
+INFO: Stopping service Catalina
+Jul 05, 2017 2:22:04 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8080
+Jul 05, 2017 2:22:04 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8493
+Jul 05, 2017 2:22:07 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Jul 05, 2017 2:22:07 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Jul 05, 2017 2:22:07 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Jul 05, 2017 2:22:07 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 619 ms
+Jul 05, 2017 2:22:07 PM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Jul 05, 2017 2:22:07 PM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Jul 05, 2017 2:22:07 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Jul 05, 2017 2:22:07 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Jul 05, 2017 2:22:16 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Jul 05, 2017 2:22:16 PM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Jul 05, 2017 2:22:16 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Jul 05, 2017 2:22:16 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Jul 05, 2017 2:22:16 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 9355 ms
+Jul 05, 2017 2:26:13 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8080
+Jul 05, 2017 2:26:13 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8493
+Jul 05, 2017 2:26:14 PM org.apache.catalina.core.StandardService stop
+INFO: Stopping service Catalina
+Jul 05, 2017 2:26:14 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Jul 05, 2017 2:26:14 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [oracle.jdbc.driver.OracleDriver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Jul 05, 2017 2:26:14 PM org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+SEVERE: A web application appears to have started a thread named [Resource Destroyer in BasicResourcePool.close()] but has failed to stop it. This is very likely to create a memory leak.
+Jul 05, 2017 2:26:15 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8080
+Jul 05, 2017 2:26:15 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8493
+Jul 31, 2017 2:51:26 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Jul 31, 2017 2:51:27 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Jul 31, 2017 2:51:28 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Jul 31, 2017 2:51:28 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 2340 ms
+Jul 31, 2017 2:51:28 PM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Jul 31, 2017 2:51:28 PM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Jul 31, 2017 2:51:28 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Jul 31, 2017 2:51:28 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Jul 31, 2017 2:51:41 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Jul 31, 2017 2:51:41 PM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Jul 31, 2017 2:51:41 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Jul 31, 2017 2:51:41 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Jul 31, 2017 2:51:41 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 13312 ms
+Jul 31, 2017 4:10:54 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8080
+Jul 31, 2017 4:10:54 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8493
+Jul 31, 2017 4:10:55 PM org.apache.catalina.core.StandardService stop
+INFO: Stopping service Catalina
+Jul 31, 2017 4:10:55 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Jul 31, 2017 4:10:55 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [oracle.jdbc.driver.OracleDriver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Jul 31, 2017 4:10:55 PM org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+SEVERE: A web application appears to have started a thread named [Resource Destroyer in BasicResourcePool.close()] but has failed to stop it. This is very likely to create a memory leak.
+Jul 31, 2017 4:10:55 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8080
+Jul 31, 2017 4:10:55 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8493
+Dec 20, 2017 9:43:44 AM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Dec 20, 2017 9:43:44 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Dec 20, 2017 9:43:45 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Dec 20, 2017 9:43:45 AM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 819 ms
+Dec 20, 2017 9:43:45 AM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Dec 20, 2017 9:43:45 AM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Dec 20, 2017 9:43:45 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Dec 20, 2017 9:43:45 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Dec 20, 2017 9:43:56 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Dec 20, 2017 9:43:56 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Dec 20, 2017 9:43:56 AM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Dec 20, 2017 9:43:56 AM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Dec 20, 2017 9:43:56 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 11489 ms
+Dec 20, 2017 10:36:54 AM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8080
+Dec 20, 2017 10:36:54 AM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8493
+Dec 20, 2017 10:36:55 AM org.apache.catalina.core.StandardService stop
+INFO: Stopping service Catalina
+Dec 20, 2017 10:36:55 AM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Dec 20, 2017 10:36:55 AM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [oracle.jdbc.driver.OracleDriver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Dec 20, 2017 10:36:55 AM org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+SEVERE: A web application appears to have started a thread named [Resource Destroyer in BasicResourcePool.close()] but has failed to stop it. This is very likely to create a memory leak.
+Dec 20, 2017 10:36:56 AM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8080
+Dec 20, 2017 10:36:56 AM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8493
+Dec 22, 2017 2:54:23 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Dec 22, 2017 2:54:24 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Dec 22, 2017 2:54:26 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Dec 22, 2017 2:54:26 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 5108 ms
+Dec 22, 2017 2:54:26 PM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Dec 22, 2017 2:54:26 PM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Dec 22, 2017 2:54:26 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Dec 22, 2017 2:54:27 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Dec 22, 2017 2:54:52 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Dec 22, 2017 2:54:52 PM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Dec 22, 2017 2:54:52 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Dec 22, 2017 2:54:52 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Dec 22, 2017 2:54:52 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 25900 ms
+Dec 22, 2017 6:03:04 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8080
+Dec 22, 2017 6:03:04 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8493
+Dec 22, 2017 6:03:05 PM org.apache.catalina.core.StandardService stop
+INFO: Stopping service Catalina
+Dec 22, 2017 6:03:05 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Dec 22, 2017 6:03:05 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [oracle.jdbc.driver.OracleDriver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Dec 22, 2017 6:03:05 PM org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+SEVERE: A web application appears to have started a thread named [Resource Destroyer in BasicResourcePool.close()] but has failed to stop it. This is very likely to create a memory leak.
+Dec 22, 2017 6:03:06 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8080
+Dec 22, 2017 6:03:06 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8493
+Dec 25, 2017 2:34:05 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Dec 25, 2017 2:34:05 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Dec 25, 2017 2:34:07 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Dec 25, 2017 2:34:07 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 5277 ms
+Dec 25, 2017 2:34:08 PM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Dec 25, 2017 2:34:08 PM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Dec 25, 2017 2:34:08 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Dec 25, 2017 2:34:09 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Dec 25, 2017 2:34:33 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Dec 25, 2017 2:34:33 PM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Dec 25, 2017 2:34:33 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Dec 25, 2017 2:34:33 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Dec 25, 2017 2:34:33 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 25466 ms
+Dec 25, 2017 3:51:13 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8080
+Dec 25, 2017 3:51:13 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8493
+Dec 25, 2017 3:51:14 PM org.apache.catalina.core.StandardService stop
+INFO: Stopping service Catalina
+Dec 25, 2017 3:51:14 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Dec 25, 2017 3:51:14 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [oracle.jdbc.driver.OracleDriver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Dec 25, 2017 3:51:14 PM org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+SEVERE: A web application appears to have started a thread named [Resource Destroyer in BasicResourcePool.close()] but has failed to stop it. This is very likely to create a memory leak.
+Dec 25, 2017 3:51:14 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8080
+Dec 25, 2017 3:51:14 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8493
+Mar 20, 2018 10:14:03 AM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Mar 20, 2018 10:14:03 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Mar 20, 2018 10:14:05 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Mar 20, 2018 10:14:05 AM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 1793 ms
+Mar 20, 2018 10:14:05 AM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Mar 20, 2018 10:14:05 AM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Mar 20, 2018 10:14:05 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Mar 20, 2018 10:14:05 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Mar 20, 2018 10:14:17 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Mar 20, 2018 10:14:17 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Mar 20, 2018 10:14:17 AM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Mar 20, 2018 10:14:17 AM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Mar 20, 2018 10:14:17 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 12889 ms
+Mar 20, 2018 3:30:08 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8080
+Mar 20, 2018 3:30:08 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8493
+Mar 20, 2018 3:30:09 PM org.apache.catalina.core.StandardService stop
+INFO: Stopping service Catalina
+Mar 20, 2018 3:30:09 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Mar 20, 2018 3:30:09 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [oracle.jdbc.driver.OracleDriver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Mar 20, 2018 3:30:09 PM org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+SEVERE: A web application appears to have started a thread named [Resource Destroyer in BasicResourcePool.close()] but has failed to stop it. This is very likely to create a memory leak.
+Mar 20, 2018 3:30:10 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8080
+Mar 20, 2018 3:30:10 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8493
+Mar 26, 2018 9:32:26 AM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Mar 26, 2018 9:32:27 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Mar 26, 2018 9:32:28 AM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Mar 26, 2018 9:32:28 AM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 2376 ms
+Mar 26, 2018 9:32:28 AM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Mar 26, 2018 9:32:28 AM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Mar 26, 2018 9:32:28 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Mar 26, 2018 9:32:30 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Mar 26, 2018 9:33:20 AM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Mar 26, 2018 9:33:20 AM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Mar 26, 2018 9:33:20 AM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Mar 26, 2018 9:33:21 AM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Mar 26, 2018 9:33:21 AM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 52966 ms
+Mar 28, 2018 4:02:11 PM org.apache.catalina.core.AprLifecycleListener init
+INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+Mar 28, 2018 4:02:12 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8080
+Mar 28, 2018 4:02:13 PM org.apache.coyote.http11.Http11Protocol init
+INFO: Initializing Coyote HTTP/1.1 on http-8493
+Mar 28, 2018 4:02:13 PM org.apache.catalina.startup.Catalina load
+INFO: Initialization processed in 2307 ms
+Mar 28, 2018 4:02:13 PM org.apache.catalina.core.StandardService start
+INFO: Starting service Catalina
+Mar 28, 2018 4:02:13 PM org.apache.catalina.core.StandardEngine start
+INFO: Starting Servlet Engine: Apache Tomcat/6.0.24
+Mar 28, 2018 4:02:13 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor manager.xml
+Mar 28, 2018 4:02:13 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor hec3dev.xml
+*********************************************************
+* Aurora-1.4.3  |  jndi:/localhost/hec3dev/  |  HEC 3.0 *
+*********************************************************
+log4j:WARN No appenders could be found for logger (com.mchange.v2.log.MLog).
+log4j:WARN Please initialize the log4j system properly.
+Mar 28, 2018 4:02:25 PM org.apache.catalina.startup.HostConfig deployDescriptor
+INFO: Deploying configuration descriptor host-manager.xml
+Mar 28, 2018 4:02:25 PM org.apache.catalina.startup.HostConfig deployDirectory
+INFO: Deploying web application directory ROOT
+Mar 28, 2018 4:02:25 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8080
+Mar 28, 2018 4:02:25 PM org.apache.coyote.http11.Http11Protocol start
+INFO: Starting Coyote HTTP/1.1 on http-8493
+Mar 28, 2018 4:02:25 PM org.apache.catalina.startup.Catalina start
+INFO: Server startup in 12428 ms
+Mar 28, 2018 5:09:12 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8080
+Mar 28, 2018 5:09:12 PM org.apache.coyote.http11.Http11Protocol pause
+INFO: Pausing Coyote HTTP/1.1 on http-8493
+Mar 28, 2018 5:09:13 PM org.apache.catalina.core.StandardService stop
+INFO: Stopping service Catalina
+Mar 28, 2018 5:09:13 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Mar 28, 2018 5:09:13 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+SEVERE: A web application registered the JBDC driver [oracle.jdbc.driver.OracleDriver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+Mar 28, 2018 5:09:13 PM org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+SEVERE: A web application appears to have started a thread named [Resource Destroyer in BasicResourcePool.close()] but has failed to stop it. This is very likely to create a memory leak.
+Mar 28, 2018 5:09:13 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8080
+Mar 28, 2018 5:09:13 PM org.apache.coyote.http11.Http11Protocol destroy
+INFO: Stopping Coyote HTTP/1.1 on http-8493

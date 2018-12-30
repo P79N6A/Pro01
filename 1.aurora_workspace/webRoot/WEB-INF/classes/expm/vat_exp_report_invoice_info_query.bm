@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: shiyuanxin  
+    $Date: 2016-4-6 下午2:16:58  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[
+                SELECT
+                    r.invoice_code,
+                    r.invoice_number,
+                    SUM(l.report_amount) report_amount,
+                    SUM(r.tax_amount) tax_amount,
+                    (SUM(l.report_amount) - SUM(r.tax_amount)) no_tax_amount,
+                    r.invoice_date,
+                    (SELECT
+                        b.code_value_name
+                    FROM
+                        sys_codes a,
+                        sys_code_values_vl b
+                    WHERE
+                        a.code_id    = b.code_id AND
+                        a.code       = 'VAT_CERTIFICATION_STATUS' AND
+                        b.code_value = r.authenticating_status
+                    ) authenticating_status,
+                    r.authenticating_date
+                FROM
+                    vat_invoice_relation r,
+                    exp_report_lines l
+                WHERE
+                    r.document_id      = ${/parameter/@exp_report_header_id} AND
+                    r.document_id      = l.exp_report_header_id AND
+                    r.document_line_id = l.exp_report_line_id
+                GROUP BY
+                    r.invoice_code,
+                    r.invoice_number,
+                    r.invoice_date,
+                    r.authenticating_status,
+                    r.authenticating_date
+                ORDER BY
+                    r.invoice_code,
+                    r.invoice_number
+            ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="invoice_code" databasetype="VARCHAR2" datatype="java.lang.String" prompt="VAT_INVOICE_RELATION.INVOICE_CODE"/>
+        <bm:field name="invoice_number" databasetype="VARCHAR2" datatype="java.lang.String" prompt="VAT_INVOICE_RELATION.INVOICE_NUMBER"/>
+        <bm:field name="report_amount" databasetype="NUMBER" datatype="java.lang.Double" prompt="EXP_REPORT_LINES.REPORT_AMOUNT"/>
+        <bm:field name="tax_amount" databasetype="NUMBER" datatype="java.lang.Double" prompt="VAT_INVOICE_RELATION.TAX_AMOUNT"/>
+        <bm:field name="no_tax_amount" databasetype="NUMBER" datatype="java.lang.Double" prompt="VAT_INVOICE_RELATION.NOT_TAX_AMOUNT"/>
+        <bm:field name="invoice_date" databasetype="DATE" datatype="java.util.Date" prompt="VAT_INVOICE_RELATION.INVOICE_DATE"/>
+        <bm:field name="authenticating_status" prompt="VAT_INVOICE_RELATION.AUTHENTICATING_STATUS_DESC"/>
+        <bm:field name="authenticating_date" databasetype="DATE" datatype="java.util.Date" prompt="VAT_INVOICE_RELATION.AUTHENTICATING_DATE"/>
+    </bm:fields>
+</bm:model>

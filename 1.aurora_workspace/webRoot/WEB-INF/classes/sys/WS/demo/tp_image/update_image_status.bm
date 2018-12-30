@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:e="aurora.service.exception" xmlns:bm="http://www.aurora-framework.org/schema/bm" alias="t1" baseTable="DEMO_WS_USER_ACCOUNT" needAccessControl="false">
+    <bm:operations>
+        <bm:operation name="execute">
+            <bm:update-sql><![CDATA[
+				
+				begin
+					tp_ws_hec_yx_pkg.update_image_status
+					   (p_barcode        =>${@barcode},
+						p_type           =>${@Type},
+						p_billtype       =>${@Billtype},
+						p_serino         =>${@serino},
+						p_opuserpk       =>${@opuserpk},
+						p_opuseraccount  =>${@opuseraccount},
+						p_opusername     =>${@opusername},
+						p_opuserdatetime =>${@opuserdatetime},
+						p_gfsh           =>${@gfsh},
+						p_xfsh           =>${@xfsh},
+						p_fpdm           =>${@fpdm},
+						p_fphm           =>${@fphm},
+						p_je             =>${@je},
+						p_se             =>${@se},
+						p_kprq           =>${@kprq},
+						p_zje            =>${@zje},
+						p_state          =>${@state});
+				end;
+				
+			]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>

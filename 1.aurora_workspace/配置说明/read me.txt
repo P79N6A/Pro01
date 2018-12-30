@@ -1,0 +1,48 @@
+先将本机服务里的VMware相关服务启动
+
+操作系统
+管理员：root/handhand
+应用用户:web/web
+数据库用户:oracle/oracle
+
+检查虚拟机IP
+执行ifconfig
+
+检查hosts设置，修改为对应的ip (192.168.15.128)
+/etc/hosts文件
+
+
+1.启动虚拟机
+2.启动oracle数据库，root用户，执行root目录下./startdb.sh
+3.关闭oracle数据库，root用户，执行root目录下./stopdb.sh
+4.启动关闭费控系统，切换到web用户，切换到目录/u01/web下执行 ./starthec.sh  启动hec
+  执行 ./shutdownhec.sh 关闭hec
+  登录系统url: http://192.168.245.128:8080/hec3dev
+  用户名：admin 密码: 1
+
+数据库启动后不能以TNS的方式登录,查看startdb.sh内的ORACLE_HOME是否正确
+应用启动后不能访问,看tomcat日志报错,如果是和JDBC有关的,可清空tomcat\work\Catalina目录重启
+  
+
+
+
+
+
+
+数据库 SID=MAS
+TNS类似设置
+vmMAS =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.245.128)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = mas)
+    )
+  )
+
+
+费控系统
+hec3dev/hec3dev
+
+  

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: hp  
+    $Date: 2013-7-26 上午10:54:01  
+    $Revision: 1.0  
+    $Purpose: 
+-->
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <a:init-procedure>
+        <a:model-query model="exp.EXP7010.exp_expense_import_batch_id" rootPath="batch_id"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="exp_expense_report_import_upload_link" url="${/request/@context_path}/modules/exp/EXP7010/exp_expense_report_import_upload.screen"/>
+        <a:link id="exp_expense_report_import_check_link" model="db.exp_interface_pkg.check_interface" modelaction="update"/>
+        <a:link id="exp_expense_report_import_error_link" url="${/request/@context_path}/modules/exp/EXP7010/exp_expense_report_import_error.screen"/>
+        <a:link id="exp_expense_report_import_load_link" model="db.exp_interface_pkg.load_expense_reports" modelaction="update"/>
+        <script><![CDATA[
+        	function loadComplete() {
+        		$('result_ds').setQueryParameter("batch_id", "${/model/batch_id/record/@batch_id}");
+        		$('result_ds').setQueryParameter("import_flag", "Y");
+        		$('result_ds').setQueryParameter("ORDER_FIELD", "batch_line_id");
+        		$("result_ds").query();
+        	}
+        
+        	function loadData() {
+        	    new Aurora.Window({
+        	        id:"upload_window",
+        	        url:$("exp_expense_report_import_upload_link").getUrl() + "?batch_id=${/model/batch_id/record/@batch_id}&amp;import_flag=&apos;Y&apos;",
+        	        title:"文件上传",
+        	        width:420,
+        	        height:240
+	        	});
+        	}
+        	
+        	function dispatchCheckData() {
+        	    checkData();
+        	}
+        	
+        	function checkData() {
+                var allData = $('result_ds').getAll();
+                if (allData.length == 0) {
+                    Aurora.showMessage('${l:PROMPT}', '${l:BGT_BUDGET_ITEMS_INTERFACE.CHECK1}');
+                } else {
+                    var param = {};
+                    param['batch_id'] = '${/model/batch_id/record/@batch_id}';
+                    Aurora.request({
+                        url: $('exp_expense_report_import_check_link').getUrl(),
+                        para: param,
+                        success: function(data) {
+                            if(data.result.return_status) {
+                                if(data.result.return_status == 'SUCCESS') {
+                                    Aurora.showMessage('提示', '核对完成，导入数据没有错误');
+                                }
+                                else {
+                                    dispatchErrorData();
+                                }
+                            }
+                       		else {
+                       		    Aurora.showErrorMessage('错误', '校验程序执行错误');
+                       		}
+                        },
+                        scope: this
+                    });
+                }        	    
+        	}
+        	
+        	function submitData() {
+        	    var allData = $('result_ds').getAll();
+                if (allData.length == 0) {
+                    Aurora.showMessage('${l:PROMPT}', '没有数据需要提交');
+                } else {
+                    var param = {};
+                    param['batch_id'] = '${/model/batch_id/record/@batch_id}';
+                    Aurora.request({
+                        url: $('exp_expense_report_import_load_link').getUrl(),
+                        para: param,
+                        success: function(data) {
+                            if(data.result.load_status) {
+                                if(data.result.load_status == 'DATA_ERROR') {
+                                    dispatchCheckData();
+                                }
+                                else if(data.result.load_status == 'SUCCESS') {
+                                    Aurora.showMessage('提示', '数据导入成功');
+                                    $('result_ds').query();
+                                }
+                                else {
+                                    Aurora.showErrorMessage('错误', '数据导入失败');
+                                }
+                            }
+                       		else {
+                       		    Aurora.showErrorMessage('错误', '提交程序执行出错');
+                       		}
+                        },
+                        scope: this
+                    });
+                }        	    
+        	}
+        	
+        	function dispatchErrorData() {
+        	    errorData();
+        	}
+        	
+        	function errorData() {
+        	    new Aurora.Window({
+        	        id:"error_window",
+        	        url:$("exp_expense_report_import_error_link").getUrl() + "?batch_id=${/model/batch_id/record/@batch_id}",
+        	        title:"错误信息",
+        	        width:720,
+        	        height:351
+	        	});        	
+        	}
+		]]></script>
+        <a:dataSets>
+            <a:dataSet id="result_ds" fetchAll="false" model="exp.EXP7010.exp_rep_line_interface" pageSize="15">
+                <a:fields>
+                    <a:field name="batch_line_id" prompt="WFL_NODE_RECIPIENT_SET.RULE_SEQUENCE"/>
+                    <a:field name="exp_report_number" prompt="EXP7010.REPORT_NUMBER"/>
+                    <a:field name="line_number" prompt="EXP7010.LINE_NUMBER"/>
+                    <a:field name="city" prompt="EXP7010.CITY"/>
+                    <a:field name="place_code" prompt="EXP7010.PLACE_CODE"/>
+                    <a:field name="place_type_code" prompt="EXP7010.PLACE_TYPE_CODE"/>
+                    <a:field name="description" prompt="EXP7010.DESCRIPTION"/>
+                    <a:field name="date_from" prompt="EXP7010.DATE_FROM"/>
+                    <a:field name="date_to" prompt="EXP7010.DATE_TO"/>
+                    <a:field name="period_name" prompt="EXP7010.PERIOD_NAME"/>
+                    <a:field name="expense_type_code" prompt="EXP7010.EXPENSE_TYPE_CODE"/>
+                    <a:field name="expense_item_code" prompt="EXP7010.EXPENSE_ITEM_CODE"/>
+                    <a:field name="budget_item_code" prompt="EXP7010.BUDGET_ITEM_CODE"/>
+                    <a:field name="price" prompt="EXP7010.PRICE"/>
+                    <a:field name="primary_quantity" prompt="EXP7010.PRIMARY_QUANTITY"/>
+                    <a:field name="company_code" prompt="EXP7010.COMPANY_CODE"/>
+                    <a:field name="operation_unit_code" prompt="EXP7010.OPERATION_UNIT_CODE"/>
+                    <a:field name="unit_code" prompt="EXP7010.UNIT_CODE"/>
+                    <a:field name="position_code" prompt="EXP7010.POSITION_CODE"/>
+                    <a:field name="resp_center_code" prompt="EXP7010.RESP_CENTER_CODE"/>
+                    <a:field name="employee_code" prompt="EXP7010.EMPLOYEE_CODE"/>
+                    <a:field name="payment_flag" prompt="EXP7010.PAYMENT_FLAG"/>
+                    <a:field name="dimension1_code" prompt="EXP7010.DIMENSION1_CODE"/>
+                    <a:field name="dimension2_code" prompt="EXP7010.DIMENSION2_CODE"/>
+                    <a:field name="dimension3_code" prompt="EXP7010.DIMENSION3_CODE"/>
+                    <a:field name="dimension4_code" prompt="EXP7010.DIMENSION4_CODE"/>
+                    <a:field name="dimension5_code" prompt="EXP7010.DIMENSION5_CODE"/>
+                    <a:field name="dimension6_code" prompt="EXP7010.DIMENSION6_CODE"/>
+                    <a:field name="dimension7_code" prompt="EXP7010.DIMENSION7_CODE"/>
+                    <a:field name="dimension8_code" prompt="EXP7010.DIMENSION8_CODE"/>
+                    <a:field name="dimension9_code" prompt="EXP7010.DIMENSION9_CODE"/>
+                    <a:field name="dimension10_code" prompt="EXP7010.DIMENSION10_CODE"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:form height="600" title="PROMPT.EXPLINELOAD" width="1350">
+                <a:hBox>
+                    <a:button click="loadData" text="PROMPT.LOADDATA"/>
+                    <a:button click="checkData" text="PROMPT.CHECK"/>
+                    <a:button click="submitData" text="HAP_SUBMIT"/>
+                    <a:button click="errorData" text="PROMPT.ERROR"/>
+                </a:hBox>
+                <a:grid bindTarget="result_ds" height="520" navBar="true" width="1340">
+                    <a:toolBar>
+                        <a:button type="excel"/>
+                    </a:toolBar>
+                    <a:columns>
+                        <a:column name="batch_line_id" width="60"/>
+                        <a:column name="exp_report_number" align="center" width="90"/>
+                        <a:column name="line_number" width="40"/>
+                        <a:column name="city" width="60"/>
+                        <a:column name="place_code" align="center" width="60"/>
+                        <a:column name="place_type_code" align="center" width="80"/>
+                        <a:column name="description"/>
+                        <a:column name="date_from" width="80"/>
+                        <a:column name="date_to" width="80"/>
+                        <a:column name="period_name" width="60"/>
+                        <a:column name="expense_type_code" align="left" width="90"/>
+                        <a:column name="expense_item_code" align="left" width="90"/>
+                        <a:column name="budget_item_code" align="left" width="90"/>
+                        <a:column name="price" align="right" width="80"/>
+                        <a:column name="primary_quantity" align="right" width="80"/>
+                        <a:column name="company_code" align="left" width="60"/>
+                        <a:column name="operation_unit_code" align="center" width="80"/>
+                        <a:column name="unit_code" align="left" width="80"/>
+                        <a:column name="position_code" align="left" width="80"/>
+                        <a:column name="resp_center_code" align="left" width="80"/>
+                        <a:column name="employee_code" align="left" width="80"/>
+                        <a:column name="payment_flag" align="center" width="60"/>
+                        <a:column name="dimension1_code" width="60"/>
+                        <a:column name="dimension2_code" width="60"/>
+                        <a:column name="dimension3_code" width="60"/>
+                        <a:column name="dimension4_code" width="60"/>
+                        <a:column name="dimension5_code" width="60"/>
+                        <a:column name="dimension6_code" width="60"/>
+                        <a:column name="dimension7_code" width="60"/>
+                        <a:column name="dimension8_code" width="60"/>
+                        <a:column name="dimension9_code" width="60"/>
+                        <a:column name="dimension10_code" width="60"/>
+                    </a:columns>
+                </a:grid>
+            </a:form>
+        </a:screenBody>
+        <script><![CDATA[
+        	loadComplete();
+        ]]></script>
+    </a:view>
+</a:screen>

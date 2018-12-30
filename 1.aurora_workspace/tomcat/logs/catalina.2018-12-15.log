@@ -1,0 +1,379 @@
+十二月 15, 2018 10:06:46 上午 org.apache.catalina.core.AprLifecycleListener init
+信息: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: D:\1.SoftWare\20.javajre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\oracle\ora90\bin;D:\1.SoftWare\32.OracleXE64\setup\app\oracle\product\11.2.0\server\bin;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;D:\1.SoftWare\5.mysql\bin;D:\1.SoftWare\20.git\Git\cmd;D:\1.SoftWare\20.maven\apache-maven-3.3.9\bin;D:\1.SoftWare\23.NodeJs\;D:\1.SoftWare\23.NodeJs\node_modules;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Users\hzd\AppData\Local\Microsoft\WindowsApps;;D:\1.SoftWare\21.VSCode\Microsoft VS Code\bin;C:\Users\hzd\AppData\Roaming\npm;.
+十二月 15, 2018 10:06:46 上午 org.apache.coyote.http11.Http11Protocol init
+严重: Error initializing endpoint
+java.net.BindException: Address already in use: JVM_Bind <null>:8080
+	at org.apache.tomcat.util.net.JIoEndpoint.init(JIoEndpoint.java:549)
+	at org.apache.coyote.http11.Http11Protocol.init(Http11Protocol.java:176)
+	at org.apache.catalina.connector.Connector.initialize(Connector.java:1007)
+	at org.apache.catalina.core.StandardService.initialize(StandardService.java:677)
+	at org.apache.catalina.core.StandardServer.initialize(StandardServer.java:795)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:540)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:560)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:261)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+Caused by: java.net.BindException: Address already in use: JVM_Bind
+	at java.net.DualStackPlainSocketImpl.bind0(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketBind(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.bind(Unknown Source)
+	at java.net.PlainSocketImpl.bind(Unknown Source)
+	at java.net.ServerSocket.bind(Unknown Source)
+	at java.net.ServerSocket.<init>(Unknown Source)
+	at java.net.ServerSocket.<init>(Unknown Source)
+	at org.apache.tomcat.util.net.DefaultServerSocketFactory.createSocket(DefaultServerSocketFactory.java:50)
+	at org.apache.tomcat.util.net.JIoEndpoint.init(JIoEndpoint.java:538)
+	... 12 more
+
+十二月 15, 2018 10:06:46 上午 org.apache.catalina.startup.Catalina load
+严重: Catalina.start
+LifecycleException:  Protocol handler initialization failed: java.net.BindException: Address already in use: JVM_Bind <null>:8080
+	at org.apache.catalina.connector.Connector.initialize(Connector.java:1009)
+	at org.apache.catalina.core.StandardService.initialize(StandardService.java:677)
+	at org.apache.catalina.core.StandardServer.initialize(StandardServer.java:795)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:540)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:560)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:261)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+
+十二月 15, 2018 10:06:46 上午 org.apache.catalina.startup.Catalina load
+信息: Initialization processed in 337 ms
+十二月 15, 2018 10:06:46 上午 org.apache.catalina.core.StandardService start
+信息: Starting service Catalina
+十二月 15, 2018 10:06:46 上午 org.apache.catalina.core.StandardEngine start
+信息: Starting Servlet Engine: Apache Tomcat/6.0.24
+十二月 15, 2018 10:06:46 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+信息: Deploying configuration descriptor hec3dev.xml
+十二月 15, 2018 10:06:46 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+警告: A docBase D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\webapps\u01\web\hec3dev\webRoot inside the host appBase has been specified, and will be ignored
+十二月 15, 2018 10:06:46 上午 org.apache.catalina.core.StandardContext resourcesStart
+严重: Error starting static Resources
+java.lang.IllegalArgumentException: Document base D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\webapps\hec3dev does not exist or is not a readable directory
+	at org.apache.naming.resources.FileDirContext.setDocBase(FileDirContext.java:142)
+	at org.apache.catalina.core.StandardContext.resourcesStart(StandardContext.java:4086)
+	at org.apache.catalina.core.StandardContext.start(StandardContext.java:4255)
+	at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:791)
+	at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:771)
+	at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:526)
+	at org.apache.catalina.startup.HostConfig.deployDescriptor(HostConfig.java:637)
+	at org.apache.catalina.startup.HostConfig.deployDescriptors(HostConfig.java:563)
+	at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:498)
+	at org.apache.catalina.startup.HostConfig.start(HostConfig.java:1277)
+	at org.apache.catalina.startup.HostConfig.lifecycleEvent(HostConfig.java:321)
+	at org.apache.catalina.util.LifecycleSupport.fireLifecycleEvent(LifecycleSupport.java:119)
+	at org.apache.catalina.core.ContainerBase.start(ContainerBase.java:1053)
+	at org.apache.catalina.core.StandardHost.start(StandardHost.java:722)
+	at org.apache.catalina.core.ContainerBase.start(ContainerBase.java:1045)
+	at org.apache.catalina.core.StandardEngine.start(StandardEngine.java:443)
+	at org.apache.catalina.core.StandardService.start(StandardService.java:516)
+	at org.apache.catalina.core.StandardServer.start(StandardServer.java:710)
+	at org.apache.catalina.startup.Catalina.start(Catalina.java:593)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:289)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:414)
+
+十二月 15, 2018 10:06:46 上午 org.apache.catalina.core.StandardContext start
+严重: Error in resourceStart()
+十二月 15, 2018 10:06:47 上午 org.apache.catalina.core.StandardContext start
+严重: Error getConfigured
+十二月 15, 2018 10:06:47 上午 org.apache.catalina.core.StandardContext start
+严重: Context [/hec3dev] startup failed due to previous errors
+十二月 15, 2018 10:06:47 上午 org.apache.catalina.core.StandardContext stop
+信息: Container org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/hec3dev] has not been started
+十二月 15, 2018 10:06:47 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+信息: Deploying configuration descriptor host-manager.xml
+十二月 15, 2018 10:06:47 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+信息: Deploying configuration descriptor manager.xml
+十二月 15, 2018 10:06:47 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deploying web application directory ROOT
+十二月 15, 2018 10:06:47 上午 org.apache.coyote.http11.Http11Protocol start
+严重: Error starting endpoint
+java.net.BindException: Address already in use: JVM_Bind <null>:8080
+	at org.apache.tomcat.util.net.JIoEndpoint.init(JIoEndpoint.java:549)
+	at org.apache.tomcat.util.net.JIoEndpoint.start(JIoEndpoint.java:565)十二月 15, 2018 10:10:26 上午 org.apache.catalina.core.AprLifecycleListener init
+信息: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: D:\1.SoftWare\20.javajre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\oracle\ora90\bin;D:\1.SoftWare\32.OracleXE64\setup\app\oracle\product\11.2.0\server\bin;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;D:\1.SoftWare\5.mysql\bin;D:\1.SoftWare\20.git\Git\cmd;D:\1.SoftWare\20.maven\apache-maven-3.3.9\bin;D:\1.SoftWare\23.NodeJs\;D:\1.SoftWare\23.NodeJs\node_modules;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Users\hzd\AppData\Local\Microsoft\WindowsApps;;D:\1.SoftWare\21.VSCode\Microsoft VS Code\bin;C:\Users\hzd\AppData\Roaming\npm;.
+十二月 15, 2018 10:10:27 上午 org.apache.coyote.http11.Http11Protocol init
+信息: Initializing Coyote HTTP/1.1 on http-18080
+十二月 15, 2018 10:10:27 上午 org.apache.tomcat.util.net.jsse.JSSESocketFactory getStore
+严重: Failed to load keystore type JKS with path /u01/web/HECUAT/tomcat/cert/server.jks due to D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+java.io.FileNotFoundException: D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(Unknown Source)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getStore(JSSESocketFactory.java:347)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeystore(JSSESocketFactory.java:269)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeyManagers(JSSESocketFactory.java:482)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.init(JSSESocketFactory.java:419)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.createSocket(JSSESocketFactory.java:130)
+	at org.apache.tomcat.util.net.JIoEndpoint.init(JIoEndpoint.java:538)
+	at org.apache.coyote.http11.Http11Protocol.init(Http11Protocol.java:176)
+	at org.apache.catalina.connector.Connector.initialize(Connector.java:1007)
+	at org.apache.catalina.core.StandardService.initialize(StandardService.java:677)
+	at org.apache.catalina.core.StandardServer.initialize(StandardServer.java:795)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:540)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:560)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:261)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+
+十二月 15, 2018 10:10:27 上午 org.apache.coyote.http11.Http11Protocol init
+严重: Error initializing endpoint
+java.io.FileNotFoundException: D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(Unknown Source)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getStore(JSSESocketFactory.java:347)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeystore(JSSESocketFactory.java:269)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeyManagers(JSSESocketFactory.java:482)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.init(JSSESocketFactory.java:419)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.createSocket(JSSESocketFactory.java:130)
+	at org.apache.tomcat.util.net.JIoEndpoint.init(JIoEndpoint.java:538)
+	at org.apache.coyote.http11.Http11Protocol.init(Http11Protocol.java:176)
+	at org.apache.catalina.connector.Connector.initialize(Connector.java:1007)
+	at org.apache.catalina.core.StandardService.initialize(StandardService.java:677)
+	at org.apache.catalina.core.StandardServer.initialize(StandardServer.java:795)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:540)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:560)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:261)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+
+十二月 15, 2018 10:10:27 上午 org.apache.catalina.startup.Catalina load
+严重: Catalina.start
+LifecycleException:  Protocol handler initialization failed: java.io.FileNotFoundException: D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+	at org.apache.catalina.connector.Connector.initialize(Connector.java:1009)
+	at org.apache.catalina.core.StandardService.initialize(StandardService.java:677)
+	at org.apache.catalina.core.StandardServer.initialize(StandardServer.java:795)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:540)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:560)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:261)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+
+十二月 15, 2018 10:10:27 上午 org.apache.catalina.startup.Catalina load
+信息: Initialization processed in 449 ms
+十二月 15, 2018 10:10:27 上午 org.apache.catalina.core.StandardService start
+信息: Starting service Catalina
+十二月 15, 2018 10:10:27 上午 org.apache.catalina.core.StandardEngine start
+信息: Starting Servlet Engine: Apache Tomcat/6.0.24
+十二月 15, 2018 10:10:27 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+信息: Deploying configuration descriptor hec3dev.xml
+十二月 15, 2018 10:10:27 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+警告: A docBase D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\webapps\u01\web\hec3dev\webRoot inside the host appBase has been specified, and will be ignored
+十二月 15, 2018 10:10:27 上午 org.apache.catalina.core.StandardContext resourcesStart
+严重: Error starting static Resources
+java.lang.IllegalArgumentException: Document base D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\webapps\hec3dev does not exist or is not a readable directory
+	at org.apache.naming.resources.FileDirContext.setDocBase(FileDirContext.java:142)
+	at org.apache.catalina.core.StandardContext.resourcesStart(StandardContext.java:4086)
+	at org.apache.catalina.core.StandardContext.start(StandardContext.java:4255)
+	at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:791)
+	at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:771)
+	at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:526)
+	at org.apache.catalina.startup.HostConfig.deployDescriptor(HostConfig.java:637)
+	at org.apache.catalina.startup.HostConfig.deployDescriptors(HostConfig.java:563)
+	at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:498)
+	at org.apache.catalina.startup.HostConfig.start(HostConfig.java:1277)
+	at org.apache.catalina.startup.HostConfig.lifecycleEvent(HostConfig.java:321)
+	at org.apache.catalina.util.LifecycleSupport.fireLifecycleEvent(LifecycleSupport.java:119)
+	at org.apache.catal十二月 15, 2018 10:37:47 上午 org.apache.catalina.core.AprLifecycleListener init
+信息: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: D:\1.SoftWare\20.javajre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\oracle\ora90\bin;D:\1.SoftWare\32.OracleXE64\setup\app\oracle\product\11.2.0\server\bin;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;D:\1.SoftWare\5.mysql\bin;D:\1.SoftWare\20.git\Git\cmd;D:\1.SoftWare\20.maven\apache-maven-3.3.9\bin;D:\1.SoftWare\23.NodeJs\;D:\1.SoftWare\23.NodeJs\node_modules;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Users\hzd\AppData\Local\Microsoft\WindowsApps;;D:\1.SoftWare\21.VSCode\Microsoft VS Code\bin;C:\Users\hzd\AppData\Roaming\npm;.
+十二月 15, 2018 10:37:47 上午 org.apache.coyote.http11.Http11Protocol init
+信息: Initializing Coyote HTTP/1.1 on http-18080
+十二月 15, 2018 10:37:47 上午 org.apache.tomcat.util.net.jsse.JSSESocketFactory getStore
+严重: Failed to load keystore type JKS with path /u01/web/HECUAT/tomcat/cert/server.jks due to D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+java.io.FileNotFoundException: D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(Unknown Source)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getStore(JSSESocketFactory.java:347)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeystore(JSSESocketFactory.java:269)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeyManagers(JSSESocketFactory.java:482)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.init(JSSESocketFactory.java:419)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.createSocket(JSSESocketFactory.java:130)
+	at org.apache.tomcat.util.net.JIoEndpoint.init(JIoEndpoint.java:538)
+	at org.apache.coyote.http11.Http11Protocol.init(Http11Protocol.java:176)
+	at org.apache.catalina.connector.Connector.initialize(Connector.java:1007)
+	at org.apache.catalina.core.StandardService.initialize(StandardService.java:677)
+	at org.apache.catalina.core.StandardServer.initialize(StandardServer.java:795)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:540)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:560)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:261)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+
+十二月 15, 2018 10:37:47 上午 org.apache.coyote.http11.Http11Protocol init
+严重: Error initializing endpoint
+java.io.FileNotFoundException: D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(Unknown Source)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getStore(JSSESocketFactory.java:347)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeystore(JSSESocketFactory.java:269)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeyManagers(JSSESocketFactory.java:482)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.init(JSSESocketFactory.java:419)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.createSocket(JSSESocketFactory.java:130)
+	at org.apache.tomcat.util.net.JIoEndpoint.init(JIoEndpoint.java:538)
+	at org.apache.coyote.http11.Http11Protocol.init(Http11Protocol.java:176)
+	at org.apache.catalina.connector.Connector.initialize(Connector.java:1007)
+	at org.apache.catalina.core.StandardService.initialize(StandardService.java:677)
+	at org.apache.catalina.core.StandardServer.initialize(StandardServer.java:795)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:540)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:560)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:261)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+
+十二月 15, 2018 10:37:47 上午 org.apache.catalina.startup.Catalina load
+严重: Catalina.start
+LifecycleException:  Protocol handler initialization failed: java.io.FileNotFoundException: D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+	at org.apache.catalina.connector.Connector.initialize(Connector.java:1009)
+	at org.apache.catalina.core.StandardService.initialize(StandardService.java:677)
+	at org.apache.catalina.core.StandardServer.initialize(StandardServer.java:795)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:540)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:560)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:261)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+
+十二月 15, 2018 10:37:47 上午 org.apache.catalina.startup.Catalina load
+信息: Initialization processed in 419 ms
+十二月 15, 2018 10:37:47 上午 org.apache.catalina.core.StandardService start
+信息: Starting service Catalina
+十二月 15, 2018 10:37:47 上午 org.apache.catalina.core.StandardEngine start
+信息: Starting Servlet Engine: Apache Tomcat/6.0.24
+十二月 15, 2018 10:37:47 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+信息: Deploying configuration descriptor hec3dev.xml
+十二月 15, 2018 10:38:10 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+信息: Deploying configuration descriptor host-manager.xml
+十二月 15, 2018 10:38:10 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+信息: Deploying configuration descriptor manager.xml
+十二月 15, 2018 10:38:10 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deploying web application directory ROOT
+十二月 15, 2018 10:38:10 上午 org.apache.coyote.http11.Http11Protocol start
+信息: Starting Coyote HTTP/1.1 on http-18080
+十二月 15, 2018 10:38:10 上午 org.apache.tomcat.util.net.jsse.JSSESocketFactory getStore
+严重: Failed to load keystore type JKS with path /u01/web/HECUAT/tomcat/cert/server.jks due to D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+java.io.FileNotFoundException: D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(Unknown Source)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getStore(JSSESocketFactory.java:347)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeystore(JSSESocketFactory.java:269)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeyManagers(JSSESocketFactory.java:482)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.init(JSSESocketFactory.java:419)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.createSocket(JSSE十二月 15, 2018 10:49:02 上午 org.apache.catalina.core.AprLifecycleListener init
+信息: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: D:\1.SoftWare\20.javajre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\oracle\ora90\bin;D:\1.SoftWare\32.OracleXE64\setup\app\oracle\product\11.2.0\server\bin;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;D:\1.SoftWare\5.mysql\bin;D:\1.SoftWare\20.git\Git\cmd;D:\1.SoftWare\20.maven\apache-maven-3.3.9\bin;D:\1.SoftWare\23.NodeJs\;D:\1.SoftWare\23.NodeJs\node_modules;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Users\hzd\AppData\Local\Microsoft\WindowsApps;;D:\1.SoftWare\21.VSCode\Microsoft VS Code\bin;C:\Users\hzd\AppData\Roaming\npm;.
+十二月 15, 2018 10:49:02 上午 org.apache.coyote.http11.Http11Protocol init
+信息: Initializing Coyote HTTP/1.1 on http-18080
+十二月 15, 2018 10:49:02 上午 org.apache.tomcat.util.net.jsse.JSSESocketFactory getStore
+严重: Failed to load keystore type JKS with path /u01/web/HECUAT/tomcat/cert/server.jks due to D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+java.io.FileNotFoundException: D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(Unknown Source)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getStore(JSSESocketFactory.java:347)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeystore(JSSESocketFactory.java:269)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeyManagers(JSSESocketFactory.java:482)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.init(JSSESocketFactory.java:419)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.createSocket(JSSESocketFactory.java:130)
+	at org.apache.tomcat.util.net.JIoEndpoint.init(JIoEndpoint.java:538)
+	at org.apache.coyote.http11.Http11Protocol.init(Http11Protocol.java:176)
+	at org.apache.catalina.connector.Connector.initialize(Connector.java:1007)
+	at org.apache.catalina.core.StandardService.initialize(StandardService.java:677)
+	at org.apache.catalina.core.StandardServer.initialize(StandardServer.java:795)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:540)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:560)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:261)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+
+十二月 15, 2018 10:49:02 上午 org.apache.coyote.http11.Http11Protocol init
+严重: Error initializing endpoint
+java.io.FileNotFoundException: D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(Unknown Source)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getStore(JSSESocketFactory.java:347)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeystore(JSSESocketFactory.java:269)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeyManagers(JSSESocketFactory.java:482)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.init(JSSESocketFactory.java:419)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.createSocket(JSSESocketFactory.java:130)
+	at org.apache.tomcat.util.net.JIoEndpoint.init(JIoEndpoint.java:538)
+	at org.apache.coyote.http11.Http11Protocol.init(Http11Protocol.java:176)
+	at org.apache.catalina.connector.Connector.initialize(Connector.java:1007)
+	at org.apache.catalina.core.StandardService.initialize(StandardService.java:677)
+	at org.apache.catalina.core.StandardServer.initialize(StandardServer.java:795)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:540)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:560)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:261)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+
+十二月 15, 2018 10:49:02 上午 org.apache.catalina.startup.Catalina load
+严重: Catalina.start
+LifecycleException:  Protocol handler initialization failed: java.io.FileNotFoundException: D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+	at org.apache.catalina.connector.Connector.initialize(Connector.java:1009)
+	at org.apache.catalina.core.StandardService.initialize(StandardService.java:677)
+	at org.apache.catalina.core.StandardServer.initialize(StandardServer.java:795)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:540)
+	at org.apache.catalina.startup.Catalina.load(Catalina.java:560)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:261)
+	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+
+十二月 15, 2018 10:49:02 上午 org.apache.catalina.startup.Catalina load
+信息: Initialization processed in 409 ms
+十二月 15, 2018 10:49:02 上午 org.apache.catalina.core.StandardService start
+信息: Starting service Catalina
+十二月 15, 2018 10:49:02 上午 org.apache.catalina.core.StandardEngine start
+信息: Starting Servlet Engine: Apache Tomcat/6.0.24
+十二月 15, 2018 10:49:02 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+信息: Deploying configuration descriptor hec3dev.xml
+十二月 15, 2018 10:49:16 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+信息: Deploying configuration descriptor host-manager.xml
+十二月 15, 2018 10:49:16 上午 org.apache.catalina.startup.HostConfig deployDescriptor
+信息: Deploying configuration descriptor manager.xml
+十二月 15, 2018 10:49:17 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deploying web application directory ROOT
+十二月 15, 2018 10:49:17 上午 org.apache.coyote.http11.Http11Protocol start
+信息: Starting Coyote HTTP/1.1 on http-18080
+十二月 15, 2018 10:49:17 上午 org.apache.tomcat.util.net.jsse.JSSESocketFactory getStore
+严重: Failed to load keystore type JKS with path /u01/web/HECUAT/tomcat/cert/server.jks due to D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+java.io.FileNotFoundException: D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\u01\web\HECUAT\tomcat\cert\server.jks (系统找不到指定的路径。)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(Unknown Source)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getStore(JSSESocketFactory.java:347)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeystore(JSSESocketFactory.java:269)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.getKeyManagers(JSSESocketFactory.java:482)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.init(JSSESocketFactory.java:419)
+	at org.apache.tomcat.util.net.jsse.JSSESocketFactory.createSocket(JSSE

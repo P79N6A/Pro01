@@ -1,0 +1,1243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Tank
+    $Date: 2017-3-02 上午
+    $Revision: 1.0  
+    $Purpose: 技术培训-单据创建界面
+-->
+<a:screen xmlns:c="aurora.application.action" xmlns:p="uncertain.proc" xmlns:a="http://www.aurora-framework.org/application" tag="exp_report" trace="true">
+    <a:init-procedure>
+        <a:model-query autoCount="false" fetchAll="true" model="train.TRA5010.tra_report_head_show" rootPath="head_data"/>
+        <a:model-query autoCount="false" fetchAll="true" model="csh.csh_payment_methods_list" rootpath="payment_method_list"/>
+        <a:model-query autoCount="false" defaultWhereClause="currency_code=${/model/head_data/record/@currency_code}" fetchAll="true" model="gld.gld_currency_vl" rootPath="precision"/>
+        <a:model-query defaultWhereClause="expense_report_type_id=nvl(${/parameter/@expense_report_type_id},(select hh.tra_report_type_id from tra_report_headers hh where hh.tra_report_header_id=${/parameter/@tra_report_header_id}))" fetchAll="true" model="exp.exp_expense_report_types_vl" rootPath="budget_control"/>
+        <a:model-query autoCount="false" defaultwhereclause="exists (select 1 from exp_employee_assigns eea         where eea.position_id=op.position_id    and eea.enabled_flag = &apos;Y&apos;   and   eea.employee_id= nvl(${/parameter/@employee_id},${/model/head_data/record/@employee_id}))  and company_id = ${/session/@company_id}" fetchAll="true" model="exp.exp_org_position" rootpath="position_list"/>
+        <a:model-query autoCount="false" fetchAll="true" model="train.tra_report_head_dimension" rootpath="head_dimension"/>
+        <a:model-query autoCount="false" fetchAll="true" model="train.tra_report_head_object" rootpath="head_object"/>
+        <a:model-query autoCount="false" fetchAll="true" model="train.tra_report_line_dimension" rootpath="line_dimension"/>
+        <a:model-query autoCount="false" fetchAll="true" model="train.tra_report_line_object" rootpath="line_object"/>
+        <a:model-query autoCount="false" model="train.TRA5010.vat_invoice_info" rootPath="vat_invoice_info"/>
+    </a:init-procedure>
+    <a:view>
+        <style><![CDATA[
+            .accordion-box td{
+                vertical-align:top;
+            }
+        ]]></style>
+        <script><![CDATA[
+            var index = 1;
+            var initLineIndex = 0;
+            var saveFlag = true; //保存标志(用在动态列)，默认当加载页面后是true（及保存状态）。当对页面上的东西进行改动后，保存标志变为false。此时必须要保存后才能提交。
+            
+            //进入页面时加载该操作
+            
+            function loadComplete() {
+            
+                if ('${/model/vat_invoice_info/record/@taxpayer_type}' == 'GENERAL_TAXPAYER') {
+                    $('grid').showColumn('invoice_category_name');
+                    $('grid').showColumn('invoice_code');
+                    $('grid').showColumn('invoice_number');
+                    $('grid').showColumn('tax_type_rate');
+                    $('grid').showColumn('tax_amount');
+                    $('grid').showColumn('invoice_date');
+                    $('grid').showColumn('not_tax_amount');
+                    lineFields = $('tra_report_lines').fields;
+                    lineFields['invoice_category_name'].pro.required = true;
+                } else {
+                    $('grid').hideColumn('invoice_category_name');
+                    $('grid').hideColumn('invoice_code');
+                    $('grid').hideColumn('invoice_number');
+                    $('grid').hideColumn('tax_type_rate');
+                    $('grid').hideColumn('tax_amount');
+                    $('grid').hideColumn('invoice_date');
+                    $('grid').hideColumn('not_tax_amount');
+                }
+            }
+            
+            function headerLoad(ds) {
+                var payMethod = ds.getField('payment_method'); //获取name对应的field
+                var payment_mehtod_ds = $('payment_mehtod_ds');
+                payMethod.setOptions(payment_mehtod_ds); //动态设置options
+            }
+            
+            //头更新事件：当头上字段发生修改时触发改操作
+            
+            function headerUpdate(ds, record, name, value, oldvalue) {
+            	//debugger;
+            	//var t1=record.getField('payee_name');
+            	//var mp = t1.getMapping();
+                if (name == 'payee_category') {
+                    record.set('payee_name', '');
+                    record.set('payee_id', '');
+                    var payee_category = value;
+                    var f1 = record.getField('payee_name');
+                    if (payee_category == null || payee_category == undefined || payee_category == '') {
+                        f1.setReadOnly(true);
+                        f1.setLovService('');
+                    } else if (payee_category == 'EMPLOYEE') {
+                        f1.setReadOnly(false);
+                        f1.setLovService('expm.exp_employee_req_lov');
+                        f1.setTitle('${l:EXP_EMPLOYEES.QUERY}');
+                    } else if (payee_category == 'VENDER') {
+                        f1.setReadOnly(false);
+                        f1.setLovService('expm.exp_vender_req_lov');
+                        f1.setTitle('${l:VENDER_SEARCH}');
+                    } else {
+                        f1.setReadOnly(false);
+                        f1.setLovService('expm.exp_customer_req_lov');
+                        f1.setTitle('${l:CUSTOMER_QUERY}');
+                    }
+                }
+                if (record.get('invoice_flag') == 'Y') {
+                    $('grid').showColumn('invoice_category_name');
+                    $('grid').showColumn('invoice_code');
+                    $('grid').showColumn('invoice_number');
+                    $('grid').showColumn('tax_type_rate');
+                    $('grid').showColumn('tax_amount');
+                    $('grid').showColumn('not_tax_amount');
+                    $('grid').showColumn('invoice_date');
+                } else {
+                    $('grid').hideColumn('invoice_category_name');
+                    $('grid').hideColumn('invoice_code');
+                    $('grid').hideColumn('invoice_number');
+                    $('grid').hideColumn('tax_type_rate');
+                    $('grid').hideColumn('tax_amount');
+                    $('grid').hideColumn('not_tax_amount');
+                    $('grid').hideColumn('invoice_date');
+                }
+            }
+            
+            //保存
+            
+            function saveReport() {
+            
+                var d1 = $('tra_report_head_dimension');
+                var d2 = $('tra_report_head_object');
+                var d3 = $('tra_report_lines');
+            
+                if (!$('tra_report_head').validate()) {
+                    return;
+                }
+                if (!d1.validate()) {
+                    return;
+                }
+                if (!d2.validate()) {
+                    return;
+                }
+                if (!d3.validate()) {
+                    return;
+                }
+                if (d3.getAll().length == 0) {
+                    Aurora.showInfoMessage('${l:PROMPT}', '${l:PLEASE_INSERT_LINE_DATA}', null, 250, 100);
+                    return;
+                }
+            
+                var rec = d2.getAt(0).data;
+                for (var p in rec) {
+                    if (p.substring(0, 1) == '#') {
+                        var records = $('tra_report_object_lines').getAll();
+                        var record = null;
+                        for (var i = 0;i < records.length;i++) {
+                            var tempRecord = records[i];
+                            if (tempRecord.get('expense_object_type_id') == p.substring(1, p.length)) {
+                                record = tempRecord;
+                                break;
+                            }
+                        }
+            
+                        if (!record) {
+                            record = new Aurora.Record({});
+                            $('tra_report_object_lines').add(record);
+                        }
+            
+                        record.data['expense_object_type_id'] = p.substring(1, p.length);
+                        record.data['expense_object_id'] = rec[p];
+                        record.data['expense_object_desc'] = rec['^' + p];
+                    }
+                }
+            
+                //头维度，当头维度修改之后将数据存放到行，如果没有修改就跳过该段逻辑
+                var recd = d1.getAt(0).data;
+                if (d1.isModified()) {
+                    for (var p in recd) {
+                        if (p.substring(0, 1) == 'e') {
+                            var lines = $('tra_report_lines').getAll();
+                            for (var i = 0,
+                                l = lines.length;i < l;i++) {
+                                lines[i].set(p, recd[p]);
+                            }
+                        }
+                    }
+                }
+            
+                var linerecords = d3.getAll();
+                for (var t = 0;t < linerecords.length;t++) {
+                    var los = [];
+                    var recp = linerecords[t].data;
+                    for (var q in recp) {
+                        var llo = {};
+                        if (q.substring(0, 1) == '^') {
+            
+                            llo['expense_object_type_id'] = q.substring(2, q.length);
+                            llo['expense_object_id'] = recp[q.replace('^', '')];
+                            llo['expense_object_desc'] = recp[q];
+            
+                            if (linerecords[t].isNew) {
+                                llo['_status'] = 'insert';
+                            } else {
+                                llo['_status'] = 'update';
+                                llo['tra_report_line_id'] = linerecords[t].get('tra_report_line_id');
+                            }
+                            los.push(llo);
+                        }
+                    }
+                    linerecords[t].data['details'] = los;
+                }
+            
+                //跳转到svc实现数据交互
+                $('tra_report_head').submit();
+            }
+            
+            //数据提交成功执行该操作
+            
+            function dataSubmitSuccess(ds, res) {
+                var saveFlag = true;
+                $('pmtAddBtn').enable();
+            
+                var head_id = res.result.record.tra_report_header_id;
+                var tra_report_type_id = res.result.record.tra_report_type_id; //tra_report_type_id：用于维护界面维护和费用对象的查询参数
+                var url = 'modules/train/TRA5020/train_report_update.screen';
+                //保存成功后跳转到单据维护明细界面
+                Aurora.post('${/request/@context_path}/' + url + '?tra_report_header_id=' + head_id + '&amp;tra_report_type_id=' + tra_report_type_id, null);
+            }
+            
+            //数据提交失败执行该操作
+            
+            function dataSubmitFailed(ds, res) {
+                $('tra_report_object_lines').removeAll();
+            }
+            
+            //列编辑器函数
+            
+            function invoiceTypeEditorFun(record, name) {
+                if (name == 'invoice_code') {
+                    return 'company_lov';
+                }
+                if (name == 'invoice_number') {
+                    return 'description_grid_tf';
+                }
+                if (name == 'tax_type_rate') {
+                    return 'type_combox';
+                }
+                if (name == 'tax_amount') {
+                    return 'tax_amount_nf';
+                }
+                if (name == 'invoice_date') {
+                    return 'date_dp';
+                }
+            }
+            //新增行按钮点击事件
+            
+            function createLineRecord() {
+                var ds = $('tra_report_lines');
+                var lineRecord = ds.getSelected();
+                var lineIndex = index + initLineIndex;
+                if (lineRecord.length == 0) {
+                    ds.create();
+                    var records = ds.getAll();
+                    for (i = 0;i < records.length - 1;i++) {
+                        records[i].set('flag', 1);
+                    }
+                    var lrecord = ds.getAt(lineIndex - 1);
+                    setinitdata(ds, lrecord, lineIndex);
+                } else {
+                    for (i = 0;i < lineRecord.length;i++) {
+                        var data = lineRecord[i].data;
+                        var newdata = {};
+                        var len = ds.getAll().length;
+                        for (var name in data) {
+                            newdata[name] = data[name];
+                        }
+                        var record = new Aurora.Record(newdata);
+                        record.isNew = 'true';
+                        record.dirty = 'false';
+                        var reportAmount = record.data['report_amount'];
+                        record.data['report_amount'] = 0;
+                        ds.add(record);
+                        record.set('report_amount', reportAmount);
+                        lineNum = (index + initLineIndex) * 10;
+                        var lineAtRecord = ds.getAt(len);
+                        lineAtRecord.set('line_number', lineNum);
+                        lineAtRecord.set('tra_report_line_id', '');
+                        index = index + 1;
+                    }
+                }
+                headAmountChanged();
+            }
+            
+            //行删除时触发事件
+            
+            function lineRemove() {
+            
+                headAmountChanged();
+            
+                index = index - 1; //删除行时，注意行号必须相应也减少
+            }
+            
+            function setinitdata(dataSet, record, lineIndex) {
+                var header = $('tra_report_head').getAt(0);
+                var selectedLines = $('tra_report_lines').getSelected();
+            
+                var payee_category = header.get('payee_category');
+                var records = $('tra_report_head').getAll();
+            
+                if ($('tra_report_lines').getAll().length != 0) {
+                    lineNum = lineIndex * 10;
+                    record.set('line_number', lineNum);
+                    index = index + 1;
+                }
+                record.set('primary_quantity', 1);
+                record.set('company_id', header.get('company_id'));
+                record.set('company_name', header.get('company_name'));
+                record.set('unit_id', header.get('unit_id'));
+                record.set('unit_name', header.get('unit_name'));
+                record.set('employee_id', header.get('employee_id'));
+                record.set('employee_name', header.get('employee_name'));
+                record.set('position_id', header.get('position_id'));
+                record.set('position_name', header.get('position_name'));
+                record.set('responsibility_center_name', header.get('responsibility_center_name'));
+                record.set('responsibility_center_id', header.get('responsibility_center_id'));
+                record.set('payee_category_name', header.get('payee_category_name'));
+                record.set('payee_category', header.get('payee_category'));
+                record.set('payee_name', header.get('payee_name'));
+                record.set('payee_id', header.get('payee_id'));
+                record.set('payment_flag', header.get('payment_flag'));
+                record.set('currency_code', header.get('currency_code'));
+                record.set('exchange_rate', header.get('rate'));
+                record.set('period_name', header.get('period_name'));
+            
+                record.set('account_number', header.get('account_number'));
+                record.set('account_name', header.get('account_name'));
+            
+                record.set('payment_type', header.get('payment_method'));
+                record.set('payment_type_id', header.get('payment_method_id'));
+            
+                record.set('expense_type_id', '${/model/budget_control/record/@default_expense_type}');
+                record.set('expense_type_name', '${/model/budget_control/record/@default_expense_type_desc}');
+            
+                // var saveFlag = true;
+            }
+            
+            //Grid单元格点击事件 - 行
+            
+            function gridCellClick(grid, row, name, record) {
+                var metadata = record.getMeta();
+            
+                if (name == 'expense_type_name') {
+                    $('tra_expense_type_ds').setQueryParameter('company_id', record.get('company_id'));
+                    $('tra_expense_type_ds').query();
+                }
+                if (name == 'tra_req_item_name') {
+                    $('tra_expense_item_ds').setQueryParameter('company_id', record.get('company_id'));
+                    $('tra_expense_item_ds').setQueryParameter('expense_type_id', record.get('expense_type_id'));
+                    $('tra_expense_item_ds').setQueryParameter('tra_report_type_id', '${/model/head_data/record/@tra_report_type_id}');
+                    $('tra_expense_item_ds').query();
+                }
+                if (name == 'unit_name') {
+                    var r = record.getMeta();
+                    var f1 = r.getField('unit_name');
+                    f1.setLovPara('company_id', record.get('company_id'));
+                }
+                if (name == 'responsibility_center_name') {
+                    var r = record.getMeta();
+                    var f1 = r.getField('responsibility_center_name');
+                    f1.setLovPara('company_id', record.get('company_id'));
+                }
+                if (name == 'employee_name') {
+                    var r = record.getMeta();
+                    var f1 = r.getField('employee_name');
+                    var ds = $('tra_report_head');
+                    var rd = ds.getAt(0);
+                    f1.setLovPara('company_id', record.get('company_id'));
+                    f1.setLovPara('employee_id', rd.get('employee_id'));
+                }
+                if (name == 'position_name') {
+                    $('position_ds').setQueryParameter('company_id', record.get('company_id'));
+                    $('position_ds').setQueryParameter('employee_id', record.get('employee_id'));
+                    $('position_ds').query();
+                }
+                if (name == 'invoice_code') {
+                    var meta = record.getMeta();
+                    var field = meta.getField('invoice_code');
+                    field.setLovPara('header_company_id', $('tra_report_head').getAt(0).get('company_id'));
+                    field.setLovPara('line_company_id', record.get('company_id'));
+                }
+                if (name == 'period_name') {
+                    var meta = record.getMeta();
+                    var field = meta.getField('period_name');
+                    if ('${/model/budget_control/record/@budget_control_enabled}' == 'N') {
+                        field.setLovService('bgt.bgt_periods_detail_lov');
+                    } else {
+                        field.setLovService('expm.bgt_periods_detail_lov');
+                    }
+                } else {
+                    record.getMeta().getField('d1').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d2').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d3').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d4').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d5').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d6').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d7').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d8').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d9').setLovPara('company_id', record.get('company_id'));
+                    record.getMeta().getField('d10').setLovPara('company_id', record.get('company_id'));
+                }
+            
+            }
+            
+            //Grid单元格点击事件 - 计划付款行
+            
+            
+            function pmtGridCellClick(grid, row, name, record) {
+            
+                var metadata = record.getMeta();
+                if (name == 'payee_partner_name') {
+                    var f1 = metadata.getField('payee_partner_name');
+                    var payee_category = record.get('payee_type_value');
+                    if (payee_category == null || payee_category == undefined || payee_category == '') {
+                        f1.setLovService('');
+                    } else if (payee_category == 'EMPLOYEE') {
+                        f1.setLovService('csh.csh_pay_req_emp_lov');
+                    } else if (payee_category == 'VENDER') {
+                        f1.setLovService('csh.csh_pay_req_ven_lov');
+                    } else {
+                        f1.setLovService('csh.csh_pay_req_cus_lov');
+                    }
+                }
+                if (name == 'account_number') {
+                    var r = record.getMeta();
+                    var f1 = r.getField('account_number');
+                    var payee_category = record.get('payee_type_value');
+                    if (payee_category == null || payee_category == undefined || payee_category == '') {
+                        f1.setLovService('');
+                    } else if (payee_category == 'EMPLOYEE') {
+                        f1.setLovService('expm.exp_employee_accounts');
+                        record.getMeta().getField('account_number').setLovPara('employee_id', record.get('payee_id'));
+                    } else if (payee_category == 'VENDER') {
+                        f1.setLovService('expm.pur_vender_accounts');
+                        record.getMeta().getField('account_number').setLovPara('vender_id', record.get('payee_id'));
+                    } else {
+                        f1.setLovService('expm.ord_customer_accounts');
+                        record.getMeta().getField('account_number').setLovPara('customer_id', record.get('payee_id'));
+                    }
+                }
+            }
+            
+            //行创建前事件：当行新增之前时触发该操作 - 行
+            
+            function lineBeforeCreate() {
+                if ($('tra_report_lines').getAll().length == 0 && $('tra_report_head').validate()) {
+                    var t = $('tra_report_head').getAt(0);
+                    var r = t.getMeta();
+                    r.getField('tra_report_position').setReadOnly(true);
+                    r.getField('tra_report_date').setReadOnly(true);
+                    r.getField('payment_method').setReadOnly(true);
+                    r.getField('payee_name').setReadOnly(true);
+                    r.getField('rate').setReadOnly(true);
+                    r.getField('payee_category_name').setReadOnly(true);
+                    return true;
+                } else if ($('tra_report_lines').getAll().length != 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+                return true;
+            }
+            
+             function payeeNameCommit(lov, r1, r2) {
+                var payee_category = r1.get('payee_category');
+                if (payee_category == 'EMPLOYEE') {
+                    r1.set('payee_id', r2.get('employee_id'));
+                } else if (payee_category == 'VENDER') {
+                    r1.set('payee_id', r2.get('vender_id'));
+                } else {
+                    r1.set('payee_id', r2.get('customer_id'));
+                }
+            }
+            
+            
+            function headPayeeCommit(lov, r1, r2) {
+            
+                var payee_category = r1.get('payee_category')
+                if (payee_category == null || payee_category == undefined || payee_category == '') {
+                    return;
+                } else if (payee_category == 'EMPLOYEE') {
+                    r1.set('payee_id', r2.get('employee_id'));
+                } else if (payee_category == 'VENDER') {
+                    r1.set('payee_id', r2.get('vender_id'));
+                } else {
+                    r1.set('payee_id', r2.get('customer_id'));
+                }
+            }
+            
+            //行创建前事件：当行新增之前时触发该操作 -计划付款行
+            
+            function pmtlineBeforeCreate() {
+                if ($('pmtplan_schedules_ds').getAll().length == 0 && $('tra_report_head').validate()) {
+                    var t = $('tra_report_head').getAt(0);
+                    var r = t.getMeta();
+                    r.getField('exp_report_position').setReadOnly(true);
+                    r.getField('exp_report_data').setReadOnly(true);
+                    r.getField('payment_method').setReadOnly(true);
+                    r.getField('payee_name').setReadOnly(true);
+                    r.getField('rate').setReadOnly(true);
+                    r.getField('payee_category_name').setReadOnly(true);
+                    return true;
+                } else if ($('pmtplan_schedules_ds').getAll().length != 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+                return true;
+            }
+            
+            //行操作时初始化
+            
+            function lineLoad(ds) {
+                var record = $('tra_report_head').getCurrentRecord();
+                if (record.get('invoice_flag') == 'Y') {
+                    $('grid').showColumn('invoice_category_name');
+                    $('grid').showColumn('invoice_code');
+                    $('grid').showColumn('invoice_number');
+                    $('grid').showColumn('tax_type_rate');
+                    $('grid').showColumn('tax_amount');
+                    $('grid').showColumn('invoice_date');
+                    $('grid').showColumn('not_tax_amount');
+                } else {
+                    $('grid').hideColumn('invoice_category_name');
+                    $('grid').hideColumn('invoice_code');
+                    $('grid').hideColumn('invoice_number');
+                    $('grid').hideColumn('tax_type_rate');
+                    $('grid').hideColumn('tax_amount');
+                    $('grid').hideColumn('invoice_date');
+                    $('grid').hideColumn('not_tax_amount');
+                }
+            }
+            
+            //行更新事件：当行上字段发生修改时触发改操作
+            
+            function lineUpdate(dataSet, record, name, value, oldvalue) {
+                // save = false;
+                if (name == 'company_name') {
+                    record.set('unit_id', '');
+                    record.set('unit_name', '');
+                    record.set('responsibility_center_id', '');
+                    record.set('responsibility_center_name', '');
+                    record.set('position_id', '');
+                    record.set('position_name', '');
+                    record.set('employee_id', '');
+                    record.set('employee_name', '');
+                    record.set('expense_item_id', '');
+                    record.set('tra_req_item_name', '');
+                    record.set('expense_type_name', '');
+                    record.set('expense_type_id', '');
+                    if (record.get('flag') == 1) {
+                        record.set('d1', '');
+                        record.set('d2', '');
+                        record.set('d3', '');
+                        record.set('d4', '');
+                        record.set('d5', '');
+                        record.set('d6', '');
+                        record.set('d7', '');
+                        record.set('d8', '');
+                        record.set('d9', '');
+                        record.set('d10', '');
+                    }
+                    record.set('flag', 1);
+                    return;
+                } else if (name == 'expense_type_name') {
+                    record.set('tra_req_item_name', '');
+                    record.set('expense_item_id', '');
+                } else if (name == 'employee_name' || name == 'employee_id') {
+                    record.set('position_id', '');
+                    record.set('position_name', '');
+                    return;
+                } else if (name == 'primary_quantity' || name == 'price') {
+                    var a = record.get('primary_quantity');
+                    var b = record.get('price');
+                    var tax_type_rate = record.get('tax_type_rate');
+                    record.set('report_amount', isNaN(a * b) ? '' : (a * b).toFixed('${/model/precision/record/@precision}'));
+            
+                    headAmountChanged();
+                    var report_amount = record.get('report_amount');
+                    record.set('tax_amount', isNaN(report_amount * tax_type_rate) ? '' : (report_amount * tax_type_rate / (1 + tax_type_rate)).toFixed('${/model/precision/record/@precision}'));
+                    var tax_amount = record.get('tax_amount');
+                    record.set('not_tax_amount', isNaN(report_amount - tax_amount) ? '' : ((report_amount - tax_amount).toFixed('${/model/precision/record/@precision}')));
+                    return;
+                } else if (name == 'date_from' || name == 'date_to') {
+                    record.validate((name == 'date_from') ? 'date_to' : 'date_from');
+                }
+                if (name == 'tax_type_rate') {
+                    var report_amount = record.get('report_amount');
+                    var tax_type_rate = record.get('tax_type_rate');
+                    if (tax_type_rate && report_amount) {
+                        record.set('tax_amount', isNaN(report_amount * tax_type_rate) ? '' : (report_amount * tax_type_rate / (1 + tax_type_rate)).toFixed('${/model/precision/record/@precision}'));
+                        var tax_amount = record.get('tax_amount');
+                        record.set('not_tax_amount', isNaN(report_amount - tax_amount) ? '' : ((report_amount - tax_amount).toFixed('${/model/precision/record/@precision}')));
+                    }
+                }
+                if (name == 'tax_amount') {
+                    var report_amount = record.get('report_amount');
+                    var tax_amount = record.get('tax_amount');
+                    record.set('not_tax_amount', isNaN(report_amount - tax_amount) ? '' : ((report_amount - tax_amount).toFixed('${/model/precision/record/@precision}')));
+                }
+            }
+            
+            //本位币金额：单价 * 数量 * 头上汇率
+            
+            function setFunctionAmount(value, record, name) {
+                // debugger;
+                var a = record.get('report_amount');
+                var b = $('tra_report_head').getAt(0).get('rate');
+                record.data['report_functional_amount'] = isNaN(a * b) ? '' : (a * b).toFixed('${/model/precision/record/@precision}');
+                return isNaN(a * b) ? '' : Aurora.formatMoney((a * b).toFixed('${/model/precision/record/@precision}'));
+            }
+            
+            //头金额计算：根据列金额进行汇总
+            
+            function headAmountChanged() {
+                var records = $('tra_report_lines').getAll();
+                var lineAmount = 0;
+                for (var i = 0;i < records.length;i++) {
+                    if (isNaN(records[i].get('report_amount'))) {
+                        records[i].set('report_amount', '0')
+                    }
+                    var req_amount = parseFloat(records[i].get('report_amount'));
+                    lineAmount += req_amount;
+                }
+                $('tra_report_head').getAt(0).set('sum_amount', lineAmount);
+            
+            }
+            
+            //gird列脚标金额汇总函数
+            
+            function sumRenderer(records, name) {
+                var sum = 0;
+                for (var i = 0;i < records.length;i++) {
+                    var r = records[i].get(name);
+                    var n = parseFloat(r);
+                    if (!isNaN(n)) {
+                        sum += n;
+                    }
+                }
+                sum = Math.round(sum * 100) / 100;
+                return '<font><label style="color:red">' + sum + '</label></font>';
+            }
+            
+            //日期检验函数
+            
+            function dateValidate(record, name, value) {
+                if (name == 'date_from' || name == 'date_to') {
+                    var start_date = record.get('date_from');
+                    var end_date = record.get('date_to');
+                    if (typeof(end_date) != 'undefined' && !Ext.isEmpty(end_date)) {
+                        if (!compareDate(start_date, end_date)) {
+                            return '开始日期必须小于或等于结束日期!';
+                        }
+                    }
+                    return true;
+                }
+            }
+            //日期比较
+            
+            function compareDate(start, end) {
+                if (start > end) {
+                    return false;
+                }
+                return true;
+            }
+            
+            //行号获取
+            
+            function line_number(value, record, name) {
+                return ($('pmtplan_schedules_ds').indexOf(record) + 1) * 10;
+            }
+            
+            //当修改动态列里面的数据后保存标志变为false
+            
+            function dynamicUpdate() {
+                saveFlag = false;
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="tra_exchange_rate_quta_ds" lookupCode="EXCHANGE_RATE_QUOTATION"/>
+            <a:dataSet id="pay_category_ds" lookupcode="PAYMENT_OBJECT"/>
+            <a:dataSet id="payment_mehtod_ds">
+                <a:datas datasource="/model/payment_method_list"/>
+            </a:dataSet>
+            <a:dataSet id="positionlist_ds">
+                <a:datas datasource="/model/position_list"/>
+            </a:dataSet>
+            <a:dataSet id="tra_expense_type_ds" fetchAll="true" model="train.public.exp_expense_type_flag_filter" queryUrl="${/request/@context_path}/autocrud/train.public.exp_expense_type_flag_filter/query?expense_report_type_id=${/parameter/@expense_report_type_id}&amp;tra_report_header_id=${/parameter/@tra_report_header_id}&amp;report_flag=Y"/>
+            <a:dataSet id="tra_expense_item_ds" fetchAll="true" model="train.public.exp_expense_item"/>
+            <a:dataSet id="tra_report_head" model="train.TRA5010.tra_report_head_show" submitUrl="${/request/@context_path}/modules/train/public/tra_report_save.svc">
+                <a:datas dataSource="/model/head_data"/>
+                <a:fields>
+                    <a:field name="tra_report_header_id"/>
+                    <a:field name="tra_report_type_name" readonly="true"/>
+                    <a:field name="tra_report_type_id"/>
+                    <a:field name="company_id"/>
+                    <a:field name="company_name"/>
+                    <a:field name="payment_method" displayfield="description" required="true" returnfield="payment_method_id" valuefield="payment_method_id"/>
+                    <a:field name="tra_report_position" displayfield="position_name" options="positionlist_ds" required="true" returnfield="position_id" valuefield="position_id"/>
+                    <a:field name="payment_flag"/>
+                    <a:field name="responsibility_center_name"/>
+                    <a:field name="responsibility_center_id"/>
+                    <a:field name="unit_id"/>
+                    <a:field name="unit_name"/>
+                    <a:field name="employee_id"/>
+                    <a:field name="employee_name"/>
+                    <a:field name="position_id"/>
+                    <a:field name="position_name"/>
+                    <a:field name="sum_amount" readOnly="true"/>
+                    <a:field name="tra_report_number" readonly="true"/>
+                    <a:field name="tra_report_date" required="true"/>
+                    <a:field name="tra_report_employee_name" readonly="true"/>
+                    <!-- <a:field name="payee_category_name" displayField="code_value_name" options="pay_category_ds" required="true" returnField="payee_category" valueField="code_value"/> -->
+                    <a:field name="payee_category_name" displayField="code_value_name" options="pay_category_ds" required="true">
+                        <a:mapping>
+                            <a:map from="code_value" to="payee_category"/>
+                            <a:map from="code_value_name" to="payee_category_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="payee_category"/>
+                    <a:field name="payee_name" autoComplete="true" autoCompleteField="code_name" lovGridHeight="320" lovHeight="460" lovWidth="520" lovservice="expm.exp_employee_req_lov" readOnly="false" required="true">
+                        <a:mapping>
+                            <a:map from="code_name" to="payee_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="payee_id"/>
+                    <a:field name="currency_code"/>
+                    <a:field name="currency_name" readonly="true"/>
+                    <a:field name="functional_currency_code"/>
+                    <a:field name="rate" required="true"/>
+                    <a:field name="description"/>
+                    <a:field name="attach_id"/>
+                    <a:field name="tra_report_status" readOnly="true"/>
+                    <a:field name="tra_report_create_by" readOnly="true"/>
+                    <a:field name="tra_report_audit_date" prompt="审核日期" readOnly="true"/>
+                    <a:field name="payment_method_id"/>
+                    <a:field name="period_name" prompt="业务期间" readOnly="true"/>
+                    <a:field name="budget_control_enabled"/>
+                    <a:field name="invoice_flag" checkedValue="Y" defaultValue="N" uncheckedValue="N"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="update" handler="headerUpdate"/>
+                    <a:event name="submitsuccess" handler="dataSubmitSuccess"/>
+                    <a:event name="submitfailed" handler="dataSubmitFailed"/>
+                    <a:event name="load" handler="headerLoad"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="tra_report_head_dimension" autoCreate="true">
+                <a:fields>
+                    <a:placeHolder id="dynamicHeadFields"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="update" handler="dynamicUpdate"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="tra_report_head_object" autoCreate="true">
+                <a:fields>
+                    <a:placeHolder id="dynamicHeadObjects"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="update" handler="dynamicUpdate"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="position_ds" fetchAll="true" model="train.TRA5010.exp_org_position"/>
+            <a:dataSet id="invoice_category_ds" loadData="true" model="vat.vat1010.vat_invoice_category_lov"/>
+            <a:dataSet id="vat_tax_type_ds" loadData="true" model="vat.vat1000.vat_tax_rate_lov"/>
+            <a:dataSet id="tra_report_object_lines" bindName="objlines" bindTarget="tra_report_head"/>
+            <a:dataSet id="tra_report_lines" autoQuery="true" bindName="lines" bindTarget="tra_report_head" fetchAll="true" model="train.public.tra_report_lines" pageSize="1000" queryUrl="${/request/@context_path}/modules/train/public/tra_report_line_query.svc?tra_report_header_id=${/parameter/@tra_report_header_id}&amp;_ban_remind=Y" selectable="true">
+                <a:fields>
+                    <a:field name="tra_report_header_id"/>
+                    <a:field name="tra_report_line_id"/>
+                    <a:field name="company_id"/>
+                    <a:field name="company_name" autoComplete="true" autoCompleteField="company_code_name" lovGridHeight="320" lovHeight="460" lovWidth="500" lovservice="exp.exp_company_tree" required="true" title="公司">
+                        <a:mapping>
+                            <a:map from="company_short_name" to="company_name"/>
+                            <a:map from="company_id" to="company_id"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="unit_id"/>
+                    <a:field name="unit_name" autoComplete="true" autoCompleteField="unit_code_name" lovGridHeight="320" lovHeight="460" lovWidth="500" lovservice="exp.exp_org_unit" required="true" title="部门">
+                        <a:mapping>
+                            <a:map from="org_unit_description" to="unit_name"/>
+                            <a:map from="unit_id" to="unit_id"/>
+                            <a:map from="responsibility_center_name" to="responsibility_center_name"/>
+                            <a:map from="responsibility_center_id" to="responsibility_center_id"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="responsibility_center_id"/>
+                    <a:field name="responsibility_center_name" autoComplete="true" autoCompleteField="resp_center_code_name" lovGridHeight="320" lovHeight="460" lovWidth="500" lovservice="fnd.fnd_responsibility_centers_lov" required="true" title="责任中心">
+                        <a:mapping>
+                            <a:map from="responsibility_center_name" to="responsibility_center_name"/>
+                            <a:map from="responsibility_center_id" to="responsibility_center_id"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="position_id"/>
+                    <a:field name="position_name" displayfield="position_name" options="position_ds" required="true" returnfield="position_id" valuefield="position_id"/>
+                    <a:field name="employee_id"/>
+                    <a:field name="employee_name" autoComplete="true" autoCompleteField="emp_code_name" lovGridHeight="320" lovHeight="460" lovWidth="500" lovservice="expm.exp_report_employeelist_cross_com" required="true" title="报销人">
+                        <a:mapping>
+                            <a:map from="name" to="employee_name"/>
+                            <a:map from="employee_id" to="employee_id"/>
+                            <a:map from="position_primary" to="position_primary"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="position_primary"/>
+                    <a:field name="currency_code"/>
+                    <a:field name="exchange_rate"/>
+                    <a:field name="line_number"/>
+                    <a:field name="description" required="true"/>
+                    <a:field name="city"/>
+                    <a:field name="place" autoComplete="true" autoCompleteField="place_code_name" lovGridHeight="320" lovHeight="450" lovLabelWidth="120" lovService="expm.exp_expense_policy_place_lov" lovWidth="550" prompt="地点" title="地点">
+                        <a:mapping>
+                            <a:map from="place_desc" to="place"/>
+                            <a:map from="place_id" to="place_id"/>
+                            <a:map from="place_type_id" to="place_type_id"/>
+                            <a:map from="place_type_desc" to="place_type"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="place_id"/>
+                    <a:field name="place_type" autoComplete="true" autoCompleteField="place_type_code_name" lovGridHeight="300" lovHeight="450" lovLabelWidth="120" lovService="expm.exp_expense_policy_place_type_lov" lovWidth="550" prompt="地点类型" title="地点类型">
+                        <a:mapping>
+                            <a:map from="place_type_id" to="place_type_id"/>
+                            <a:map from="description" to="place_type"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="place_type_id"/>
+                    <a:field name="date_from" validator="dateValidate"/>
+                    <a:field name="date_to" validator="dateValidate"/>
+                    <a:field name="expense_type_id"/>
+                    <a:field name="expense_type_name" displayfield="expense_type_description" options="tra_expense_type_ds" required="true" returnfield="expense_type_id" valuefield="expense_type_id"/>
+                    <a:field name="expense_item_id"/>
+                    <a:field name="tra_req_item_name" displayfield="expense_item_description" options="tra_expense_item_ds" required="true" returnfield="expense_item_id" tipfield="expense_item_prompt" valuefield="expense_item_id"/>
+                    <a:field name="price" required="true"/>
+                    <a:field name="primary_quantity" required="true"/>
+                    <a:field name="report_amount" required="true"/>
+                    <a:field name="report_functional_amount"/>
+                    <a:field name="period_name" autoComplete="true" autoCompleteField="period_name" lovGridHeight="300" lovHeight="460" lovWidth="500" required="true" title="业务期间">
+                        <a:mapping>
+                            <a:map from="period_name" to="period_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="payment_flag" checkedvalue="Y" uncheckedvalue="N"/>
+                    <a:field name="payee_id"/>
+                    <a:field name="invoice_category_name" displayField="invoice_category_name" options="invoice_category_ds" returnField="invoice_category" valueField="invoice_category_code">
+                        <a:mapping>
+                            <a:map from="invoice_type" to="invoice_type"/>
+                            <a:map from="invoice_category_code" to="invoice_category"/>
+                            <a:map from="source_type" to="source_type"/>
+                            <a:map from="authenticating_flag" to="authenticating_flag"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="invoice_type"/>
+                    <a:field name="invoice_category"/>
+                    <a:field name="invoice_code" autoComplete="true" autoCompleteField="invoice_code" lovAutoQuery="false" lovGridHeight="300" lovHeight="460" lovService="vat.vat1130.vat_invoice_query" lovWidth="600" title="VAT_INVOICE.INVOICE_CODE">
+                        <a:mapping>
+                            <a:map from="invoice_code" to="invoice_code"/>
+                            <a:map from="invoice_number" to="invoice_number"/>
+                            <a:map from="amount" to="price"/>
+                            <a:map from="tax_amount" to="tax_amount"/>
+                            <a:map from="not_tax_amount" to="not_tax_amount"/>
+                            <a:map from="tax_type_rate" to="tax_type_rate"/>
+                            <a:map from="invoice_date" to="invoice_date"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="invoice_number"/>
+                    <a:field name="tax_type_rate" displayField="tax_type_rate" options="vat_tax_type_ds" returnfield="tax_type_rate" valuefield="tax_type_rate"/>
+                    <a:field name="tax_amount"/>
+                    <a:field name="invoice_date"/>
+                    <a:field name="not_tax_amount"/>
+                    <a:field name="source_type"/>
+                    <a:field name="authenticating_flag"/>
+                    <a:placeHolder id="dynamicLineFields"/>
+                    <a:placeHolder id="dynamicLineFieldsObj"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="update" handler="lineUpdate"/>
+                    <a:event name="beforecreate" handler="lineBeforeCreate"/>
+                    <a:event name="remove" handler="lineRemove"/>
+                    <a:event name="load" handler="lineLoad"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="pmtplan_schedules_ds" autoQuery="true" bindName="pmtplan" bindTarget="tra_report_head" model="train.public.tra_report_pmtplan_schedules_query" queryUrl="${/request/@context_path}/autocrud/train.public.tra_report_pmtplan_schedules_query/query?tra_report_header_id=${/parameter/@tra_report_header_id}" selectable="true">
+                <a:fields>
+                    <a:field name="tra_report_header_id"/>
+                    <a:field name="payment_schedule_line_id"/>
+                    <a:field name="line_num"/>
+                    <a:field name="verification_loan"/>
+                    <a:field name="company_name"/>
+                    <a:field name="description"/>
+                    <a:field name="currency_name" required="true"/>
+                    <a:field name="currency"/>
+                    <a:field name="due_amount" required="true"/>
+                    <a:field name="write_off_amount"/>
+                    <a:field name="schedule_start_date" required="true"/>
+                    <a:field name="schedule_due_date" required="true"/>
+                    <a:field name="payee_type" displayField="code_value_name" options="pay_category_ds" required="true" returnField="payee_type_value" valueField="code_value"/>
+                    <a:field name="payee_type_value"/>
+                    <a:field name="payee_id"/>
+                    <a:field name="payee_partner_name" autoComplete="true" autoCompleteField="code_name" lovGridHeight="320" lovHeight="460" lovWidth="500" required="true" title="收款方">
+                        <a:mapping>
+                            <a:map from="id" to="payee_id"/>
+                            <a:map from="description" to="payee_partner_name"/>
+                            <a:map from="account_name" to="account_name"/>
+                            <a:map from="account_number" to="account_number"/>
+                            <a:map from="bank_code" to="bank_code"/>
+                            <a:map from="bank_name" to="bank_name"/>
+                            <a:map from="bank_location_code" to="bank_location_code"/>
+                            <a:map from="bank_location_name" to="bank_location_name"/>
+                            <a:map from="province_code" to="province_code"/>
+                            <a:map from="province_name" to="province_name"/>
+                            <a:map from="city_code" to="city_code"/>
+                            <a:map from="city_name" to="city_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="payment_method" displayField="description" options="payment_mehtod_ds" required="true" returnField="payment_type_id" valueField="payment_method_id"/>
+                    <a:field name="payment_type_id"/>
+                    <a:field name="account_number" autoComplete="true" autoCompleteField="account_number" fetchRemote="false" lovGridHeight="250" lovHeight="400" lovWidth="500" required="true" title="银行账户">
+                        <a:mapping>
+                            <a:map from="account_number" to="account_number"/>
+                            <a:map from="account_name" to="account_name"/>
+                            <a:map from="bank_code" to="bank_code"/>
+                            <a:map from="bank_name" to="bank_name"/>
+                            <a:map from="bank_location_code" to="bank_location_code"/>
+                            <a:map from="bank_location_name" to="bank_location_name"/>
+                            <a:map from="province_code" to="province_code"/>
+                            <a:map from="province_name" to="province_name"/>
+                            <a:map from="city_code" to="city_code"/>
+                            <a:map from="city_name" to="city_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="bank_code"/>
+                    <a:field name="bank_name"/>
+                    <a:field name="bank_location_code"/>
+                    <a:field name="bank_location_name"/>
+                    <a:field name="province_code"/>
+                    <a:field name="province_name"/>
+                    <a:field name="city_code"/>
+                    <a:field name="city_name"/>
+                    <a:field name="usedes_name" autoComplete="true" autoCompleteField="code_name" lovGridHeight="300" lovHeight="460" lovService="train.public.csh_payment_usedes_vl?expense_report_type_id=${/parameter/@expense_report_type_id}&amp;tra_report_header_id=${/parameter/@tra_report_header_id}" lovWidth="500" required="true" title="CSH_PAYMENT_USEDS.USEDS_CODE">
+                        <a:mapping>
+                            <a:map from="usedes_code" to="usedes"/>
+                            <a:map from="description" to="usedes_name"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="usedes"/>
+                    <a:field name="bank_id"/>
+                    <a:field name="account_name" required="true"/>
+                    <a:field name="frozen_flag" checkedValue="Y" defaultValue="N" uncheckedValue="N"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="beforecreate" handler="pmtlineBeforeCreate"/>
+                </a:events>
+            </a:dataSet>
+            <a:dataSet id="head_object">
+                <a:datas dataSource="/model/head_object"/>
+            </a:dataSet>
+            <a:dataSet id="head_dimension">
+                <a:datas dataSource="/model/head_dimension"/>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar id="tra_rep_standard_top_bar">
+                <a:screenTitle/>
+                <a:toolbarButton click="saveReport" text="HAP_SAVE" width="80"/>
+            </a:screenTopToolbar>
+            <a:form id="tra_rep_standard_head_form" title="TRA_REPORT_CREATE.TITEL">
+                <a:box id="tra_rep_standard_normal_box" column="4" style="width:100%">
+                    <a:textField name="tra_report_number" bindtarget="tra_report_head" prompt="单据编号"/>
+                    <a:textField name="tra_report_type_name" bindtarget="tra_report_head" prompt="单据类型"/>
+                    <a:datePicker name="tra_report_date" bindtarget="tra_report_head" prompt="报销日期"/>
+                    <a:numberField name="sum_amount" allowDecimals="true" allowFormat="true" bindTarget="tra_report_head" prompt="总金额"/>
+                    <a:textField name="tra_report_employee_name" bindtarget="tra_report_head" prompt="报销人"/>
+                    <a:comboBox name="tra_report_position" bindtarget="tra_report_head" prompt="岗位"/>
+                    <a:textField name="currency_name" bindtarget="tra_report_head" prompt="币种"/>
+                    <a:numberField name="attach_id" allowDecimals="false" bindtarget="tra_report_head" prompt="附件数"/>
+                    <a:textField name="tra_report_create_by" bindtarget="tra_report_head" prompt="制单人"/>
+                    <a:comboBox name="payment_method" bindtarget="tra_report_head" prompt="付款方式"/>
+                    <a:comboBox name="payee_category_name" bindtarget="tra_report_head" prompt="收款对象"/>
+                    <a:lov name="payee_name" bindtarget="tra_report_head" prompt="收款方">
+                        <a:events>
+                            <a:event name="commit" handler="payeeNameCommit"/>
+                        </a:events>
+                    </a:lov>
+                    <a:numberField name="rate" bindTarget="tra_report_head" prompt="汇率"/>
+                    <a:textField name="tra_report_status" bindtarget="tra_report_head" prompt="状态">
+                        <a:events>
+                            <a:event name="commit" handler="headPayeeCommit"/>
+                        </a:events>
+                    </a:textField>
+                    <a:placeHolder id="dynamicHeadColumn"/>
+                    <a:placeHolder id="dynamicHeadObject"/>
+                </a:box>
+                <a:box id="exp_rep_mt_standard_ta_box" style="width:100%">
+                    <a:hBox>
+                        <a:textArea name="description" id="tra_rep_standard_desc_ta" bindtarget="tra_report_head" emptyText="这是一个textArea" prompt="描述"/>
+                        <a:vBox>
+                            <a:checkBox name="invoice_flag" bindTarget="tra_report_head" label="含专票"/>
+                        </a:vBox>
+                    </a:hBox>
+                </a:box>
+            </a:form>
+            <a:tabPanel id="line_tab" marginHeight="220" marginWidth="29">
+                <a:tabs>
+                    <a:tab prompt="培训报销单行信息" width="150">
+                        <a:grid id="grid" bindTarget="tra_report_lines" marginHeight="255" navBar="true" style="margin-top:5px;margin-left:5px;">
+                            <a:toolBar>
+                                <a:button id="addBtn" click="createLineRecord" icon="${/request/@context_path}/images/add.gif" text="HAP_NEW"/>
+                                <a:button type="delete"/>
+                            </a:toolBar>
+                            <a:columns>
+                                <a:column name="line_number" align="center" editor="description_grid_tf" prompt="行号" width="50"/>
+                                <a:column name="description" align="left" editor="description_grid_tf" prompt="描述" width="150"/>
+                                <a:column name="company_name" align="left" editor="company_lov" prompt="公司" width="120"/>
+                                <a:column name="expense_type_name" align="left" editor="type_combox" prompt="报销类型" width="120"/>
+                                <a:column name="tra_req_item_name" align="left" editor="type_combox" prompt="费用项目" width="120"/>
+                                <a:column name="date_from" align="left" editor="date_dp" prompt="日期从" renderer="Aurora.formatDate" width="120"/>
+                                <a:column name="date_to" align="left" editor="date_dp" prompt="日期至" renderer="Aurora.formatDate" width="120"/>
+                                <a:column name="price" align="right" editor="numberfield" prompt="单价" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="primary_quantity" align="right" editor="quantity_number_nf" prompt="数量" width="100"/>
+                                <a:column name="report_amount" align="right" prompt="原币金额" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="report_functional_amount" align="right" prompt="本币金额" renderer="setFunctionAmount" width="100"/>
+                                <a:column name="invoice_category_name" align="center" editor="type_combox" prompt="发票种类" width="100"/>
+                                <a:column name="invoice_code" align="center" editorFunction="invoiceTypeEditorFun" prompt="发票代码" width="100"/>
+                                <a:column name="invoice_number" align="center" editorFunction="invoiceTypeEditorFun" prompt="发票号码" width="100"/>
+                                <a:column name="tax_type_rate" align="right" editorFunction="invoiceTypeEditorFun" prompt="税率" width="60"/>
+                                <a:column name="tax_amount" align="right" editorFunction="invoiceTypeEditorFun" footerRenderer="sumRenderer" prompt="税额" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="not_tax_amount" align="right" footerRenderer="sumRenderer" prompt="不含税金额" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="invoice_date" align="center" editorFunction="invoiceTypeEditorFun" prompt="开票日期" renderer="Aurora.formatDate" width="80"/>
+                                <a:column name="period_name" align="left" editor="company_lov" prompt="业务期间" width="80"/>
+                                <a:column name="responsibility_center_name" align="left" editor="company_lov" prompt="责任中心" width="120"/>
+                                <a:column name="unit_name" align="left" editor="company_lov" prompt="部门" width="120"/>
+                                <a:column name="employee_name" align="left" editor="company_lov" prompt="报销人" width="120"/>
+                                <a:column name="position_name" align="left" editor="type_combox" prompt="岗位" width="120"/>
+                                <a:placeHolder id="dynamicLineColumn"/>
+                                <a:placeHolder id="dynamicLineColumnObj"/>
+                            </a:columns>
+                            <a:editors>
+                                <a:textField id="description_grid_tf"/>
+                                <a:placeHolder id="numberfield_holder"/>
+                                <a:numberField id="tax_amount_nf" allowNegative="false"/>
+                                <a:numberField id="quantity_number_nf" allowDecimals="false" allowNegative="false"/>
+                                <a:comboBox id="type_combox"/>
+                                <a:lov id="company_lov" lovGridHeight="250" lovHeight="500" lovWidth="600"/>
+                                <a:lov id="company_lov1" editable="false" lovGridHeight="250" lovHeight="450" lovWidth="500"/>
+                                <a:datePicker id="date_dp"/>
+                            </a:editors>
+                            <a:events>
+                                <a:event name="cellclick" handler="gridCellClick"/>
+                            </a:events>
+                        </a:grid>
+                    </a:tab>
+                    <a:tab prompt="培训报销单计划付款行信息" width="150">
+                        <a:grid id="pmt_grid" bindTarget="pmtplan_schedules_ds" marginHeight="255" navBar="true" style="margin-top:5px;margin-left:5px;">
+                            <a:toolBar>
+                                <a:button id="pmtAddBtn" disabled="true" type="add"/>
+                                <a:button type="delete"/>
+                            </a:toolBar>
+                            <a:columns>
+                                <a:column name="line_num" align="center" prompt="行号" renderer="line_number" width="50"/>
+                                <a:column name="description" align="left" editor="pmt_tf" prompt="描述" width="150"/>
+                                <a:column name="due_amount" align="right" editor="pmt_nf" prompt="金额" renderer="Aurora.formatMoney" width="100"/>
+                                <a:column name="payee_type" align="left" editor="pmt_combox" prompt="收款对象" width="120"/>
+                                <a:column name="payee_partner_name" align="left" editor="pmt_lov" prompt="收款方" width="120"/>
+                                <a:column name="account_number" align="left" editor="pmt_lov" prompt="银行账号" width="120"/>
+                                <a:column name="account_name" align="left" editor="pmt_tf" prompt="银行账户" width="120"/>
+                                <a:column name="payment_method" align="left" editor="pmt_combox" prompt="付款方式" width="120"/>
+                                <a:column name="usedes_name" align="left" editor="pmt_lov" prompt="付款用途" width="120"/>
+                                <a:column name="schedule_due_date" align="left" editor="schedule_due_date_dp" prompt="计划付款日" renderer="Aurora.formatDate"/>
+                                <a:column name="frozen_flag" align="center" editor="pmt_checkbox" prompt="冻结" width="50"/>
+                                <a:column name="bank_id" align="center" prompt="银行账户" width="80"/>
+                            </a:columns>
+                            <a:editors>
+                                <a:comboBox id="pmt_combox"/>
+                                <a:textField id="pmt_tf"/>
+                                <a:lov id="pmt_lov" lovGridHeight="320" lovHeight="450" lovWidth="500"/>
+                                <a:datePicker id="schedule_start_date_dp"/>
+                                <a:datePicker id="schedule_due_date_dp"/>
+                                <a:checkBox id="pmt_checkbox"/>
+                                <a:numberField id="pmt_nf"/>
+                            </a:editors>
+                            <a:events>
+                                <a:event name="cellclick" handler="pmtGridCellClick"/>
+                            </a:events>
+                        </a:grid>
+                    </a:tab>
+                </a:tabs>
+            </a:tabPanel>
+        </a:screenBody>
+        <script><![CDATA[
+            loadComplete();
+        ]]></script>
+        <script><![CDATA[
+             function init() {
+            	var headerRecord = $('tra_report_head').getAt(0);
+            	var payeeCategory = headerRecord.get('payee_category');
+                if (payeeCategory == 'EMPLOYEE') {
+                        headerRecord.set('payee_id', ${/parameter/@employee_id});
+                        headerRecord.set('payee_name', headerRecord.get('employee_name'));
+                }
+             }
+            init();
+            
+        ]]></script>
+        <script purpose="auto_resize"><![CDATA[
+            function expRepMTStandardInitSize() {
+                //描述宽度
+                var labelWidth = 75;
+                //标签宽度,5 = 3padding + 2border-spacing
+                var tagWidth = 150 + 5;
+                //页面宽度、高度
+                var vw = $A.getViewportWidth();
+                //留白宽度
+                var marginWidth = 35;
+                //自适应宽度
+                var autoWidth = vw - marginWidth;
+                //Form内部宽度，-2border
+                var formInnerWidth = autoWidth - 2;
+                //所占列数
+                var colSpan = 4;
+                //设置组件的自适应宽度
+                Ext.get('tra_rep_standard_head_form').setWidth(autoWidth + 4);
+                $('line_tab').setWidth(autoWidth + 4);
+                $('grid').setWidth(autoWidth + 4 - 17);
+                $('pmt_grid').setWidth(autoWidth + 4 - 17);
+                //设置TextArea的自适应宽度,别问我最后那个6是哪里来的，试出来的
+                Ext.get('tra_rep_standard_desc_ta').setWidth(formInnerWidth - (formInnerWidth / colSpan - labelWidth - tagWidth) - labelWidth - 6 - 70);
+            }
+            expRepMTStandardInitSize();
+        ]]></script>
+    </a:view>
+    <a:view-config>
+        <c:batch-config source="/model/head_dimension" targetId="dynamicHeadColumn">
+            <a:lov name="${@dimension_code}" bindTarget="tra_report_head_dimension" lovGridHeight="320" lovHeight="450" lovWidth="500"/>
+        </c:batch-config>
+        <c:create-config targetId="dynamicHeadFields">
+            <p:loop source="/model/head_dimension">
+                <c:process-config>
+                    <a:field name="${@dimension_code}" autoComplete="true" autoCompleteField="code_name" defaultValue="${@value_description}" lovGridHeight="320" lovHeight="450" lovService="expm.EXP2110.exp_rep_ref_dimension_dvc_lov?dimension_id=${@dimension_id}&amp;enabled_flag=Y" lovWidth="500" prompt="${@description}" required="true" title="${@description}">
+                        <a:mapping>
+                            <a:map from="dimension_value_code" to="dimension_value_code"/>
+                            <a:map from="dimension_value_id" to="${@dimension_code1}"/>
+                            <a:map from="description" to="${@dimension_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@dimension_code1}" defaultValue="${@default_dim_value_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="dynamicHeadObject">
+            <p:loop source="/model/head_object">
+                <p:switch test="@expense_object_method">
+                    <p:case value="VALUE_LIST">
+                        <c:process-config>
+                            <a:lov name="${@expense_object_type_code}" bindTarget="tra_report_head_object" lovGridHeight="320" lovHeight="450" lovWidth="500"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="SQL_TEXT">
+                        <c:process-config>
+                            <a:lov name="${@expense_object_type_code}" bindTarget="tra_report_head_object" lovGridHeight="320" lovHeight="450" lovWidth="500"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="DESC_TEXT">
+                        <c:process-config>
+                            <a:textField name="${@expense_object_type_code}" bindTarget="tra_report_head_object"/>
+                        </c:process-config>
+                    </p:case>
+                </p:switch>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="dynamicHeadObjects">
+            <p:loop source="/model/head_object">
+                <c:process-config>
+                    <a:field name="${@expense_object_type_code}" defaultValue="${@default_object_desc}" lovGridHeight="320" lovHeight="450" lovUrl="${/request/@context_path}/modules/expm/public/exp_req_ref_obj_sql_query_lov.screen?expense_object_type_id=${@expense_object_type_id}" lovWidth="500" prompt="${@description}" required="${@required_flag}" title="${@description}">
+                        <a:mapping>
+                            <a:map from="id" to="${@forname}"/>
+                            <a:map from="description" to="${@expense_object_type_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@forname}" defaultValue="${@default_object_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:batch-config source="/model/line_dimension" targetId="dynamicLineColumn">
+            <a:column name="${@dimension_code}" align="center" editor="company_lov" prompt="${@description}"/>
+        </c:batch-config>
+        <c:create-config targetId="dynamicLineFields">
+            <p:loop source="/model/line_dimension">
+                <c:process-config>
+                    <a:field name="${@dimension_code}" defaultValue="${@value_description}" lovGridHeight="320" lovHeight="450" lovService="expm.EXP2110.exp_rep_ref_dimension_dvc_lov?dimension_id=${@dimension_id}&amp;enabled_flag=Y" lovWidth="500" prompt="${@description}" required="true" title="${@description}">
+                        <a:mapping>
+                            <a:map from="dimension_value_code" to="dimension_value_code"/>
+                            <a:map from="dimension_value_id" to="${@dimension_code1}"/>
+                            <a:map from="description" to="${@dimension_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@dimension_code1}" defaultValue="${@default_dim_value_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="dynamicLineColumnObj">
+            <p:loop source="/model/line_object">
+                <p:switch test="@expense_object_method">
+                    <p:case value="VALUE_LIST">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center" editor="company_lov1"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="SQL_TEXT">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center" editor="company_lov1"/>
+                        </c:process-config>
+                    </p:case>
+                    <p:case value="DESC_TEXT">
+                        <c:process-config>
+                            <a:column name="${@expense_object_type_code}" align="center" editor="description_grid_tf"/>
+                        </c:process-config>
+                    </p:case>
+                </p:switch>
+            </p:loop>
+        </c:create-config>
+        <c:create-config targetId="dynamicLineFieldsObj">
+            <p:loop source="/model/line_object">
+                <c:process-config>
+                    <a:field name="${@expense_object_type_code}" defaultValue="${@default_object_desc}" lovGridHeight="320" lovHeight="450" lovUrl="${/request/@context_path}/modules/expm/public/exp_req_ref_obj_sql_query_lov.screen?expense_object_type_id=${@expense_object_type_id}" lovWidth="500" prompt="${@description}" required="${@required_flag}" title="${@description}">
+                        <a:mapping>
+                            <a:map from="id" to="${@forname}"/>
+                            <a:map from="description" to="${@expense_object_type_code}"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="${@forname}" defaultValue="${@default_object_id}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+        <!-- 调整类报销单的金额可以为负数 -->
+        <c:create-config targetId="numberfield_holder">
+            <p:switch test="/model/head_data/record/@adjustment_flag">
+                <p:case value="Y">
+                    <c:process-config>
+                        <a:numberField id="numberfield" allowNegative="true" decimalPrecision="3"/>
+                    </c:process-config>
+                </p:case>
+                <p:case>
+                    <c:process-config>
+                        <a:numberField id="numberfield" allowNegative="false" decimalPrecision="3"/>
+                    </c:process-config>
+                </p:case>
+            </p:switch>
+        </c:create-config>
+    </a:view-config>
+</a:screen>

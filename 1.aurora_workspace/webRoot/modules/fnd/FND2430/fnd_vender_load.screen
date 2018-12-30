@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: haico.sun  
+    $Date: 2015-03-18  
+    $Revision: 1.0  
+    $Purpose: 公司基供应商主数据导入
+-->
+<a:screen xmlns:c="aurora.application.action" xmlns:a="http://www.aurora-framework.org/application" xmlns:p="uncertain.proc">
+    <a:init-procedure>
+        <a:model-query autocount="false" defaultWhereClause=" v.tmpelate_code = &apos;COMPANY_VENDER_MAIN_DATA&apos;" fetchall="true" model="sys.sys_import_definition" rootpath="line_dimension"/>
+    </a:init-procedure>
+    <a:view>
+        <a:link id="fnd_ven_import_upload_link" url="${/request/@context_path}/modules/fnd/FND2430/fnd_ven_import_upload.screen"/>
+        <a:link id="fnd_ven_import_err_link" url="${/request/@context_path}/modules/fnd/FND2430/fnd_ven_import_err.screen"/>
+        <a:link id="fnd_ven_import_commit_link" model="db.fnd_vender_interface_pkg.fnd_vender_interface_submit" modelaction="update"/>
+        <a:link id="fnd_ven_import_check_link" url="${/request/@context_path}/modules/fnd/FND2430/fnd_vender_chk_save_data.svc"/>
+        <a:link id="fnd_vender_import_link" url="${/request/@context_path}/modules/fnd/FND2430/fnd_vender_load.screen"/>
+        <script><![CDATA[
+            var check_flag = false;
+            
+            function loadData() {
+                new Aurora.Window({
+                    id: 'upload_window',
+                    url: $('fnd_ven_import_upload_link').getUrl() + '?template_code=COMPANY_VENDER_MAIN_DATA',
+                    title: '${l:BUDGET_JOURNAL_IMPORT}',
+                    width: 420,
+                    height: 275
+                });
+            }
+            
+            function checkData() {
+                var allData = $('result_ds').getAll();
+                if (allData.length == 0) {
+                    Aurora.showMessage('${l:PROMPT}', '没有数据需要核对');
+                } else {
+                    var param = {};
+                    param['header_id'] = '${/parameter/@header_id}';
+                    param['tmpelate_code'] = 'COMPANY_VENDER_MAIN_DATA';
+                    Aurora.request({
+                        url: $('fnd_ven_import_check_link').getUrl(),
+                        para: param,
+                        success: function(res) {
+                            var check_status = res.result.check_status;
+                            if (check_status == 'S') {
+                                check_flag = true;
+                                Aurora.showMessage('提示', '核对完成，可以提交！');
+                            }
+                            if (check_status == 'E') {
+                                check_flag = false;
+                                Aurora.showMessage('提示', '核对完成，数据错误，请查看相关错误 消息，进行修改！');
+                            }
+                        },
+                        scope: this
+                    });
+                }
+            }
+            
+            function submitData() {
+                var allData = $('result_ds').getAll();
+                if (allData.length == 0) {
+                    Aurora.showMessage('${l:PROMPT}', '没有数据需要提交');
+                } else {
+                    if (!check_flag) {
+                        Aurora.showMessage('${l:PROMPT}', '请先核对，再提交！');
+                        return;
+                    }
+                    var param = {};
+                    param['header_id'] = '${/parameter/@header_id}';
+                    param['tmpelate_code'] = 'COMPANY_VENDER_MAIN_DATA';
+                    Aurora.request({
+                        url: /*${/request/@context_path}/autocrud/bgt.exp_empolyees_import_commit/update*/
+                        $('fnd_ven_import_commit_link').getUrl(),
+                        para: param,
+                        success: function(res) {
+                            //window.location.reload();
+                            window.location.href = $('fnd_vender_import_link').getUrl();
+                        },
+                        scope: this
+                    });
+                }
+            }
+            
+            function errorData() {
+                window.open( /*exp_empolyees_import_err.screen*/
+                $('fnd_ven_import_err_link').getUrl() + '?template_code=COMPANY_VENDER_MAIN_DATA&header_id=${/parameter/@header_id}');
+            }
+        ]]></script>
+        <a:dataSets>
+            <a:dataSet id="result_ds" autoQuery="true" fetchAll="true" model="fnd.fnd_interface_lines" queryUrl="${/request/@context_path}/autocrud/fnd.fnd_interface_lines/query?header_id=${/parameter/@header_id}">
+                <a:fields>
+                    <a:placeHolder id="dynamicLineFields"/>
+                </a:fields>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:screenTopToolbar>
+                <a:screenTitle/>
+                <a:toolbarButton click="loadData" text="PROMPT.LOADDATA"/>
+                <a:toolbarButton click="checkData" text="PROMPT.CHECK"/>
+                <a:toolbarButton click="submitData" text="PROMPT.SUBMIT"/>
+                <a:toolbarButton click="errorData" text="PROMPT.ERROR"/>
+                <a:gridButton bind="grid" text="HAP_EXPORT" type="excel" width="80"/>
+            </a:screenTopToolbar>
+            <a:grid id="grid" bindTarget="result_ds" height="400" marginHeight="150" marginWidth="25" navBar="true" style="margin-left:1px;margin-top:5px" width="1000">
+                <a:columns>
+                    <a:placeHolder id="dynamicLineColumn"/>
+                </a:columns>
+            </a:grid>
+        </a:screenBody>
+    </a:view>
+    <a:view-config>
+        <c:batch-config source="/model/line_dimension" targetId="dynamicLineColumn">
+            <a:column name="${@column_name}" align="center" prompt="${@column_desc}" width="150"/>
+        </c:batch-config>
+        <c:create-config targetId="dynamicLineFields">
+            <p:loop source="/model/line_dimension">
+                <c:process-config>
+                    <a:field name="${@column_name}"/>
+                </c:process-config>
+            </p:loop>
+        </c:create-config>
+    </a:view-config>
+</a:screen>

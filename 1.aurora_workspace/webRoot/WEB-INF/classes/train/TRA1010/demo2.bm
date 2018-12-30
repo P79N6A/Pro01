@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[select * from  exp_employee_levels_vl]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:fields>
+        <bm:field name="employee_levels_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="EMPLOYEE_LEVELS_ID" required="true"/>
+        <bm:field name="level_series_id" databaseType="NUMBER" datatype="java.lang.Long" physicalName="LEVEL_SERIES_ID" required="true"/>
+        <bm:field name="employee_levels_code" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="EMPLOYEE_LEVELS_CODE" required="true"/>
+        <bm:field name="description" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="DESCRIPTION"/>
+        <bm:field name="enabled_flag" databaseType="VARCHAR2" datatype="java.lang.String" physicalName="ENABLED_FLAG" required="true"/>
+        <bm:field name="created_by" databaseType="NUMBER" datatype="java.lang.Long" physicalName="CREATED_BY" required="true"/>
+        <bm:field name="creation_date" databaseType="DATE" datatype="java.util.Date" physicalName="CREATION_DATE" required="true"/>
+        <bm:field name="last_updated_by" databaseType="NUMBER" datatype="java.lang.Long" physicalName="LAST_UPDATED_BY" required="true"/>
+        <bm:field name="last_update_date" databaseType="DATE" datatype="java.util.Date" physicalName="LAST_UPDATE_DATE" required="true"/>
+    </bm:fields>
+</bm:model>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Author: Spencer 3893
+    $Date: 2013-4-3 下午4:41:40  
+    $Revision: 1.0  
+    $Purpose: 可选的资产出租的申请类型
+-->
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="query">
+            <bm:query-sql><![CDATA[SELECT v.AST_REQUISITION_TYPE_ID,
+			    v.ASSET_BOOK_ID,
+			    v.AST_REQUISITION_TYPE_CODE,
+			    v.DESCRIPTION_ID,
+			    v.PAGE_SERVICE,
+			    v.BASE_TRX_CATEGORY,
+			    v.DEFAULT_TRX_TYPE_ID,
+			    v.AUTO_APPROVE_FLAG,
+			    v.ENABLED_FLAG, 
+			    v.description FROM(
+            SELECT
+			    t1.AST_REQUISITION_TYPE_ID,
+			    t1.ASSET_BOOK_ID,
+			    t1.AST_REQUISITION_TYPE_CODE,
+			    t1.DESCRIPTION_ID,
+			    t1.PAGE_SERVICE,
+			    t1.BASE_TRX_CATEGORY,
+			    t1.DEFAULT_TRX_TYPE_ID,
+			    t1.AUTO_APPROVE_FLAG,
+			    t1.ENABLED_FLAG,
+			    (SELECT
+			        DESCRIPTION_TEXT
+			    FROM
+			        fnd_descriptions
+			    WHERE
+			        DESCRIPTION_ID=t1.description_id AND
+			        Language      = ${/session/@lang}
+			    ) AS description
+			FROM
+			    EAM_REQUISITION_TYPES t1
+			WHERE
+			    t1.BASE_TRX_CATEGORY in ('BAC','LBK')
+			    AND EXISTS (
+					SELECT 1
+					  FROM SYS_USER                     SU,
+					       EXP_EMPLOYEES                EM,
+					       EXP_USER_GROUP_LINES         GL,
+					       EXP_USER_GROUP_HEADERS       GH,
+					       EXP_SOB_USER_GROUPS          UG,
+					       EAM_REQ_TYPE_REF_USER_GROUPS RUG,
+					       EAM_ASSET_BOOKS_VL           BV
+					 WHERE SU.EMPLOYEE_ID = EM.EMPLOYEE_ID
+					   AND EM.EMPLOYEE_ID = GL.EMPLOYEE_ID
+					   AND GL.EXPENSE_USER_GROUP_ID = GH.EXPENSE_USER_GROUP_ID
+					   AND GH.EXPENSE_USER_GROUP_CODE = UG.USER_GROUPS_CODE
+					   AND RUG.USER_GROUP_ID = UG.USER_GROUPS_ID
+					   AND UG.SET_OF_BOOKS_ID = BV.SET_OF_BOOK_ID
+					   AND BV.ASSET_BOOK_ID = T1.ASSET_BOOK_ID
+					   AND RUG.AST_REQUISITION_TYPE_ID = T1.AST_REQUISITION_TYPE_ID
+					   AND SU.USER_ID = ${/session/@user_id}))v
+			    #WHERE_CLAUSE#
+			    ]]></bm:query-sql>
+        </bm:operation>
+    </bm:operations>
+    <bm:query-fields>
+        <bm:query-field name="asset_book_id" queryExpression="v.asset_book_id = ${@asset_book_id}"/>
+    </bm:query-fields>
+</bm:model>

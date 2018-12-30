@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:screen xmlns:a="http://www.aurora-framework.org/application">
+    <a:init-procedure>
+        <a:model-query fetchAll="true" model="eam.eam0020.eam0020_asset_books_lov" queryOrderBy="asset_book_code" rootPath="eam0110_asset_books_list"/>
+    </a:init-procedure>
+    <a:view>
+        <script><![CDATA[
+        // 查询表单数据
+    	function eam0110_queryFun() {
+            $('eam0110_asset_transaction_type_result_ds').query();
+        }
+        
+        // 重置表单
+        function eam0110_resetFun() {
+            $('eam0110_asset_transaction_type_query_ds').reset();
+        }
+        
+        function submit_success() {
+                $('eam0110_asset_transaction_type_result_ds').query();
+        }
+        
+        function eam0110AstTranTypeEdit(record,name){
+            if(name == 'asset_book_desc'){
+	            if (!record.isNew) {
+	                    return '';
+	                } else {
+	                    return 'eam0110_cbbx';
+	                }
+            }else if(name == 'transaction_type_code'){
+	            if (!record.isNew) {
+	                    return '';
+	                } else {
+	                    return 'eam0110_txtfield_upper';
+	                }
+            }else if(name == 'base_trx_category_desc'){
+	            if (!record.isNew) {
+	                    return '';
+	                } else {
+	                    return 'eam0110_cbbx';
+	                }
+            }else if(name == 'accounting_flag'){
+	            if (!record.isNew) {
+	                    return '';
+	                } else {
+	                    return 'eam0110_chkbox';
+	                }
+            }else if(name == 'interface_flag'){
+	            if (!record.isNew) {
+	                    return '';
+	                } else {
+	                    return 'eam0110_chkbox';
+	                }
+            }
+        }
+        function onDsUpdate(dataSet, record, name, value){
+            if(name == 'accounting_flag'){
+                var accounting_flag = record.get('accounting_flag');
+                if(accounting_flag == 'Y'){
+                    record.getField("debit_acc_usage_desc").setRequired(true);
+                    record.getField("credit_acc_usage_desc").setRequired(true);
+                }else if(accounting_flag == 'N'){
+                    record.getField("debit_acc_usage_desc").setRequired(false);
+                    record.getField("credit_acc_usage_desc").setRequired(false);
+                }
+            }
+        }
+    ]]></script>
+        <a:dataSets>
+            <a:dataSet id="eam_base_trx_category_ds" lookupCode="EAM_BASE_TRX_CATEGORY"/>
+            <a:dataSet id="eam0110_asset_books_ds">
+                <a:datas dataSource="/model/eam0110_asset_books_list"/>
+            </a:dataSet>
+            <a:dataSet id="eam0110_asset_transaction_type_query_ds">
+                <a:fields>
+                    <a:field name="asset_book_desc" displayField="asset_book_desc" options="eam0110_asset_books_ds" prompt="EAM_ASSET_CATEGORIES.ASSET_BOOK" returnField="asset_book_code" valueField="asset_book_code"/>
+                    <a:field name="transaction_type_code" prompt="EAM_TRANSACTION_TYPES.TRANSACTION_TYPE_CODE"/>
+                    <a:field name="description" prompt="EAM_TRANSACTION_TYPES.DESCRIPTION"/>
+                    <a:field name="base_trx_category"/>
+                    <a:field name="base_trx_category_desc" displayField="code_value_name" options="eam_base_trx_category_ds" prompt="EAM_TRANSACTION_TYPES.BASE_TRX_CATEGORY" returnField="base_trx_category" valueField="code_value"/>
+                </a:fields>
+            </a:dataSet>
+            <a:dataSet id="eam0110_asset_transaction_type_result_ds" autoQuery="true" fetchAll="false" model="eam.eam_transaction_types" queryDataSet="eam0110_asset_transaction_type_query_ds" selectable="true">
+                <a:fields>
+                    <a:field name="asset_book_id" required="true"/>
+                    <a:field name="asset_book_desc" displayField="asset_book_desc" options="eam0110_asset_books_ds" required="true" returnField="asset_book_id" valueField="asset_book_id"/>
+                    <a:field name="transaction_type_id"/>
+                    <a:field name="transaction_type_code" required="true"/>
+                    <a:field name="description_id"/>
+                    <a:field name="base_trx_category" required="true"/>
+                    <a:field name="base_trx_category_desc" displayField="code_value_name" options="eam_base_trx_category_ds" required="true" returnField="base_trx_category" valueField="code_value"/>
+                    <a:field name="accounting_flag" checkedValue="Y" defaultValue="N" unCheckedValue="N"/>
+                    <a:field name="interface_flag" checkedValue="Y" defaultValue="N" unCheckedValue="N"/>
+                    <a:field name="debit_acc_usage"/>
+                    <a:field name="debit_acc_usage_desc" lovGridHeight="300" lovHeight="450" lovService="sys.sys_service_lookup_v?code=EAM_ACC_USAGE_CODE&amp;language=${/session/@lang}" lovWidth="550" title="EAM_TRANSACTION_TYPES.DEBIT_ACC_USAGE_DESC">
+                        <a:mapping>
+                            <a:map from="code_value" to="debit_acc_usage"/>
+                            <a:map from="code_value_name" to="debit_acc_usage_desc"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="credit_acc_usage"/>
+                    <a:field name="credit_acc_usage_desc" lovGridHeight="300" lovHeight="450" lovService="sys.sys_service_lookup_v?code=EAM_ACC_USAGE_CODE&amp;language=${/session/@lang}" lovWidth="550" title="EAM_TRANSACTION_TYPES.CREDIT_ACC_USAGE_DESC">
+                        <a:mapping>
+                            <a:map from="code_value" to="credit_acc_usage"/>
+                            <a:map from="code_value_name" to="credit_acc_usage_desc"/>
+                        </a:mapping>
+                    </a:field>
+                    <a:field name="enabled_flag" checkedValue="Y" defaultValue="Y" unCheckedValue="N"/>
+                    <a:field name="description" required="true"/>
+                </a:fields>
+                <a:events>
+                    <a:event name="update" handler="onDsUpdate"/>
+                    <a:event name="submitsuccess" handler="submit_success"/>
+                </a:events>
+            </a:dataSet>
+        </a:dataSets>
+        <a:screenBody>
+            <a:form column="4" labelWidth="100" title="EAM_TRANSACTION_TYPES.TITLE" width="1030">
+                <a:comboBox name="asset_book_desc" bindTarget="eam0110_asset_transaction_type_query_ds">
+                    <a:events>
+                        <a:event name="enterdown" handler="eam0110_queryFun"/>
+                    </a:events>
+                </a:comboBox>
+                <a:textField name="transaction_type_code" bindTarget="eam0110_asset_transaction_type_query_ds">
+                    <a:events>
+                        <a:event name="enterdown" handler="eam0110_queryFun"/>
+                    </a:events>
+                </a:textField>
+                <a:textField name="description" bindTarget="eam0110_asset_transaction_type_query_ds">
+                    <a:events>
+                        <a:event name="enterdown" handler="eam0110_queryFun"/>
+                    </a:events>
+                </a:textField>
+                <a:comboBox name="base_trx_category_desc" bindTarget="eam0110_asset_transaction_type_query_ds">
+                    <a:events>
+                        <a:event name="enterdown" handler="eam0110_queryFun"/>
+                    </a:events>
+                </a:comboBox>
+            </a:form>
+            <a:hBox>
+                <a:button click="eam0110_queryFun" text="HAP_QUERY"/>
+                <a:button click="eam0110_resetFun" text="HAP_RESET"/>
+            </a:hBox>
+            <a:grid bindTarget="eam0110_asset_transaction_type_result_ds" height="440" navBar="true" width="1030">
+                <a:toolBar>
+                    <a:button type="add"/>
+                    <a:button type="save"/>
+                    <a:button type="clear"/>
+                </a:toolBar>
+                <a:columns>
+                    <a:column name="asset_book_desc" align="left" editorFunction="eam0110AstTranTypeEdit" width="150"/>
+                    <a:column name="transaction_type_code" align="left" editorFunction="eam0110AstTranTypeEdit" width="150"/>
+                    <a:column name="description" align="left" editor="eam0110_txtfield" width="150"/>
+                    <a:column name="base_trx_category_desc" align="left" editorFunction="eam0110AstTranTypeEdit" width="150"/>
+                    <a:column name="accounting_flag" editorFunction="eam0110AstTranTypeEdit" width="80"/>
+                    <a:column name="interface_flag" editorFunction="eam0110AstTranTypeEdit" width="80"/>
+                    <a:column name="debit_acc_usage_desc" editor="eam0110_acc_usage_lov" width="80"/>
+                    <a:column name="credit_acc_usage_desc" editor="eam0110_acc_usage_lov" width="80"/>
+                    <a:column name="enabled_flag" editor="eam0110_chkbox" width="80"/>
+                </a:columns>
+                <a:editors>
+                    <a:textField id="eam0110_txtfield"/>
+                    <a:textField id="eam0110_txtfield_upper" typeCase="upper"/>
+                    <a:lov id="eam0110_acc_usage_lov"/>
+                    <a:checkBox id="eam0110_chkbox"/>
+                    <a:comboBox id="eam0110_cbbx"/>
+                </a:editors>
+            </a:grid>
+        </a:screenBody>
+    </a:view>
+</a:screen>

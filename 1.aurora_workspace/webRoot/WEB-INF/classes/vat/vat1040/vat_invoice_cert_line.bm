@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bm:model xmlns:bm="http://www.aurora-framework.org/schema/bm">
+    <bm:operations>
+        <bm:operation name="update">
+            <bm:update-sql><![CDATA[
+                BEGIN
+                    vat_report_invoice_pkg.vat_invoice_cert_line(p_head_id       =>${@exp_report_header_id},
+											                     p_line_id       =>${@exp_report_line_id},
+											                     p_auth_status   =>${@authenticating_status},
+											                     p_auth_date     =>to_date(${@authenticating_date},'yyyy-mm-dd'),
+                                                                 p_user_id       =>${/session/@user_id});
+                END; 
+            ]]></bm:update-sql>
+        </bm:operation>
+    </bm:operations>
+</bm:model>
