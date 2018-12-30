@@ -75,8 +75,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-           <optional>true</optional><!--optional=teue 依赖不会传递，该项目依赖devtools,之后依赖于boot项目的项目如果想用devtools，需要重新引入-->
+            <optional>true</optional><!--optional=teue 依赖不会传递，该项目依赖devtools,之后依赖于boot项目的项目如果想用devtools，需要重新引入-->
             <scope>true</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

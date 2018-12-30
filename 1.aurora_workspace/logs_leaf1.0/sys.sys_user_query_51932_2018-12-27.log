@@ -1,0 +1,37 @@
+2018-12-27 10:26:09.911 [uncertain.proc] [CONFIG] Enter procedure pre-service
+2018-12-27 10:26:09.912 [leaf.application.session_check] [CONFIG] Session data copied to context
+2018-12-27 10:26:09.912 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:09.912 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:09.912 [leaf.application.session_check] [CONFIG] Checking BM access sys.sys_user for operation query
+2018-12-27 10:26:09.917 [leaf.application.session_check] [CONFIG] Result from leaf.bm.DefaultAccessChecker@2d7fb744 is true
+2018-12-27 10:26:09.917 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-27 10:26:09.921 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:09.923 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:09.923 [uncertain.proc] [CONFIG] [action] CheckServiceLock
+2018-12-27 10:26:09.923 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-27 10:26:09.927 [uncertain.proc] [CONFIG] [action] ValidateInput
+2018-12-27 10:26:09.927 [uncertain.proc] [CONFIG] [action] InvokeService
+2018-12-27 10:26:09.928 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:09.928 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.sys_user==============================
+2018-12-27 10:26:09.958 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:09.959 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:09.960 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:09.960 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:09.960 [uncertain.proc] [CONFIG] [action] CreatequeryStatement
+2018-12-27 10:26:09.971 [uncertain.proc] [CONFIG] [action] PopulatequeryStatement
+2018-12-27 10:26:09.972 [uncertain.proc] [CONFIG] [action] CreatequerySql
+2018-12-27 10:26:09.972 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:23.822 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:23.822 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:23.825 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+SELECT fc.user_id,fc.user_name,(select sya.avatar from sys_user_avatar sya where fc.user_id=sya.user_id) AS avatar,fc.start_date,fc.end_date,fc.last_logon_date,fc.description,fc.password_lifespan_days,fc.password_lifespan_access,fc.employee_id,fc.frozen_flag,decode(fc.frozen_flag,'Y','ÒÑ¶³½á','N','Î´¶³½á') AS frozen_flag_display,fc.frozen_date,fc.password_start_date,fc.menu_type,fc.bp_category,(select scv.code_value_name from sys_code_values_v scv where code='user_type' and scv.code_value = fc.bp_category) AS bp_category_name,fc.bp_id,(select hd.bp_code from hls_bp_master hd where fc.bp_id=hd.bp_id) AS bp_code,(select hd.bp_name from hls_bp_master hd where fc.bp_id=hd.bp_id) AS bp_name,emp.EMPLOYEE_CODE,emp.NAME AS emp_name
+FROM sys_user fc
+	LEFT OUTER JOIN EXP_EMPLOYEES emp ON fc.employee_id = emp.EMPLOYEE_ID
+
+---------------------Binding info---------------------
+null
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:23.825 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:23.825 [uncertain.proc] [CONFIG] [action] CreateSuccessResponse

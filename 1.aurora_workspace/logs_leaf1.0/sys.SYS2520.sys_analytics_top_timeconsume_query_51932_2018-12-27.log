@@ -1,0 +1,44 @@
+2018-12-27 10:33:54.920 [uncertain.proc] [CONFIG] Enter procedure pre-service
+2018-12-27 10:33:54.921 [leaf.application.session_check] [CONFIG] Session data copied to context
+2018-12-27 10:33:54.921 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:54.921 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:54.921 [leaf.application.session_check] [CONFIG] Checking BM access sys.SYS2520.sys_analytics_top_timeconsume for operation query
+2018-12-27 10:33:54.923 [leaf.application.session_check] [CONFIG] Result from leaf.bm.DefaultAccessChecker@7a4d8347 is true
+2018-12-27 10:33:54.923 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-27 10:33:54.930 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:54.930 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:54.930 [uncertain.proc] [CONFIG] [action] CheckServiceLock
+2018-12-27 10:33:54.930 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-27 10:33:54.930 [uncertain.proc] [CONFIG] [action] ValidateInput
+2018-12-27 10:33:54.930 [uncertain.proc] [CONFIG] [action] InvokeService
+2018-12-27 10:33:54.931 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:54.931 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.SYS2520.sys_analytics_top_timeconsume==============================
+2018-12-27 10:33:54.964 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:54.967 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:54.967 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:33:54.967 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:54.967 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:33:54.967 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:33:54.967 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:33:54.988 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:33:55.0 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:33:55.0 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+             select *
+              from (select *
+                      from (select url, median(max_duration) time
+                              from sys_runtime_req_top_timeuse
+                              WHERE day >= to_date(?,'yyyy-mm-dd')  AND day < to_date(?,'yyyy-mm-dd')+1
+                             group by url)
+                     order by time desc)
+             where rownum <= 20
+ 
+---------------------Binding info---------------------
+No.1	Access path:/parameter/@startDate	Data type of passed value :java.lang.String	Value:2018-12-20	Output:false	Database Type:null	
+No.2	Access path:/parameter/@endDate	Data type of passed value :java.lang.String	Value:2018-12-27	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:33:55.0 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:55.0 [uncertain.proc] [CONFIG] [action] CreateSuccessResponse

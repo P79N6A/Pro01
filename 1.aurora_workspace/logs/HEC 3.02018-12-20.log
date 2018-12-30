@@ -1,0 +1,72 @@
+2018-12-20 09:04:27.505 [uncertain.core] [INFO] Uncertain engine startup
+2018-12-20 09:04:27.520 [uncertain.core] [INFO] Loaded instance aurora.plugin.export.task.ReportTask from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.plugin.export.task\report-task.config
+2018-12-20 09:04:27.520 [uncertain.core] [INFO] Loaded instance aurora.application.ApplicationConfig from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\application.config
+2018-12-20 09:04:27.520 [uncertain.core] [INFO] Loaded instance aurora.application.DefaultSessionInfoProvider from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\temp\aurora_builtin_package\aurora.features\config\session-info-provider.config
+2018-12-20 09:04:27.520 [uncertain.core] [INFO] Loaded instance aurora.service.lock.SessionLockChecker from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\service-lock.config
+2018-12-20 09:04:27.536 [uncertain.core] [INFO] Loaded instance uncertain.proc.ProcedureRegistry from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\service-procedure.config
+2018-12-20 09:04:27.552 [uncertain.core] [INFO] Loaded instance uncertain.event.ParticipantManager from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\service-listener.config
+2018-12-20 09:04:27.552 [uncertain.core] [INFO] Loaded instance aurora.application.features.ServiceLogging from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\service-logging.config
+2018-12-20 09:04:27.567 [uncertain.core] [INFO] Loaded instance aurora.service.ws.SOAPConfiguration from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\soap.config
+2018-12-20 09:04:27.567 [uncertain.core] [INFO] Loaded instance aurora.application.features.msg.AuroraClientInstance from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\msg.config
+2018-12-20 09:04:27.567 [aurora.application.features.msg] [INFO] start jms client successful!
+2018-12-20 09:04:27.583 [uncertain.core] [INFO] Loaded instance aurora.application.task.TaskHandler from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\task.config
+2018-12-20 09:04:27.583 [uncertain.core] [INFO] Loaded instance aurora.application.features.ApplicationStartupProcedureInvoker from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\temp\aurora_builtin_package\aurora.base\config\app-init-procedure-invoker.config
+2018-12-20 09:04:27.599 [uncertain.core] [INFO] Loaded instance aurora.service.exception.ExceptionDescriptorConfig from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\temp\aurora_builtin_package\aurora.base\config\exception-descriptor.config
+2018-12-20 09:04:27.599 [uncertain.core] [INFO] Loaded instance aurora.bm.BmCachedDataProvider from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\temp\aurora_builtin_package\aurora.base\config\bm-cached-data-provider.config
+2018-12-20 09:04:28.15 [uncertain.core] [INFO] Loaded instance aurora.datasource.DataSourceConfig from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.database\datasource.config
+2018-12-20 09:04:28.47 [uncertain.core] [INFO] Loaded instance aurora.database.profile.DatabaseFactory from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\temp\aurora_builtin_package\aurora.database\config\database.config
+2018-12-20 09:04:28.47 [uncertain.core] [INFO] Loaded instance aurora.bm.ModelFactory from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\temp\aurora_builtin_package\aurora.database\config\model-factory.config
+2018-12-20 09:04:28.47 [uncertain.core] [INFO] Loaded instance aurora.plugin.weixin.QiyeWeixinConfig from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.plugin.weixin\qiyewexin.config
+2018-12-20 09:04:28.62 [aurora.presentation] [INFO] Aurora Presentation Framework Startup... 
+2018-12-20 09:04:28.62 [aurora.presentation] [INFO]  =============== Loading package from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\AuroraUI\src/aurora.ui.std
+2018-12-20 09:04:28.156 [aurora.presentation] [INFO] Loaded package aurora.ui.std
+2018-12-20 09:04:28.156 [aurora.presentation] [INFO]  =============== Loading package from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\AuroraUI\src/aurora.ui.touch
+2018-12-20 09:04:28.172 [aurora.presentation] [INFO] Loaded package aurora.ui.touch
+2018-12-20 09:04:28.172 [aurora.presentation] [INFO]  =============== Loading package from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\/WEB-INF/ui.template
+2018-12-20 09:04:28.172 [aurora.presentation] [INFO] Loaded package ui.template
+2018-12-20 09:04:28.172 [uncertain.core] [INFO] Loaded instance aurora.presentation.PresentationManager from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.presentation\presentation-manager.config
+2018-12-20 09:04:28.187 [uncertain.core] [INFO] Loaded instance aurora.presentation.FreeMarkerProvider from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.presentation\freemarker-provider.config
+2018-12-20 09:04:28.187 [uncertain.cache.CacheFactoryConfig] [INFO] Loading cache config file D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\cacheConfig\service-prompt-cache.config
+2018-12-20 09:04:28.218 [uncertain.cache.CacheFactoryConfig] [INFO] Loading cache config file D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\cacheConfig\service-lookup-prompt-cache.config
+2018-12-20 09:04:28.219 [uncertain.cache.CacheFactoryConfig] [INFO] Loading cache config file D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\cacheConfig\service-lookup-list-cache.config
+2018-12-20 09:04:28.221 [uncertain.cache.CacheFactoryConfig] [INFO] Loading cache config file D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\cacheConfig\screen-access-cache.config
+2018-12-20 09:04:28.223 [uncertain.cache.CacheFactoryConfig] [INFO] Loading cache config file D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\cacheConfig\role-service-cache.config
+2018-12-20 09:04:28.225 [uncertain.cache.CacheFactoryConfig] [INFO] Loading cache config file D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\cacheConfig\role-bm-cache.config
+2018-12-20 09:04:28.226 [uncertain.cache.CacheFactoryConfig] [INFO] Loading cache config file D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\cacheConfig\multi-language-description-cache.config
+2018-12-20 09:04:28.227 [uncertain.core] [INFO] Loaded instance uncertain.cache.CacheFactoryConfig from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\cache.config
+2018-12-20 09:04:28.230 [uncertain.core] [INFO] Loaded instance aurora.application.features.cstm.CustomizationDataProvider from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\customization-data-provider.config
+2018-12-20 09:04:28.232 [uncertain.core] [INFO] Loaded instance aurora.security.CacheBasedResourceAccessChecker from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\cache-based-resource-access-checker.config
+2018-12-20 09:04:28.235 [uncertain.core] [INFO] Loaded instance aurora.bm.CacheBasedCheckerFactory from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\bm-access.config
+2018-12-20 09:04:28.238 [uncertain.core] [INFO] Loaded instance aurora.application.features.ResponseCacheProvider from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\response-cache.config
+2018-12-20 09:04:28.239 [aurora.database] [INFO] Using datasource com.mchange.v2.c3p0.PoolBackedDataSource@5e3f51ef [ connectionPoolDataSource -> com.mchange.v2.c3p0.WrapperConnectionPoolDataSource@d0a8f78e [ acquireIncrement -> 3, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> null, breakAfterAcquireFailure -> false, checkoutTimeout -> 30000, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, debugUnreturnedConnectionStackTraces -> false, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, identityToken -> 1hgfabl9z1jt5kj01wqva49|16414e40, idleConnectionTestPeriod -> 60, initialPoolSize -> 3, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 120, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 20, maxStatements -> 0, maxStatementsPerConnection -> 0, minPoolSize -> 20, nestedDataSource -> com.mchange.v2.c3p0.DriverManagerDataSource@6b863268 [ description -> null, driverClass -> oracle.jdbc.driver.OracleDriver, factoryClassLocation -> null, identityToken -> 1hgfabl9z1jt5kj01wqva49|71329995, jdbcUrl -> jdbc:oracle:thin:@(DESCRIPTION =     (ADDRESS_LIST =       (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.230.130)(PORT = 1521))     )     (CONNECT_DATA =       (SERVICE_NAME = mas)     )   ), properties -> {user=******, password=******, protocol=thin} ], preferredTestQuery -> select 1 from dual, propertyCycle -> 0, testConnectionOnCheckin -> true, testConnectionOnCheckout -> false, unreturnedConnectionTimeout -> 0, usesTraditionalReflectiveProxies -> false; userOverrides: {} ], dataSourceName -> null, factoryClassLocation -> null, identityToken -> 1hgfabl9z1jt5kj01wqva49|4fad9bb2, numHelperThreads -> 3 ]
+2018-12-20 09:04:28.259 [uncertain.core] [INFO] Loaded instance aurora.database.service.DatabaseServiceFactory from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\tomcat\temp\aurora_builtin_package\aurora.database\config\database-service-factory.config
+2018-12-20 09:04:28.259 [uncertain.core] [INFO] Loaded instance aurora.application.features.RequestRecorder from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\request-record.config
+2018-12-20 09:04:28.259 [uncertain.core] [INFO] Loaded instance aurora.security.AccessCheckRuleConfig from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.security\access-check-rule.config
+2018-12-20 09:04:28.259 [uncertain.core] [INFO] Loaded instance aurora.i18n.CacheBasedMessageProvider from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\service-prompt.config
+2018-12-20 09:04:28.259 [uncertain.core] [INFO] Loaded instance aurora.application.features.CacheBasedLookupCodeProvider from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\service-lookup.config
+2018-12-20 09:04:28.275 [aurora.monitor] [INFO] request recorder initialize
+2018-12-20 09:04:37.438 [uncertain.core] [INFO] =========== Loading participant in {service} scope =============
+2018-12-20 09:04:37.438 [uncertain.core] [INFO] No.1 type=aurora.service.json.JSONServiceInterpreter
+2018-12-20 09:04:37.438 [uncertain.core] [INFO] New instance created
+2018-12-20 09:04:37.438 [uncertain.core] [INFO] No.2 type=aurora.plugin.export.ModelOutput
+2018-12-20 09:04:37.439 [uncertain.core] [INFO] New instance created
+2018-12-20 09:04:37.439 [uncertain.core] [INFO] No.3 type=aurora.application.features.cstm.ConfigCustomizationListener
+2018-12-20 09:04:37.439 [uncertain.core] [INFO] New instance created
+2018-12-20 09:04:37.439 [uncertain.core] [INFO] No.4 type=aurora.application.action.DoDispatch
+2018-12-20 09:04:37.439 [uncertain.core] [INFO] New instance created
+2018-12-20 09:04:37.439 [uncertain.core] [INFO] No.5 type=aurora.application.features.DataSetInit
+2018-12-20 09:04:37.439 [uncertain.core] [INFO] New instance created
+2018-12-20 09:04:37.439 [uncertain.core] [INFO] No.6 type=aurora.application.features.CachedScreenListener
+2018-12-20 09:04:37.439 [uncertain.core] [INFO] New instance created
+2018-12-20 09:04:37.439 [uncertain.core] [INFO] No.7 type=aurora.application.features.UploadInit
+2018-12-20 09:04:37.440 [uncertain.core] [INFO] New instance created
+2018-12-20 09:04:37.440 [uncertain.core] [INFO] No.8 type=aurora.service.lock.SessionLockChecker
+2018-12-20 09:04:37.440 [uncertain.core] [INFO] Got from global instance registry
+2018-12-20 09:04:37.440 [uncertain.core] [INFO] No.9 type=aurora.application.features.RequestRecorder
+2018-12-20 09:04:37.440 [uncertain.core] [INFO] New instance created
+2018-12-20 09:04:37.440 [uncertain.core] [INFO] No.10 type=aurora.security.AccessCheck
+2018-12-20 09:04:37.440 [uncertain.core] [INFO] New instance created
+2018-12-20 09:04:37.440 [uncertain.core] [INFO] No.11 type=aurora.service.ws.SOAPServiceInterpreter
+2018-12-20 09:04:37.440 [uncertain.core] [INFO] New instance created
+2018-12-20 09:04:37.440 [aurora.application] [INFO] Running application startup procedure from D:\1.SoftWare\20.git\workspace\Pro01\1.aurora_workspace\webRoot\WEB-INF\aurora.feature\service-procedure.config
+2018-12-20 09:04:37.466 [uncertain.core] [INFO] UncertainEngine startup success in 9977 ms

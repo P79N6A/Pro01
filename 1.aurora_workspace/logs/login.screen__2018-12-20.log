@@ -1,0 +1,35 @@
+2018-12-20 09:05:06.142 [aurora.application.session_check] [CONFIG] HTTP session not created
+2018-12-20 09:05:06.142 [aurora.application.session_check] [CONFIG] Access check result for login.screen => success
+2018-12-20 09:05:06.143 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-20 09:05:06.181 [uncertain.proc] [CONFIG] [action] InitService
+2018-12-20 09:05:06.181 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-20 09:05:06.182 [uncertain.proc] [CONFIG] [action] CreateModel
+2018-12-20 09:05:06.183 [uncertain.proc] [CONFIG] [action] CreateView
+2018-12-20 09:05:06.183 [uncertain.proc] [CONFIG] [action] BuildOutputContent
+2018-12-20 09:05:06.188 [aurora.presentation.buildsession] [CONFIG] Start build session
+2018-12-20 09:05:06.190 [aurora.presentation.buildsession] [CONFIG] building view: <html-page> -> aurora.presentation.component.HtmlPage@328d86d3
+2018-12-20 09:05:06.205 [aurora.presentation.buildsession] [CONFIG] building view: <link> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:05:06.209 [aurora.presentation.buildsession] [CONFIG] building view: <link> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:05:06.210 [aurora.presentation.buildsession] [CONFIG] building view: <link> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:05:06.211 [aurora.presentation.buildsession] [CONFIG] building view: <link> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:05:06.211 [aurora.presentation.buildsession] [CONFIG] building view: <dataSets> -> aurora.application.features.DataSetInit@210a5ea2
+2018-12-20 09:05:06.212 [aurora.presentation.buildsession] [CONFIG] building view: <dataSet> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:05:06.213 [aurora.presentation.buildsession] [CONFIG] building view: <dataSet> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:05:06.216 [aurora.presentation.buildsession] [CONFIG] building view: <style> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:05:06.224 [aurora.presentation.buildsession] [CONFIG] building view: <script> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:05:06.227 [aurora.presentation.buildsession] [CONFIG] building view: <div> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:05:06.228 [aurora.presentation.buildsession] [CONFIG] building view: <div> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:05:06.228 [aurora.presentation.buildsession] [CONFIG] building view: <div> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:05:06.228 [aurora.presentation.buildsession] [CONFIG] building view: <div> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:05:06.228 [aurora.presentation.buildsession] [CONFIG] building view: <table> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:05:06.228 [aurora.presentation.buildsession] [CONFIG] building view: <tr> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:05:06.228 [aurora.presentation.buildsession] [CONFIG] building view: <td> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:05:06.229 [aurora.presentation.buildsession] [CONFIG] building view: <vBox> -> aurora.presentation.component.std.VBox@15c0b7c8
+2018-12-20 09:05:06.232 [aurora.presentation.buildsession] [CONFIG] building view: <textField> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:05:06.236 [aurora.presentation.buildsession] [CONFIG] building view: <passWord> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:05:06.237 [aurora.presentation.buildsession] [CONFIG] building view: <comboBox> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:05:06.239 [aurora.presentation.buildsession] [CONFIG] building view: <td> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:05:06.239 [aurora.presentation.buildsession] [CONFIG] building view: <hBox> -> aurora.presentation.component.std.HBox@36eca596
+2018-12-20 09:05:06.239 [aurora.presentation.buildsession] [CONFIG] building view: <button> -> aurora.presentation.TemplateBasedView@d2f1834
+2018-12-20 09:05:06.242 [aurora.presentation.buildsession] [CONFIG] building view: <script> -> aurora.presentation.DefaultViewBuilder@261385a8
+2018-12-20 09:05:06.242 [aurora.presentation.buildsession] [CONFIG] End build session

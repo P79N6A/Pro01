@@ -1,0 +1,870 @@
+2018-12-20 09:28:05.45 [aurora.application.session_check] [CONFIG] Session data copied to context
+2018-12-20 09:28:05.45 [aurora.application.session_check] [CONFIG] Checking BM access wfl.wfl_workflow_instance_for_todo for operation query
+2018-12-20 09:28:05.62 [aurora.application.session_check] [CONFIG] Result from aurora.bm.DefaultAccessChecker@8922475 is true
+2018-12-20 09:28:05.62 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-20 09:28:05.62 [uncertain.proc] [CONFIG] [action] CheckServiceLock
+2018-12-20 09:28:05.62 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-20 09:28:05.62 [uncertain.proc] [CONFIG] [action] ValidateInput
+2018-12-20 09:28:05.62 [uncertain.proc] [CONFIG] [action] InvokeService
+2018-12-20 09:28:05.63 [aurora.database] [CONFIG] ===================================== prepare to run model-query wfl.wfl_workflow_instance_for_todo==============================
+2018-12-20 09:28:05.79 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-20 09:28:05.79 [uncertain.proc] [FINE] aurora.database.service.BusinessModelService.onDecideSqlGenerationMode
+2018-12-20 09:28:05.79 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-20 09:28:05.79 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-20 09:28:05.79 [uncertain.proc] [FINE] aurora.database.features.OrderByClauseCreator.onPopulateOperationSql
+2018-12-20 09:28:05.79 [uncertain.proc] [FINE] aurora.database.features.WhereClauseCreator.onPopulateOperationSql
+2018-12-20 09:28:05.79 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-20 09:28:05.79 [uncertain.proc] [FINE] aurora.bm.QuerySqlCreator.onExecuteQuery
+2018-12-20 09:28:05.86 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-20 09:28:05.86 [uncertain.proc] [FINE] aurora.database.features.AutoQueryCounter.onQueryFinish
+2018-12-20 09:28:05.91 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-20 09:28:05.91 [uncertain.proc] [FINE] aurora.database.features.CacheBasedLookUpField.postFetchResultSet
+2018-12-20 09:28:05.91 [aurora.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+                select *
+  from (select temp.*,
+               eert.description,
+               (select t.name
+                  from exp_employees t
+                 where t.employee_id = erh.employee_id) employee_name
+          from (select decode(r.date_limit,
+                              null,
+                              0,
+                              decode(sign(r.date_limit - sysdate), -1, 1, 0)) as is_late,
+                       (select wwn.name
+                          from wfl_workflow_node_vl wwn
+                         where wwn.node_id = r.node_id) as node_name,
+                       (select wdr.document_desc
+                          from wfl_document_reference_vl wdr
+                         where ww.workflow_category = wdr.workflow_category) as order_type,
+                       to_char(t1.creation_date, 'yyyy-mm-dd') as creation_date_view,
+                       to_char(r.creation_date, 'yyyy-mm-dd hh24:mi') as apply_date_view,
+                       to_char(r.date_limit, 'yyyy-mm-dd hh24:mi') as date_limit_view,
+                       t1.instance_desc,
+                       t1.instance_amount,
+                       t1.instance_id,
+                       t1.workflow_id,
+                       t1.status,
+                       t1.current_node,
+                       t1.instance_param,
+                       t1.date_from,
+                       t1.date_to,
+                       t1.object_version_number,
+                       t1.reason,
+                       t1.current_handler,
+                       t1.status_desc,
+                       t1.approve_count,
+                       t1.node_result,
+                       t1.attachment_id,
+                       t1.document_number,
+                       t1.attribute_n_1,
+                       t1.attribute_n_2,
+                       t1.attribute_n_3,
+                       t1.attribute_n_4,
+                       t1.attribute_n_5,
+                       t1.attribute_n_6,
+                       t1.attribute_n_7,
+                       t1.attribute_n_8,
+                       t1.attribute_n_9,
+                       t1.attribute_n_10,
+                       t1.attribute_c_1,
+                       t1.attribute_c_2,
+                       t1.attribute_c_3,
+                       t1.attribute_c_4,
+                       t1.attribute_c_5,
+                       t1.attribute_c_6,
+                       t1.attribute_c_7,
+                       t1.attribute_c_8,
+                       t1.attribute_c_9,
+                       t1.attribute_c_10,
+                       t1.attribute_d_1,
+                       t1.attribute_d_2,
+                       t1.attribute_d_3,
+                       t1.attribute_d_4,
+                       t1.attribute_d_5,
+                       t1.attribute_d_6,
+                       t1.attribute_d_7,
+                       t1.attribute_d_8,
+                       t1.attribute_d_9,
+                       t1.attribute_d_10,
+                       r.record_id,
+                       r.date_limit,
+                       r.creation_date as apply_date,
+                       r.node_id,
+                       ww.workflow_id as workflow_category
+                  from wfl_workflow_instance t1
+                 inner join wfl_instance_node_recipient r
+                    on t1.instance_id = r.instance_id
+                 inner join wfl_workflow ww
+                    on t1.workflow_id = ww.workflow_id
+                 where r.user_id = ?
+                 order by is_late desc, creation_date_view desc) temp,
+               exp_report_headers erh,
+               exp_expense_report_types_vl eert
+         where erh.exp_report_number = temp.document_number
+           and erh.exp_report_type_id = eert.expense_report_type_id
+        union all
+        select temp.*,
+               eer.description,
+               (select t.name
+                  from exp_employees t
+                 where t.employee_id = er.employee_id) employee_name
+          from (select decode(r.date_limit,
+                              null,
+                              0,
+                              decode(sign(r.date_limit - sysdate), -1, 1, 0)) as is_late,
+                       (select wwn.name
+                          from wfl_workflow_node_vl wwn
+                         where wwn.node_id = r.node_id) as node_name,
+                       (select wdr.document_desc
+                          from wfl_document_reference_vl wdr
+                         where ww.workflow_category = wdr.workflow_category) as order_type,
+                       to_char(t1.creation_date, 'yyyy-mm-dd') as creation_date_view,
+                       to_char(r.creation_date, 'yyyy-mm-dd hh24:mi') as apply_date_view,
+                       to_char(r.date_limit, 'yyyy-mm-dd hh24:mi') as date_limit_view,
+                       t1.instance_desc,
+                       t1.instance_amount,
+                       t1.instance_id,
+                       t1.workflow_id,
+                       t1.status,
+                       t1.current_node,
+                       t1.instance_param,
+                       t1.date_from,
+                       t1.date_to,
+                       t1.object_version_number,
+                       t1.reason,
+                       t1.current_handler,
+                       t1.status_desc,
+                       t1.approve_count,
+                       t1.node_result,
+                       t1.attachment_id,
+                       t1.document_number,
+                       t1.attribute_n_1,
+                       t1.attribute_n_2,
+                       t1.attribute_n_3,
+                       t1.attribute_n_4,
+                       t1.attribute_n_5,
+                       t1.attribute_n_6,
+                       t1.attribute_n_7,
+                       t1.attribute_n_8,
+                       t1.attribute_n_9,
+                       t1.attribute_n_10,
+                       t1.attribute_c_1,
+                       t1.attribute_c_2,
+                       t1.attribute_c_3,
+                       t1.attribute_c_4,
+                       t1.attribute_c_5,
+                       t1.attribute_c_6,
+                       t1.attribute_c_7,
+                       t1.attribute_c_8,
+                       t1.attribute_c_9,
+                       t1.attribute_c_10,
+                       t1.attribute_d_1,
+                       t1.attribute_d_2,
+                       t1.attribute_d_3,
+                       t1.attribute_d_4,
+                       t1.attribute_d_5,
+                       t1.attribute_d_6,
+                       t1.attribute_d_7,
+                       t1.attribute_d_8,
+                       t1.attribute_d_9,
+                       t1.attribute_d_10,
+                       r.record_id,
+                       r.date_limit,
+                       r.creation_date as apply_date,
+                       r.node_id,
+                       ww.workflow_id as workflow_category
+                  from wfl_workflow_instance t1
+                 inner join wfl_instance_node_recipient r
+                    on t1.instance_id = r.instance_id
+                 inner join wfl_workflow ww
+                    on t1.workflow_id = ww.workflow_id
+                 where r.user_id = ?
+                 order by is_late desc, creation_date_view desc) temp,
+               exp_requisition_headers er,
+               exp_expense_req_types_vl eer
+         where er.exp_requisition_number = temp.document_number
+           and er.exp_requisition_type_id = eer.expense_requisition_type_id
+                union all
+        select temp.*,
+               t.DESCRIPTION,
+               (select t.name
+                  from exp_employees t
+                 where t.employee_id =(select employee_id from sys_user su where su.user_id = h.created_by)) employee_name
+          from (select decode(r.date_limit,
+                              null,
+                              0,
+                              decode(sign(r.date_limit - sysdate), -1, 1, 0)) as is_late,
+                       (select wwn.name
+                          from wfl_workflow_node_vl wwn
+                         where wwn.node_id = r.node_id) as node_name,
+                       (select wdr.document_desc
+                          from wfl_document_reference_vl wdr
+                         where ww.workflow_category = wdr.workflow_category) as order_type,
+                       to_char(t1.creation_date, 'yyyy-mm-dd') as creation_date_view,
+                       to_char(r.creation_date, 'yyyy-mm-dd hh24:mi') as apply_date_view,
+                       to_char(r.date_limit, 'yyyy-mm-dd hh24:mi') as date_limit_view,
+                       t1.instance_desc,
+                       t1.instance_amount,
+                       t1.instance_id,
+                       t1.workflow_id,
+                       t1.status,
+                       t1.current_node,
+                       t1.instance_param,
+                       t1.date_from,
+                       t1.date_to,
+                       t1.object_version_number,
+                       t1.reason,
+                       t1.current_handler,
+                       t1.status_desc,
+                       t1.approve_count,
+                       t1.node_result,
+                       t1.attachment_id,
+                       t1.document_number,
+                       t1.attribute_n_1,
+                       t1.attribute_n_2,
+                       t1.attribute_n_3,
+                       t1.attribute_n_4,
+                       t1.attribute_n_5,
+                       t1.attribute_n_6,
+                       t1.attribute_n_7,
+                       t1.attribute_n_8,
+                       t1.attribute_n_9,
+                       t1.attribute_n_10,
+                       t1.attribute_c_1,
+                       t1.attribute_c_2,
+                       t1.attribute_c_3,
+                       t1.attribute_c_4,
+                       t1.attribute_c_5,
+                       t1.attribute_c_6,
+                       t1.attribute_c_7,
+                       t1.attribute_c_8,
+                       t1.attribute_c_9,
+                       t1.attribute_c_10,
+                       t1.attribute_d_1,
+                       t1.attribute_d_2,
+                       t1.attribute_d_3,
+                       t1.attribute_d_4,
+                       t1.attribute_d_5,
+                       t1.attribute_d_6,
+                       t1.attribute_d_7,
+                       t1.attribute_d_8,
+                       t1.attribute_d_9,
+                       t1.attribute_d_10,
+                       r.record_id,
+                       r.date_limit,
+                       r.creation_date as apply_date,
+                       r.node_id,
+                       ww.workflow_id as workflow_category
+                  from wfl_workflow_instance t1
+                 inner join wfl_instance_node_recipient r
+                    on t1.instance_id = r.instance_id
+                 inner join wfl_workflow ww
+                    on t1.workflow_id = ww.workflow_id
+                 where r.user_id = ?
+                 and ww.workflow_category = 'CON_CONTRACT'
+                 order by is_late desc, creation_date_view desc) temp,
+               con_contract_headers h,
+               con_contract_types_vl t,
+               con_contract_type_dists d
+         where h.contract_header_id = temp.instance_param
+         and h.contract_type_id = d.contract_type_dist_id
+         and d.contract_type_id = t.contract_type_id
+        union all
+        select temp.*,
+               cprtv.description,
+               (select t.name
+                  from exp_employees t
+                 where t.employee_id = cprh.employee_id) employee_name
+          from (select decode(r.date_limit,
+                              null,
+                              0,
+                              decode(sign(r.date_limit - sysdate), -1, 1, 0)) as is_late,
+                       (select wwn.name
+                          from wfl_workflow_node_vl wwn
+                         where wwn.node_id = r.node_id) as node_name,
+                       (select wdr.document_desc
+                          from wfl_document_reference_vl wdr
+                         where ww.workflow_category = wdr.workflow_category) as order_type,
+                       to_char(t1.creation_date, 'yyyy-mm-dd') as creation_date_view,
+                       to_char(r.creation_date, 'yyyy-mm-dd hh24:mi') as apply_date_view,
+                       to_char(r.date_limit, 'yyyy-mm-dd hh24:mi') as date_limit_view,
+                       t1.instance_desc,
+                       t1.instance_amount,
+                       t1.instance_id,
+                       t1.workflow_id,
+                       t1.status,
+                       t1.current_node,
+                       t1.instance_param,
+                       t1.date_from,
+                       t1.date_to,
+                       t1.object_version_number,
+                       t1.reason,
+                       t1.current_handler,
+                       t1.status_desc,
+                       t1.approve_count,
+                       t1.node_result,
+                       t1.attachment_id,
+                       t1.document_number,
+                       t1.attribute_n_1,
+                       t1.attribute_n_2,
+                       t1.attribute_n_3,
+                       t1.attribute_n_4,
+                       t1.attribute_n_5,
+                       t1.attribute_n_6,
+                       t1.attribute_n_7,
+                       t1.attribute_n_8,
+                       t1.attribute_n_9,
+                       t1.attribute_n_10,
+                       t1.attribute_c_1,
+                       t1.attribute_c_2,
+                       t1.attribute_c_3,
+                       t1.attribute_c_4,
+                       t1.attribute_c_5,
+                       t1.attribute_c_6,
+                       t1.attribute_c_7,
+                       t1.attribute_c_8,
+                       t1.attribute_c_9,
+                       t1.attribute_c_10,
+                       t1.attribute_d_1,
+                       t1.attribute_d_2,
+                       t1.attribute_d_3,
+                       t1.attribute_d_4,
+                       t1.attribute_d_5,
+                       t1.attribute_d_6,
+                       t1.attribute_d_7,
+                       t1.attribute_d_8,
+                       t1.attribute_d_9,
+                       t1.attribute_d_10,
+                       r.record_id,
+                       r.date_limit,
+                       r.creation_date as apply_date,
+                       r.node_id,
+                       ww.workflow_id as workflow_category
+                  from wfl_workflow_instance t1
+                 inner join wfl_instance_node_recipient r
+                    on t1.instance_id = r.instance_id
+                 inner join wfl_workflow ww
+                    on t1.workflow_id = ww.workflow_id
+                 where r.user_id = ?
+                 order by is_late desc, creation_date_view desc) temp,
+               csh_payment_requisition_hds cprh,
+               csh_pay_req_types_vl cprtv
+         where cprh.requisition_number = temp.document_number
+           and cprtv.type_id = cprh.payment_req_type_id
+        union all
+        select temp.*,
+               etrt1.description,
+               (select t.name
+                  from exp_employees t
+                 where t.employee_id = etph.employee_id) employee_name
+          from (select decode(r.date_limit,
+                              null,
+                              0,
+                              decode(sign(r.date_limit - sysdate), -1, 1, 0)) as is_late,
+                       (select wwn.name
+                          from wfl_workflow_node_vl wwn
+                         where wwn.node_id = r.node_id) as node_name,
+                       (select wdr.document_desc
+                          from wfl_document_reference_vl wdr
+                         where ww.workflow_category = wdr.workflow_category) as order_type,
+                       to_char(t1.creation_date, 'yyyy-mm-dd') as creation_date_view,
+                       to_char(r.creation_date, 'yyyy-mm-dd hh24:mi') as apply_date_view,
+                       to_char(r.date_limit, 'yyyy-mm-dd hh24:mi') as date_limit_view,
+                       t1.instance_desc,
+                       t1.instance_amount,
+                       t1.instance_id,
+                       t1.workflow_id,
+                       t1.status,
+                       t1.current_node,
+                       t1.instance_param,
+                       t1.date_from,
+                       t1.date_to,
+                       t1.object_version_number,
+                       t1.reason,
+                       t1.current_handler,
+                       t1.status_desc,
+                       t1.approve_count,
+                       t1.node_result,
+                       t1.attachment_id,
+                       t1.document_number,
+                       t1.attribute_n_1,
+                       t1.attribute_n_2,
+                       t1.attribute_n_3,
+                       t1.attribute_n_4,
+                       t1.attribute_n_5,
+                       t1.attribute_n_6,
+                       t1.attribute_n_7,
+                       t1.attribute_n_8,
+                       t1.attribute_n_9,
+                       t1.attribute_n_10,
+                       t1.attribute_c_1,
+                       t1.attribute_c_2,
+                       t1.attribute_c_3,
+                       t1.attribute_c_4,
+                       t1.attribute_c_5,
+                       t1.attribute_c_6,
+                       t1.attribute_c_7,
+                       t1.attribute_c_8,
+                       t1.attribute_c_9,
+                       t1.attribute_c_10,
+                       t1.attribute_d_1,
+                       t1.attribute_d_2,
+                       t1.attribute_d_3,
+                       t1.attribute_d_4,
+                       t1.attribute_d_5,
+                       t1.attribute_d_6,
+                       t1.attribute_d_7,
+                       t1.attribute_d_8,
+                       t1.attribute_d_9,
+                       t1.attribute_d_10,
+                       r.record_id,
+                       r.date_limit,
+                       r.creation_date as apply_date,
+                       r.node_id,
+                       ww.workflow_id as workflow_category
+                  from wfl_workflow_instance t1
+                 inner join wfl_instance_node_recipient r
+                    on t1.instance_id = r.instance_id
+                 inner join wfl_workflow ww
+                    on t1.workflow_id = ww.workflow_id
+                 where r.user_id = ?
+                 order by is_late desc, creation_date_view desc) temp,
+               exp_travel_plan_headers etph,
+               exp_travel_plan_types_vl etrt1,
+               exp_com_travel_plan_types_vl etrt2
+         where etph.travel_plan_number = temp.document_number
+           and etph.travel_plan_type_id = etrt2.com_travel_plan_id
+           and etrt1.travel_plan_type_id = etrt2.travel_plan_type_id
+        union all
+        select temp.*,
+               bt.description,
+               (select t.name
+                  from exp_employees t
+                 where t.employee_id = bh.employee_id) employee_name
+          from (select decode(r.date_limit,
+                              null,
+                              0,
+                              decode(sign(r.date_limit - sysdate), -1, 1, 0)) as is_late,
+                       (select wwn.name
+                          from wfl_workflow_node_vl wwn
+                         where wwn.node_id = r.node_id) as node_name,
+                       (select wdr.document_desc
+                          from wfl_document_reference_vl wdr
+                         where ww.workflow_category = wdr.workflow_category) as order_type,
+                       to_char(t1.creation_date, 'yyyy-mm-dd') as creation_date_view,
+                       to_char(r.creation_date, 'yyyy-mm-dd hh24:mi') as apply_date_view,
+                       to_char(r.date_limit, 'yyyy-mm-dd hh24:mi') as date_limit_view,
+                       t1.instance_desc,
+                       t1.instance_amount,
+                       t1.instance_id,
+                       t1.workflow_id,
+                       t1.status,
+                       t1.current_node,
+                       t1.instance_param,
+                       t1.date_from,
+                       t1.date_to,
+                       t1.object_version_number,
+                       t1.reason,
+                       t1.current_handler,
+                       t1.status_desc,
+                       t1.approve_count,
+                       t1.node_result,
+                       t1.attachment_id,
+                       t1.document_number,
+                       t1.attribute_n_1,
+                       t1.attribute_n_2,
+                       t1.attribute_n_3,
+                       t1.attribute_n_4,
+                       t1.attribute_n_5,
+                       t1.attribute_n_6,
+                       t1.attribute_n_7,
+                       t1.attribute_n_8,
+                       t1.attribute_n_9,
+                       t1.attribute_n_10,
+                       t1.attribute_c_1,
+                       t1.attribute_c_2,
+                       t1.attribute_c_3,
+                       t1.attribute_c_4,
+                       t1.attribute_c_5,
+                       t1.attribute_c_6,
+                       t1.attribute_c_7,
+                       t1.attribute_c_8,
+                       t1.attribute_c_9,
+                       t1.attribute_c_10,
+                       t1.attribute_d_1,
+                       t1.attribute_d_2,
+                       t1.attribute_d_3,
+                       t1.attribute_d_4,
+                       t1.attribute_d_5,
+                       t1.attribute_d_6,
+                       t1.attribute_d_7,
+                       t1.attribute_d_8,
+                       t1.attribute_d_9,
+                       t1.attribute_d_10,
+                       r.record_id,
+                       r.date_limit,
+                       r.creation_date as apply_date,
+                       r.node_id,
+                       ww.workflow_id as workflow_category
+                  from wfl_workflow_instance t1
+                 inner join wfl_instance_node_recipient r
+                    on t1.instance_id = r.instance_id
+                 inner join wfl_workflow ww
+                    on t1.workflow_id = ww.workflow_id
+                 where r.user_id = ?
+                 order by is_late desc, creation_date_view desc) temp,
+               bgt_journal_headers bh,
+               bgt_journal_types_vl bt
+         where bh.budget_journal_number = temp.document_number
+           and bh.bgt_journal_type_id = bt.bgt_journal_type_id
+        union all
+        select temp.*,
+               art.description,
+               (select t.name
+                  from exp_employees t
+                 where t.employee_id = ah.employee_id) employee_name
+          from (select decode(r.date_limit,
+                              null,
+                              0,
+                              decode(sign(r.date_limit - sysdate), -1, 1, 0)) as is_late,
+                       (select wwn.name
+                          from wfl_workflow_node_vl wwn
+                         where wwn.node_id = r.node_id) as node_name,
+                       (select wdr.document_desc
+                          from wfl_document_reference_vl wdr
+                         where ww.workflow_category = wdr.workflow_category) as order_type,
+                       to_char(t1.creation_date, 'yyyy-mm-dd') as creation_date_view,
+                       to_char(r.creation_date, 'yyyy-mm-dd hh24:mi') as apply_date_view,
+                       to_char(r.date_limit, 'yyyy-mm-dd hh24:mi') as date_limit_view,
+                       t1.instance_desc,
+                       t1.instance_amount,
+                       t1.instance_id,
+                       t1.workflow_id,
+                       t1.status,
+                       t1.current_node,
+                       t1.instance_param,
+                       t1.date_from,
+                       t1.date_to,
+                       t1.object_version_number,
+                       t1.reason,
+                       t1.current_handler,
+                       t1.status_desc,
+                       t1.approve_count,
+                       t1.node_result,
+                       t1.attachment_id,
+                       t1.document_number,
+                       t1.attribute_n_1,
+                       t1.attribute_n_2,
+                       t1.attribute_n_3,
+                       t1.attribute_n_4,
+                       t1.attribute_n_5,
+                       t1.attribute_n_6,
+                       t1.attribute_n_7,
+                       t1.attribute_n_8,
+                       t1.attribute_n_9,
+                       t1.attribute_n_10,
+                       t1.attribute_c_1,
+                       t1.attribute_c_2,
+                       t1.attribute_c_3,
+                       t1.attribute_c_4,
+                       t1.attribute_c_5,
+                       t1.attribute_c_6,
+                       t1.attribute_c_7,
+                       t1.attribute_c_8,
+                       t1.attribute_c_9,
+                       t1.attribute_c_10,
+                       t1.attribute_d_1,
+                       t1.attribute_d_2,
+                       t1.attribute_d_3,
+                       t1.attribute_d_4,
+                       t1.attribute_d_5,
+                       t1.attribute_d_6,
+                       t1.attribute_d_7,
+                       t1.attribute_d_8,
+                       t1.attribute_d_9,
+                       t1.attribute_d_10,
+                       r.record_id,
+                       r.date_limit,
+                       r.creation_date as apply_date,
+                       r.node_id,
+                       ww.workflow_id as workflow_category
+                  from wfl_workflow_instance t1
+                 inner join wfl_instance_node_recipient r
+                    on t1.instance_id = r.instance_id
+                 inner join wfl_workflow ww
+                    on t1.workflow_id = ww.workflow_id
+                 where r.user_id = ?
+                 order by is_late desc, creation_date_view desc) temp,
+               acp_acp_requisition_hds ah,
+               acp_sys_acp_req_types_vl art
+         where ah.requisition_number = temp.document_number
+           and ah.acp_req_type_id = art.acp_req_type_id
+        union all
+        
+        select temp.*,
+               tv.type_name,
+               (select t.name
+                  from exp_employees t
+                 where t.employee_id = a.employee_id) employee_name
+          from (select decode(r.date_limit,
+                              null,
+                              0,
+                              decode(sign(r.date_limit - sysdate), -1, 1, 0)) as is_late,
+                       (select wwn.name
+                          from wfl_workflow_node_vl wwn
+                         where wwn.node_id = r.node_id) as node_name,
+                       (select wdr.document_desc
+                          from wfl_document_reference_vl wdr
+                         where ww.workflow_category = wdr.workflow_category) as order_type,
+                       to_char(t1.creation_date, 'yyyy-mm-dd') as creation_date_view,
+                       to_char(r.creation_date, 'yyyy-mm-dd hh24:mi') as apply_date_view,
+                       to_char(r.date_limit, 'yyyy-mm-dd hh24:mi') as date_limit_view,
+                       t1.instance_desc,
+                       t1.instance_amount,
+                       t1.instance_id,
+                       t1.workflow_id,
+                       t1.status,
+                       t1.current_node,
+                       t1.instance_param,
+                       t1.date_from,
+                       t1.date_to,
+                       t1.object_version_number,
+                       t1.reason,
+                       t1.current_handler,
+                       t1.status_desc,
+                       t1.approve_count,
+                       t1.node_result,
+                       t1.attachment_id,
+                       t1.document_number,
+                       t1.attribute_n_1,
+                       t1.attribute_n_2,
+                       t1.attribute_n_3,
+                       t1.attribute_n_4,
+                       t1.attribute_n_5,
+                       t1.attribute_n_6,
+                       t1.attribute_n_7,
+                       t1.attribute_n_8,
+                       t1.attribute_n_9,
+                       t1.attribute_n_10,
+                       t1.attribute_c_1,
+                       t1.attribute_c_2,
+                       t1.attribute_c_3,
+                       t1.attribute_c_4,
+                       t1.attribute_c_5,
+                       t1.attribute_c_6,
+                       t1.attribute_c_7,
+                       t1.attribute_c_8,
+                       t1.attribute_c_9,
+                       t1.attribute_c_10,
+                       t1.attribute_d_1,
+                       t1.attribute_d_2,
+                       t1.attribute_d_3,
+                       t1.attribute_d_4,
+                       t1.attribute_d_5,
+                       t1.attribute_d_6,
+                       t1.attribute_d_7,
+                       t1.attribute_d_8,
+                       t1.attribute_d_9,
+                       t1.attribute_d_10,
+                       r.record_id,
+                       r.date_limit,
+                       r.creation_date as apply_date,
+                       r.node_id,
+                       ww.workflow_id as workflow_category
+                  from wfl_workflow_instance t1
+                 inner join wfl_instance_node_recipient r
+                    on t1.instance_id = r.instance_id
+                 inner join wfl_workflow ww
+                    on t1.workflow_id = ww.workflow_id
+                 where r.user_id = ?
+                   and ww.workflow_category = 'PTL_ANNOUNCEMENT'
+                 order by is_late desc, creation_date_view desc) temp,
+               ptl_announcements a,
+               ptl_announcement_types_vl tv
+         where temp.instance_param = a.announcement_id
+           and a.announcement_type_id = tv.announcement_type_id
+           
+        union all
+                select temp.*,
+               ptl_file_pkg.get_folder_path(a.folder_id),
+               (select t.name
+                  from exp_employees t
+                 where t.employee_id = (select employee_id from sys_user su where su.user_id = a.created_by)) employee_name
+          from (select decode(r.date_limit,
+                              null,
+                              0,
+                              decode(sign(r.date_limit - sysdate), -1, 1, 0)) as is_late,
+                       (select wwn.name
+                          from wfl_workflow_node_vl wwn
+                         where wwn.node_id = r.node_id) as node_name,
+                       (select wdr.document_desc
+                          from wfl_document_reference_vl wdr
+                         where ww.workflow_category = wdr.workflow_category) as order_type,
+                       to_char(t1.creation_date, 'yyyy-mm-dd') as creation_date_view,
+                       to_char(r.creation_date, 'yyyy-mm-dd hh24:mi') as apply_date_view,
+                       to_char(r.date_limit, 'yyyy-mm-dd hh24:mi') as date_limit_view,
+                       t1.instance_desc,
+                       t1.instance_amount,
+                       t1.instance_id,
+                       t1.workflow_id,
+                       t1.status,
+                       t1.current_node,
+                       t1.instance_param,
+                       t1.date_from,
+                       t1.date_to,
+                       t1.object_version_number,
+                       t1.reason,
+                       t1.current_handler,
+                       t1.status_desc,
+                       t1.approve_count,
+                       t1.node_result,
+                       t1.attachment_id,
+                       t1.document_number,
+                       t1.attribute_n_1,
+                       t1.attribute_n_2,
+                       t1.attribute_n_3,
+                       t1.attribute_n_4,
+                       t1.attribute_n_5,
+                       t1.attribute_n_6,
+                       t1.attribute_n_7,
+                       t1.attribute_n_8,
+                       t1.attribute_n_9,
+                       t1.attribute_n_10,
+                       t1.attribute_c_1,
+                       t1.attribute_c_2,
+                       t1.attribute_c_3,
+                       t1.attribute_c_4,
+                       t1.attribute_c_5,
+                       t1.attribute_c_6,
+                       t1.attribute_c_7,
+                       t1.attribute_c_8,
+                       t1.attribute_c_9,
+                       t1.attribute_c_10,
+                       t1.attribute_d_1,
+                       t1.attribute_d_2,
+                       t1.attribute_d_3,
+                       t1.attribute_d_4,
+                       t1.attribute_d_5,
+                       t1.attribute_d_6,
+                       t1.attribute_d_7,
+                       t1.attribute_d_8,
+                       t1.attribute_d_9,
+                       t1.attribute_d_10,
+                       r.record_id,
+                       r.date_limit,
+                       r.creation_date as apply_date,
+                       r.node_id,
+                       ww.workflow_id as workflow_category
+                  from wfl_workflow_instance t1
+                 inner join wfl_instance_node_recipient r
+                    on t1.instance_id = r.instance_id
+                 inner join wfl_workflow ww
+                    on t1.workflow_id = ww.workflow_id
+                 where r.user_id = ?
+                   and ww.workflow_category = 'PTL_FILES'
+                 order by is_late desc, creation_date_view desc) temp,
+               ptl_files a
+         where temp.instance_param = a.file_id
+        union all
+        
+        select temp.*,
+               gv.group_desc,
+               (select t.name
+                  from exp_employees t
+                 where t.employee_id = dh.employee_id) employee_name
+          from (select decode(r.date_limit,
+                              null,
+                              0,
+                              decode(sign(r.date_limit - sysdate), -1, 1, 0)) as is_late,
+                       (select wwn.name
+                          from wfl_workflow_node_vl wwn
+                         where wwn.node_id = r.node_id) as node_name,
+                       (select wdr.document_desc
+                          from wfl_document_reference_vl wdr
+                         where ww.workflow_category = wdr.workflow_category) as order_type,
+                       to_char(t1.creation_date, 'yyyy-mm-dd') as creation_date_view,
+                       to_char(r.creation_date, 'yyyy-mm-dd hh24:mi') as apply_date_view,
+                       to_char(r.date_limit, 'yyyy-mm-dd hh24:mi') as date_limit_view,
+                       t1.instance_desc,
+                       t1.instance_amount,
+                       t1.instance_id,
+                       t1.workflow_id,
+                       t1.status,
+                       t1.current_node,
+                       t1.instance_param,
+                       t1.date_from,
+                       t1.date_to,
+                       t1.object_version_number,
+                       t1.reason,
+                       t1.current_handler,
+                       t1.status_desc,
+                       t1.approve_count,
+                       t1.node_result,
+                       t1.attachment_id,
+                       t1.document_number,
+                       t1.attribute_n_1,
+                       t1.attribute_n_2,
+                       t1.attribute_n_3,
+                       t1.attribute_n_4,
+                       t1.attribute_n_5,
+                       t1.attribute_n_6,
+                       t1.attribute_n_7,
+                       t1.attribute_n_8,
+                       t1.attribute_n_9,
+                       t1.attribute_n_10,
+                       t1.attribute_c_1,
+                       t1.attribute_c_2,
+                       t1.attribute_c_3,
+                       t1.attribute_c_4,
+                       t1.attribute_c_5,
+                       t1.attribute_c_6,
+                       t1.attribute_c_7,
+                       t1.attribute_c_8,
+                       t1.attribute_c_9,
+                       t1.attribute_c_10,
+                       t1.attribute_d_1,
+                       t1.attribute_d_2,
+                       t1.attribute_d_3,
+                       t1.attribute_d_4,
+                       t1.attribute_d_5,
+                       t1.attribute_d_6,
+                       t1.attribute_d_7,
+                       t1.attribute_d_8,
+                       t1.attribute_d_9,
+                       t1.attribute_d_10,
+                       r.record_id,
+                       r.date_limit,
+                       r.creation_date as apply_date,
+                       r.node_id,
+                       ww.workflow_id as workflow_category
+                  from wfl_workflow_instance t1
+                 inner join wfl_instance_node_recipient r
+                    on t1.instance_id = r.instance_id
+                 inner join wfl_workflow ww
+                    on t1.workflow_id = ww.workflow_id
+                 where r.user_id = ?
+                   and ww.workflow_category = 'OA_FLOW'
+                 order by is_late desc, creation_date_view desc) temp,
+               oa_flow_doc_headers dh,
+               bpm_page_groups_vl gv
+         where dh.oa_flow_doc_header_id = temp.instance_param
+           and dh.oa_flow_type_id = gv.group_id) t3
+ order by apply_date_view desc
+            
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+No.2	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+No.3	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+No.4	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+No.5	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+No.6	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+No.7	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+No.8	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+No.9	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+No.10	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:2	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-20 09:28:05.91 [uncertain.proc] [CONFIG] [action] CreateSuccessResponse

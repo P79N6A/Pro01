@@ -1,0 +1,1832 @@
+2018-12-27 10:26:03.672 [uncertain.proc] [CONFIG] Enter procedure pre-service
+2018-12-27 10:26:03.673 [leaf.application.session_check] [CONFIG] Session data copied to context
+2018-12-27 10:26:03.673 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:03.673 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:03.673 [leaf.application.session_check] [CONFIG] Access check result for main.lview => success
+2018-12-27 10:26:03.673 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-27 10:26:03.733 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.733 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:03.733 [uncertain.proc] [CONFIG] [action] InitService
+2018-12-27 10:26:03.738 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-27 10:26:03.738 [uncertain.proc] [CONFIG] [action] CreateModel
+2018-12-27 10:26:03.746 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.747 [leaf.database] [CONFIG] ===================================== prepare to run model-query zjwfl.ZJWFL5110.sdic_wfl_to_do_list_count==============================
+2018-12-27 10:26:03.777 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.780 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.781 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:03.781 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:03.781 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:03.781 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:03.781 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:03.791 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:03.791 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:03.791 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+             select    (select count(1) as list_count
+          from zj_wfl_instance_node_recipient r
+         where r.user_id = ?)
+         +
+          (select count(1) FROM SDIC_WFL_TO_DO_LIST S1
+           where (exists(select 1 from dual where ? =s1.user_id)
+           or exists(select 1 from dual where ? =s1.role_id)
+           )
+           and s1.DONE_FLAG='N') list_count  from dual
+		    
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.2	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.3	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:03.792 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.SYS100.sys_notice_msg_count==============================
+2018-12-27 10:26:03.794 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.796 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.797 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:03.797 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:03.797 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:03.797 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:03.797 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:03.805 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:03.805 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:03.806 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+    			select count(1) as list_count
+				  from sys_notice_msg_v t1
+				 where t1.enabled_flag='Y'
+				   and (t1.notice_user_id = ?
+				   	   or
+				   	   t1.notice_user_id is null)
+				   and t1.status='OPEN'
+    		
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:03.806 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.SYS100.sys_notice_title_count==============================
+2018-12-27 10:26:03.808 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.810 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.810 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:03.810 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:03.811 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:03.811 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:03.811 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:03.820 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:03.820 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:03.820 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+          select count(1) notice_class_title
+			  from (select 1
+			          from sys_notice_msg_v t1
+			         WHERE t1.enabled_flag = 'Y'
+			           and (t1.notice_user_id = ? or t1.notice_user_id is null)
+			           and t1.status = 'OPEN'
+			         group by t1.msg_title) dual
+				 
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:03.820 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.sys_page_menu==============================
+2018-12-27 10:26:03.822 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.824 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.824 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:03.824 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:03.824 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:03.824 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:03.827 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:03.898 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:03.898 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:03.898 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+                SELECT
+                    v.function_id,
+                    v.function_code,
+                    v.function_name,
+                    v.menu_id,
+                    v.parent_menu_id,
+                    case when v.menu_type = 'MENU' then
+                    (case   when (select count(*) from sys_role_module_home_page srmw where srmw.function_group_id = v.function_id and srmw.role_id = v.role_id and srmw.subject = ?) > 0 then 'role_module'
+                            when (select count(*) from sys_module_home_page smhp where smhp.function_group_id = v.function_id and smhp.subject = ?) > 0 then 'module'
+                            else 'none' end
+                    )else 'none' end module_flag,
+                    (select nvl(sum(1),0) from sys_role_menu_v v1 where v1.parent_menu_id=v.menu_id) sub_menu_count
+                FROM
+                    sys_role_menu_v v  WHERE v.role_id=? AND v.menu_type='MENU' and v.parent_menu_id is null
+                ORDER BY
+                    v.layout_sequence
+            
+---------------------Binding info---------------------
+No.1	Access path:/session/@subject	Data type of passed value :java.lang.String	Value:HAP	Output:false	Database Type:null	
+No.2	Access path:/session/@subject	Data type of passed value :java.lang.String	Value:HAP	Output:false	Database Type:null	
+No.3	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:03.898 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.sys_page_menu==============================
+2018-12-27 10:26:03.900 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.901 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:03.901 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:03.901 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:03.901 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:03.901 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:03.902 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:04.226 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:04.226 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:04.226 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+                SELECT
+                    v.function_id,
+                    v.function_code,
+                    v.function_name,
+                    v.menu_id,
+                    v.parent_menu_id,
+                    case when v.menu_type = 'MENU' then
+                    (case   when (select count(*) from sys_role_module_home_page srmw where srmw.function_group_id = v.function_id and srmw.role_id = v.role_id and srmw.subject = ?) > 0 then 'role_module'
+                            when (select count(*) from sys_module_home_page smhp where smhp.function_group_id = v.function_id and smhp.subject = ?) > 0 then 'module'
+                            else 'none' end
+                    )else 'none' end module_flag,
+                    (select nvl(sum(1),0) from sys_role_menu_v v1 where v1.parent_menu_id=v.menu_id) sub_menu_count
+                FROM
+                    sys_role_menu_v v  WHERE v.role_id=? AND v.menu_type='MENU' and v.parent_menu_id is not null
+                ORDER BY
+                    v.layout_sequence
+            
+---------------------Binding info---------------------
+No.1	Access path:/session/@subject	Data type of passed value :java.lang.String	Value:HAP	Output:false	Database Type:null	
+No.2	Access path:/session/@subject	Data type of passed value :java.lang.String	Value:HAP	Output:false	Database Type:null	
+No.3	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:04.226 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.sys_page_menu==============================
+2018-12-27 10:26:04.230 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:04.232 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:04.232 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:04.232 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:04.232 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:04.232 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:04.233 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:07.798 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:07.798 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:07.798 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+                SELECT
+                    v.function_id,
+                    v.function_code,
+                    v.function_name,
+                    v.menu_id,
+                    v.parent_menu_id,
+                    case when v.menu_type = 'MENU' then
+                    (case   when (select count(*) from sys_role_module_home_page srmw where srmw.function_group_id = v.function_id and srmw.role_id = v.role_id and srmw.subject = ?) > 0 then 'role_module'
+                            when (select count(*) from sys_module_home_page smhp where smhp.function_group_id = v.function_id and smhp.subject = ?) > 0 then 'module'
+                            else 'none' end
+                    )else 'none' end module_flag,
+                    (select nvl(sum(1),0) from sys_role_menu_v v1 where v1.parent_menu_id=v.menu_id) sub_menu_count
+                FROM
+                    sys_role_menu_v v  WHERE v.role_id=? AND v.menu_type = 'FUNCTION'
+                ORDER BY
+                    v.layout_sequence
+            
+---------------------Binding info---------------------
+No.1	Access path:/session/@subject	Data type of passed value :java.lang.String	Value:HAP	Output:false	Database Type:null	
+No.2	Access path:/session/@subject	Data type of passed value :java.lang.String	Value:HAP	Output:false	Database Type:null	
+No.3	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:07.798 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.sys_page_function_favorites==============================
+2018-12-27 10:26:07.800 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:07.800 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:07.802 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:07.802 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:07.802 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:07.802 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:07.802 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:07.810 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:07.810 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:07.810 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+            	select v.function_code, v.function_name
+				  from sys_page_favorites_v v
+				 where v.user_id = ?
+				   and v.role_id = ?
+				   and v.company_id = ?
+				   and v.favorite_flag = 'Y'
+				   and rownum<=20
+            
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.2	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.3	Access path:/session/@company_id	Data type of passed value :java.lang.Long	Value:2145	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:07.811 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.sys_page_function_last_visits==============================
+2018-12-27 10:26:07.814 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:07.816 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:07.816 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:07.816 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:07.816 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:07.817 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:07.817 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:07.839 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:07.839 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:07.839 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+                SELECT DISTINCT
+                    function_code,
+                    function_name
+                FROM
+                    (SELECT
+                        v.function_code,
+                        v.function_name
+                    FROM
+                        sys_page_favorites_v v
+                    WHERE
+                        v.user_id    = ? AND
+                        v.role_id    = ? AND
+                        v.company_id = ?
+                    ORDER BY
+                        v.last_visit_time DESC
+                    )
+                WHERE
+                    rownum <= 20
+            
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.2	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.3	Access path:/session/@company_id	Data type of passed value :java.lang.Long	Value:2145	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:07.839 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.sys_page_function_most_visits==============================
+2018-12-27 10:26:07.842 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:07.844 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:07.844 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:07.844 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:07.844 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:07.844 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:07.844 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:08.101 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:08.101 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:08.101 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+                SELECT DISTINCT
+                    function_code,
+                    function_name
+                FROM
+                    (SELECT
+                        v.function_code,
+                        v.function_name
+                    FROM
+                        sys_page_favorites_v v
+                    WHERE
+                        v.user_id    = ? AND
+                        v.role_id    = ? AND
+                        v.company_id = ?
+                    ORDER BY
+                        v.hit_number DESC
+                    )
+                WHERE
+                    rownum <= 20
+            
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.2	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.3	Access path:/session/@company_id	Data type of passed value :java.lang.Long	Value:2145	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:08.101 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.sys_page_home_page==============================
+2018-12-27 10:26:08.103 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.104 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.104 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:08.104 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:08.104 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:08.104 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:08.104 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:08.123 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:08.123 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:08.123 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+				select v.function_code, v.function_name, v.main_service_name
+				  from sys_page_favorites_v v
+				 where v.user_id = ?
+				   and v.role_id = ?
+				   and v.company_id = ?
+				   and v.home_page_flag = 'Y'
+			
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.2	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.3	Access path:/session/@company_id	Data type of passed value :java.lang.Long	Value:2145	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:08.123 [leaf.database] [CONFIG] ===================================== prepare to run model-query basic.sys_session_info==============================
+2018-12-27 10:26:08.126 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.128 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.128 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:08.128 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:08.128 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:08.128 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:08.128 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:08.151 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:08.152 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:08.152 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+    	        select to_char(sysdate, 'yyyy-mm-dd') as today,
+    	        	   to_char(sysdate, 'yyyy') as current_year,
+    	        	   to_number(to_char(sysdate, 'mm')) as current_month,
+    	        	   to_number(to_char(sysdate, 'dd')) as current_day,
+		               '3000-01-01' as never_date,
+		               t1.company_id,
+		               t1.company_code,
+		               t1.company_short_name,
+		               t1.company_full_name,
+		               t2.role_id,
+		               t2.role_name,
+		               t2.role_code,
+		               t3.country_id,
+		               t3.description as country_name,
+		               t4.lease_channel,
+		               t4.description as lease_channel_desc,
+		               t5.division,
+		               t5.description as division_desc,
+		               t6.lease_organization,
+		               t6.description as lease_organization_desc,
+		               t7.currency_code,
+               		   t7.currency_name,
+               		   t8.user_name,
+               		   t8.description as user_desc
+		          from dual t
+		          left join fnd_companies_vl t1
+		            on t1.company_id = ?
+		           and t1.enabled_flag = 'Y'
+		          left join sys_role_vl t2
+		            on t2.role_id = ?
+		           and t2.enabled_flag = 'Y'
+		          left join fnd_country t3
+		            on t3.country_code = 'CHN'
+		           and t3.enabled_flag='Y'
+		            left join hls_lease_channel t4
+		            on t4.lease_channel = ?
+		           and t4.enabled_flag='Y'
+		          left join hls_division t5
+		            on t5.division = ?
+		           and t5.enabled_flag='Y'
+		          left join hls_lease_organization t6
+		            on t6.lease_organization = ?
+		           and t6.enabled_flag='Y'
+		          left join gld_currency_vl t7
+		            on t7.currency_code='CNY'
+		           and t7.enabled_flag='Y'
+		          left join sys_user t8
+		            on t8.user_id = ?
+    		
+---------------------Binding info---------------------
+No.1	Access path:/session/@company_id	Data type of passed value :java.lang.Long	Value:2145	Output:false	Database Type:null	
+No.2	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.3	Access path:/session/@lease_channel	Data type of passed value :[null]	Value:null	Output:false	Database Type:null	
+No.4	Access path:/session/@division	Data type of passed value :[null]	Value:null	Output:false	Database Type:null	
+No.5	Access path:/session/@lease_organization	Data type of passed value :[null]	Value:null	Output:false	Database Type:null	
+No.6	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:08.152 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.SYS890.hls_sys_role_home_page_vl==============================
+2018-12-27 10:26:08.156 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.157 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.157 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:08.157 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:08.157 [uncertain.proc] [CONFIG] [action] CreatequeryStatement
+2018-12-27 10:26:08.158 [uncertain.proc] [CONFIG] [action] PopulatequeryStatement
+2018-12-27 10:26:08.159 [uncertain.proc] [CONFIG] [action] CreatequerySql
+2018-12-27 10:26:08.161 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:08.183 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:08.183 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:08.183 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+SELECT t1.ROLE_HOME_PAGE_ID,t1.HOME_PAGE_ID,t1.ORDER_SEQUENCE,t1.ENABLED_FLAG,t1.ROLE_ID,(select a.role_code from sys_role_vl a where a.role_id=t1.role_id) AS role_code,(select a.role_name from sys_role_vl a where a.role_id=t1.role_id) AS role_name,(select a.function_code from hls_sys_home_page a where a.home_page_id=t1.home_page_id) AS function_code,(select B.function_name from hls_sys_home_page a,sys_function_v B where a.home_page_id=t1.home_page_id AND B.function_code=A.FUNCTION_CODE) AS function_name
+FROM HLS_SYS_ROLE_HOME_PAGE t1
+WHERE t1.role_id=? and t1.enabled_flag='Y'
+ORDER BY (select a.role_code from sys_role_vl a where a.role_id=t1.role_id),order_sequence
+---------------------Binding info---------------------
+No.1	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:08.183 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.sys_user_theme==============================
+2018-12-27 10:26:08.188 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.189 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.189 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:08.189 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:08.189 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:08.189 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:08.189 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:08.211 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:08.211 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:08.211 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+                select
+                    sut.sys_user_theme_id,
+                    sut.user_id,
+                    sut.theme,
+                    sut.subject
+              from sys_user_theme sut
+               WHERE user_id=?
+            
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:08.389 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.SYS100.sys_notice_msg==============================
+2018-12-27 10:26:08.392 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.394 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.394 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:08.394 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:08.394 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:08.394 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:08.394 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:08.646 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:08.646 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:08.647 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+                SELECT
+                    t.*
+                FROM
+                    (
+                    (SELECT
+                        NULL msg_title,
+                        t1.msg_title child_msg_title,
+                        NULL notice_user_id,
+                        NULL notice_msg_id,
+                        NULL msg_info,
+                        NULL notice_type,
+                        NULL start_date_active,
+                        NULL end_date_active,
+                        NULL enabled_flag,
+                        NULL source_type,
+                        NULL source_id,
+                        NULL msg_body,
+                        NULL creation_date,
+                        NULL status,
+                        NULL priority,
+                        'Y' expand_flag,
+                        NULL notice_url,
+                        NULL operation_flag,
+                        NULL operation_url
+                    FROM
+                        sys_notice_msg_v t1
+                    WHERE
+                        t1.enabled_flag='Y' AND
+                        (
+                            t1.notice_user_id  = ? OR
+                            t1.notice_user_id IS NULL
+                        )
+                        AND
+                        t1.status='OPEN'
+                    GROUP BY
+                        msg_title
+                    )
+                UNION ALL
+                    (SELECT
+                        t1.msg_title,
+                        NULL child_msg_title,
+                        t1.notice_user_id,
+                        t1.notice_msg_id,
+                        t1.msg_title
+                        || '    '
+                        || TO_CHAR(t1.start_date_active, 'yyyy-mm-dd hh24:mi:ss') AS msg_info,
+                        t1.notice_type,
+                        t1.start_date_active,
+                        t1.end_date_active,
+                        t1.enabled_flag,
+                        t1.source_type,
+                        t1.source_id,
+                        t1.msg_body,
+                        TO_CHAR(t1.creation_date, 'yyyy-mm-dd hh24:mi:ss') creation_date,
+                        t1.status,
+                        t1.priority,
+                        'N' expand_flag,
+                        t1.notice_url,
+                        t1.operation_flag,
+                        t1.operation_url
+                    FROM
+                        sys_notice_msg_v t1  WHERE t1.enabled_flag='Y' and (t1.notice_user_id = ? or t1.notice_user_id is null) and t1.status='OPEN'
+                    )) t START
+                WITH t.msg_title IS NULL CONNECT BY t.msg_title = prior t.child_msg_title
+                ORDER BY
+                    t.creation_date DESC
+            
+---------------------Binding info---------------------
+No.1	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.2	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:08.647 [leaf.database] [CONFIG] ===================================== prepare to run model-query zjwfl.ZJWFL5110.sdic_wfl_instance_node_recipient==============================
+2018-12-27 10:26:08.649 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.650 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:08.650 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:08.650 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:08.650 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:08.650 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:08.651 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:08.668 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:08.668 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:08.668 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+    			select t1.* from (select s.instance_id,
+               s.approve_count,
+               s.submitted_by,
+               s.submitted_by_name,
+               s.node_id,
+               s.node_desc,
+               s.hierarchy_record_id,
+               s.seq_number,
+               s.user_id,
+               s.date_limit,
+               s.record_id,
+               s.commision_by,
+               s.commision_desc,
+               s.last_notify_date,
+               s.workflow_id,
+               s.workflow_code,
+               s.workflow_desc,
+               s.workflow_desc || '-' || s.node_desc as workflow_info,
+               s.document_info,
+               to_char(s.creation_date, 'yyyy-mm-dd hh24:mi:ss') as creation_date_format,
+               CAST(sysdate AS TIMESTAMP) - CAST(s.creation_date AS TIMESTAMP)  || '' as residence_date_format,
+               s.urgent_type,
+               (select e.position_code from exp_emp_assign_e_v e where e.user_id=s.user_id and e.primary_position_flag='Y' and e.company_id=? and rownum=1)position_code,
+               (select sequence_num
+          from zj_wfl_workflow_node n
+         where n.node_id = s.node_id) node_sequence_num,
+                       s.record_type,
+                'SYS_WFL' LIST_TYPE,
+                null url_link,
+                s.creation_date,
+                null winid
+          from zj_wfl_instance_node_rcpt_v s
+          where s.user_id=?
+          union  ALL
+          SELECT
+          S1.WFL_TO_DO_LIST_ID instance_id,
+          NULL approve_count,
+          S1.SUBMIT_BY,
+          (SELECT SU.DESCRIPTION FROM SYS_USER SU WHERE SU.USER_ID=S1.SUBMIT_BY) 
+          submitted_by_name,
+          NULL node_id,
+          NULL node_desc,
+          NULL hierarchy_record_id,
+          NULL node_desc,
+          NULL USER_ID,
+          NULL date_limit,
+           NULL record_id,
+               NULL commision_by,
+               NULL commision_desc,
+               NULL last_notify_date,
+               NULL workflow_id,
+               NULL workflow_code,
+               NULL workflow_desc,
+              s1.list_desc as workflow_info,
+               s1.document_info,
+               to_char(s1.create_date, 'yyyy-mm-dd hh24:mi:ss') as creation_date_format,
+               CAST(sysdate AS TIMESTAMP) - CAST(s1.creation_date AS TIMESTAMP)  || '' as residence_date_format,
+               'dai' urgent_type,
+               null position_code,
+               null node_sequence_num,
+               null     record_type,
+               'NO_SYS_WFL' LIST_TYPE,
+               s1.url url_link,
+               s1.creation_date,
+               s1.winid
+           FROM SDIC_WFL_TO_DO_LIST S1
+           where (exists(select 1 from dual where ?  =s1.user_id)
+           or exists(select 1 from dual where ?  =s1.role_id)
+           )
+           and s1.DONE_FLAG='N')  t1
+				    
+				 order by t1.urgent_type, t1.creation_date desc
+    		
+---------------------Binding info---------------------
+No.1	Access path:/session/@company_id	Data type of passed value :java.lang.Long	Value:2145	Output:false	Database Type:null	
+No.2	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.3	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+No.4	Access path:/session/@user_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:08.668 [uncertain.proc] [CONFIG] [action] CreateView
+2018-12-27 10:26:08.668 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:08.668 [uncertain.proc] [CONFIG] [action] BuildOutputContent
+2018-12-27 10:26:08.673 [leaf.presentation.buildsession] [CONFIG] Start build session
+2018-12-27 10:26:08.673 [leaf.presentation.buildsession] [CONFIG] building view: <html-page> -> leaf.presentation.component.HtmlPage@498a8286
+2018-12-27 10:26:08.694 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.700 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.701 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.701 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.702 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.702 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.703 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.703 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.704 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.709 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.713 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.714 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.714 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.716 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.716 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.717 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.719 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.720 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.721 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.735 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.736 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.736 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.737 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.737 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.739 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.740 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.740 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.741 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.741 [leaf.presentation.buildsession] [CONFIG] building view: <script> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.742 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.742 [leaf.presentation.buildsession] [CONFIG] building view: <script> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.742 [leaf.presentation.buildsession] [CONFIG] building view: <script> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.742 [leaf.presentation.buildsession] [CONFIG] building view: <script> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.743 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.743 [leaf.presentation.buildsession] [CONFIG] building view: <link> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:08.744 [leaf.presentation.buildsession] [CONFIG] building view: <style> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.744 [leaf.presentation.buildsession] [CONFIG] building view: <script> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.755 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.755 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.755 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.755 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.755 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.756 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.756 [leaf.presentation.buildsession] [CONFIG] building view: <table> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.756 [leaf.presentation.buildsession] [CONFIG] building view: <tbody> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.756 [leaf.presentation.buildsession] [CONFIG] building view: <tr> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.756 [leaf.presentation.buildsession] [CONFIG] building view: <td> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.756 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.756 [leaf.presentation.buildsession] [CONFIG] building view: <freeMarker> -> leaf.presentation.component.std.FreeMarkerTemplate@39f6b18c
+2018-12-27 10:26:08.841 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.841 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.841 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.841 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.842 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.843 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.843 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.843 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.843 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.843 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.843 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.844 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.844 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.844 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.844 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.844 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.845 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.845 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.845 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.845 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.845 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.845 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.845 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.846 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.846 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.846 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.846 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.847 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.847 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.847 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.847 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.847 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.848 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.848 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.848 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.848 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.849 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.849 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.849 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.849 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.849 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.850 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.850 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.850 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.850 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.850 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.850 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.850 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.851 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.851 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.851 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.851 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.851 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.852 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.852 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.852 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.852 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.853 [leaf.presentation.buildsession] [CONFIG] building view: <tr> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.853 [leaf.presentation.buildsession] [CONFIG] building view: <td> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.853 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:08.853 [leaf.presentation.buildsession] [CONFIG] building view: <freeMarker> -> leaf.presentation.component.std.FreeMarkerTemplate@6ed24b55
+2018-12-27 10:26:09.84 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.85 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.85 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.85 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.85 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.85 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.85 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.86 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.86 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.87 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.87 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.87 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.87 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.87 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.88 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.88 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.89 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.89 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.89 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.89 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.90 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.90 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.90 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.91 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.92 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.92 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.92 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.92 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.93 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.93 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.95 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.95 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.95 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.95 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.96 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.96 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.96 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.96 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.97 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.97 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.97 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.97 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.98 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.98 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.99 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.99 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.99 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.99 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.100 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.100 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.100 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.100 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.101 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.101 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.101 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.101 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.101 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.101 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.102 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.102 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.102 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.102 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.102 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.102 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.103 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.103 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.103 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.103 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.103 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.103 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.104 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.104 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.104 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.104 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.104 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.104 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.104 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.104 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.105 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.105 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.105 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.105 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.105 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.105 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.105 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.106 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.106 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.106 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.106 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.106 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.106 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.106 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.106 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.106 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.106 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.107 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.108 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.108 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.108 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.108 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.109 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.109 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.109 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.109 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.109 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.109 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.109 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.110 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.110 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.110 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.110 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.112 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.112 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.113 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.113 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.113 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.113 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.114 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.114 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.114 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.114 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.115 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.115 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.115 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.115 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.115 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.115 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.115 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.116 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.116 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.116 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.117 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.117 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.117 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.117 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.117 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.117 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.117 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.117 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.118 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.118 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.118 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.118 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.118 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.118 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.119 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.119 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.119 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.119 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.119 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.119 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.120 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.120 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.120 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.120 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.120 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.120 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.120 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.121 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.122 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.122 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.123 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.123 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.123 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.124 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.125 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.125 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.125 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.125 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.125 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.126 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.126 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.126 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.126 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.126 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.127 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.127 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.127 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.127 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.127 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.127 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.127 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.127 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.128 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.128 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.128 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.128 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.128 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.128 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.129 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.129 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.129 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.129 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.129 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.129 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.130 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.130 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.130 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.130 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.130 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.130 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.130 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.130 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.131 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.131 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.131 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.131 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.131 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.131 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.131 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.131 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.132 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.132 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.132 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.132 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.132 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.132 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.132 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.132 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.132 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.132 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.133 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.133 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.133 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.133 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.133 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.133 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.133 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.133 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.133 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.134 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.134 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.134 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.134 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.134 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.134 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.134 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.134 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.134 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.135 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.135 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.135 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.135 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.135 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.135 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.135 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.135 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.136 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.137 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.137 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.137 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.137 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.137 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.137 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.137 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.137 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.138 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.138 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.138 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.138 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.138 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.138 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.138 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.139 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.139 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.139 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.139 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.139 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.139 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.139 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.140 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.141 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.142 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.142 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.142 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.142 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.142 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.142 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.142 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.142 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.142 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.143 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.143 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.143 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.143 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.143 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.143 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.144 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.144 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.144 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.144 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.144 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.144 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.144 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.144 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.144 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.145 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.145 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.145 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.145 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.145 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.145 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.146 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.146 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.146 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.146 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.146 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.146 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.147 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.147 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.147 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.147 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.147 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.147 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.147 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.148 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.148 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.148 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.148 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.148 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.148 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.148 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.148 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.148 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.149 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.149 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.149 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.149 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.149 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.150 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.151 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.151 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.151 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.151 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.164 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.164 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.164 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.164 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.164 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.164 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.164 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.164 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.165 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.165 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.166 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.166 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.166 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.166 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.166 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.166 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.166 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.167 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.167 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.167 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.167 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.167 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.167 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.167 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.167 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.168 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.168 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.168 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.168 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.168 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.168 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.168 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.168 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.168 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.168 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.169 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.169 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.169 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.169 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.170 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.170 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.170 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.170 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.170 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.170 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.170 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.170 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.170 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.170 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.170 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.171 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.171 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.171 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.171 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.171 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.172 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.172 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.172 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.172 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.172 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.172 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.172 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.172 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.172 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.172 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.173 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.173 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.173 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.173 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.174 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.174 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.174 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.174 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.174 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.174 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.174 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.174 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.175 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.175 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.175 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.175 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.175 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.175 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.176 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.177 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.177 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.177 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.177 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.177 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.177 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.177 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.177 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.179 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.180 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.181 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.182 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.182 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.182 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.182 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.182 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.182 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.183 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.183 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.183 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.183 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.183 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.183 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.183 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.183 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.183 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.183 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.184 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.185 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.185 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.185 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.185 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.185 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.185 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.185 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.185 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.186 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.186 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.186 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.186 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.186 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.186 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.186 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.186 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.187 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.187 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.187 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.187 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.187 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.187 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.187 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.187 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.187 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.187 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.188 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.188 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.188 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.188 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.188 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.188 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.188 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.188 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.189 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.189 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.189 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.189 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.189 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.189 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.189 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.189 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.190 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.191 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.191 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.191 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.191 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.191 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.191 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.191 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.192 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.192 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.192 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.192 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.192 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.192 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.192 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.192 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.192 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.192 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.193 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.194 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.195 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.196 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.197 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.198 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.199 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.199 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.199 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.199 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.199 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.199 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.199 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.199 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.199 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.199 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.199 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.200 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.200 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.200 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.200 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.200 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.200 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.200 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.200 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.200 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.200 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.200 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.201 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.214 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.214 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.215 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.216 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.216 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.216 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.216 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.216 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.216 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.216 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.216 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.216 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.216 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.217 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.218 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.219 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.220 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.221 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.222 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.223 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.223 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.223 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.223 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.223 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.223 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.223 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.223 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.223 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.223 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.223 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.224 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.224 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.224 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.226 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.226 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.226 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.226 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.226 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.226 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.226 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.226 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.226 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.227 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.228 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.229 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.230 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.231 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.231 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.231 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.231 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.231 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.231 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.231 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.231 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.231 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.231 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.231 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.232 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.232 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <ul> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.233 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <a> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.234 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <input> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.235 [leaf.presentation.buildsession] [CONFIG] building view: <input> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.236 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <li> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <input> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.237 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.238 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <span> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.239 [leaf.presentation.buildsession] [CONFIG] building view: <img> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <input> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <input> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.240 [leaf.presentation.buildsession] [CONFIG] building view: <input> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.241 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.241 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.241 [leaf.presentation.buildsession] [CONFIG] building view: <input> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.242 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.242 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.242 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.242 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.242 [leaf.presentation.buildsession] [CONFIG] building view: <input> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.242 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.242 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.242 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.242 [leaf.presentation.buildsession] [CONFIG] building view: <input> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.243 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.243 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.243 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.243 [leaf.presentation.buildsession] [CONFIG] building view: <input> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.243 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.243 [leaf.presentation.buildsession] [CONFIG] building view: <div> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.244 [leaf.presentation.buildsession] [CONFIG] building view: <dataSets> -> leaf.application.features.DataSetInit@4b3695ef
+2018-12-27 10:26:09.244 [leaf.presentation.buildsession] [CONFIG] building view: <dataSet> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:09.248 [leaf.presentation.buildsession] [CONFIG] building view: <dataSet> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:09.251 [leaf.presentation.buildsession] [CONFIG] building view: <dataSet> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:09.265 [leaf.presentation.buildsession] [CONFIG] building view: <dataSet> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:09.268 [leaf.presentation.buildsession] [CONFIG] building view: <dataSet> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:09.268 [leaf.presentation.buildsession] [CONFIG] building view: <dataSet> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:09.271 [leaf.presentation.buildsession] [CONFIG] building view: <dataSet> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:09.274 [leaf.presentation.buildsession] [CONFIG] building view: <screenBody> -> leaf.presentation.component.std.ScreenBody@17226fd7
+2018-12-27 10:26:09.278 [leaf.presentation.buildsession] [CONFIG] building view: <form> -> leaf.presentation.component.std.Form@608b8bc9
+2018-12-27 10:26:09.280 [leaf.presentation.buildsession] [CONFIG] building view: <passWord> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:09.286 [leaf.presentation.buildsession] [CONFIG] building view: <passWord> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:09.287 [leaf.presentation.buildsession] [CONFIG] building view: <passWord> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:09.289 [leaf.presentation.buildsession] [CONFIG] building view: <switch> -> leaf.presentation.component.std.Switch@6129b704
+2018-12-27 10:26:09.289 [leaf.presentation.buildsession] [CONFIG] building view: <tabPanel> -> leaf.presentation.TemplateBasedView@5f937e3c
+2018-12-27 10:26:09.290 [leaf.presentation.buildsession] [CONFIG] building view: <script> -> leaf.presentation.DefaultViewBuilder@4f8f8c73
+2018-12-27 10:26:09.293 [leaf.presentation.buildsession] [CONFIG] End build session

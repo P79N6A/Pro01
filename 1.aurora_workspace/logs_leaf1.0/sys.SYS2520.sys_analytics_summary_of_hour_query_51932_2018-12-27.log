@@ -1,0 +1,48 @@
+2018-12-27 10:33:54.938 [uncertain.proc] [CONFIG] Enter procedure pre-service
+2018-12-27 10:33:54.939 [leaf.application.session_check] [CONFIG] Session data copied to context
+2018-12-27 10:33:54.939 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:54.939 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:54.939 [leaf.application.session_check] [CONFIG] Checking BM access sys.SYS2520.sys_analytics_summary_of_hour for operation query
+2018-12-27 10:33:54.941 [leaf.application.session_check] [CONFIG] Result from leaf.bm.DefaultAccessChecker@29242488 is true
+2018-12-27 10:33:54.941 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-27 10:33:54.943 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:54.943 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:54.943 [uncertain.proc] [CONFIG] [action] CheckServiceLock
+2018-12-27 10:33:54.943 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-27 10:33:54.943 [uncertain.proc] [CONFIG] [action] ValidateInput
+2018-12-27 10:33:54.943 [uncertain.proc] [CONFIG] [action] InvokeService
+2018-12-27 10:33:54.943 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:54.943 [leaf.database] [CONFIG] ===================================== prepare to run model-query sys.SYS2520.sys_analytics_summary_of_hour==============================
+2018-12-27 10:33:54.965 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:54.965 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:54.965 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:33:54.965 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:54.965 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:33:54.965 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:33:54.966 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:33:54.984 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:33:54.997 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:33:54.997 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+            select hour,
+                   median(visits) visits,
+                   median(med_dur_screen) med_dur_screen,
+                   median(med_dur_svc) med_dur_svc,
+                   median(med_dur_query) med_dur_query,
+                   avg(avg_dur_screen) avg_dur_screen,
+                   avg(avg_dur_svc) avg_dur_svc,
+                   avg(avg_dur_query) avg_dur_query
+              from sys_runtime_req_summary_hour
+             WHERE day >= to_date(?,'yyyy-mm-dd')  AND day < to_date(?,'yyyy-mm-dd')+1
+             group by hour
+             order by hour
+            
+---------------------Binding info---------------------
+No.1	Access path:/parameter/@startDate	Data type of passed value :java.lang.String	Value:2018-12-20	Output:false	Database Type:null	
+No.2	Access path:/parameter/@endDate	Data type of passed value :java.lang.String	Value:2018-12-27	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:33:54.997 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:54.997 [uncertain.proc] [CONFIG] [action] CreateSuccessResponse

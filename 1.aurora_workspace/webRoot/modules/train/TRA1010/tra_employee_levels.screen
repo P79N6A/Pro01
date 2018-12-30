@@ -54,6 +54,9 @@ result_ds 以键值对的形式传输 绑定到
                     		<a:map  from="employee_levels_code" to="employee_levels_code"  prompt="级别代码"   />
                     		
                     	</a:mapping> --><![CDATA[
+                        
+                        
+                        
                     	
                     ]]></a:field>
                     <a:field name="level_series" displayField="level_series">

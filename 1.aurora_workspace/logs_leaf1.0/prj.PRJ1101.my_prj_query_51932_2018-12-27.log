@@ -1,0 +1,49 @@
+2018-12-27 10:26:12.908 [uncertain.proc] [CONFIG] Enter procedure pre-service
+2018-12-27 10:26:12.908 [leaf.application.session_check] [CONFIG] Session data copied to context
+2018-12-27 10:26:12.908 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.908 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.908 [leaf.application.session_check] [CONFIG] Checking BM access prj.PRJ1101.my_prj for operation query
+2018-12-27 10:26:12.909 [leaf.application.session_check] [CONFIG] Result from leaf.bm.DefaultAccessChecker@61d5cd04 is true
+2018-12-27 10:26:12.909 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-27 10:26:12.910 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.911 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.911 [uncertain.proc] [CONFIG] [action] CheckServiceLock
+2018-12-27 10:26:12.911 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-27 10:26:12.911 [uncertain.proc] [CONFIG] [action] ValidateInput
+2018-12-27 10:26:12.911 [uncertain.proc] [CONFIG] [action] InvokeService
+2018-12-27 10:26:12.911 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.911 [leaf.database] [CONFIG] ===================================== prepare to run model-query prj.PRJ1101.my_prj==============================
+2018-12-27 10:26:12.928 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.929 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:26:12.929 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:26:12.929 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.929 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:26:12.929 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:26:12.929 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:26:12.946 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:26:12.966 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:26:12.966 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+                select
+                   t1.bp_name,
+                   t1.project_name name,
+                   t1.project_number,
+                   t1.finance_amount amount,
+                   t1.currency_n currency,
+                   to_char(t1.creation_date,'yyyy-mm-dd') first_date,
+                   t1.lease_organization_n organization,
+                   t1.employee_id_n employee_name,
+                   t2.legal_person,
+                   t1.project_status_n status
+                from
+                   PRJ_project_lv t1,
+                   hls_bp_master t2
+                where t1.bp_id_tenant=t2.bp_id
+            
+---------------------Binding info---------------------
+null
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:26:12.966 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:26:12.966 [uncertain.proc] [CONFIG] [action] CreateSuccessResponse

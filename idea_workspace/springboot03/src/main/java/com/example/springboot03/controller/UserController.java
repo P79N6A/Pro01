@@ -1,12 +1,14 @@
 package com.example.springboot03.controller;
 
 import com.example.springboot03.config.encryptionAlgorithm.symmetricEncryption.EncrypDES;
-import com.example.springboot03.dto.IMoocJSONResult;
+import com.example.springboot03.dto.MyJSONResult;
+import com.example.springboot03.dto.MyResource;
 import com.example.springboot03.dto.User;
 import com.example.springboot03.exception.ResultFactory;
 import com.example.springboot03.mapper.UserMapper;
 import com.example.springboot03.service.UserService;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +41,10 @@ public class UserController {
     UserMapper userMapper;
     @Autowired
     UserService userService;
+    @Autowired
+    MyResource sourceResource;
 
+    /***********************************example：调用dao层方法***************************/
     @RequestMapping(value = "cs")
     public User cs() {
         //调用dao层
@@ -54,17 +59,7 @@ public class UserController {
         List<User> user2 = userMapper.selectAll();
         return user2;
     }
-
-    @GetMapping("/singleBaseDelete")
-    public int singleBaseDelete(Integer id) {
-        return userMapper.deleteByPrimaryKey(id);
-    }
-    @PostMapping("/singleBaseUpdate")
-    public int singleBaseUpdate(@RequestBody @Valid User user) {
-        return userMapper.updateByPrimaryKey(user);
-    }
-
-
+    /***********************************example:单表CRUD tk.mybatis**********************/
     @GetMapping("/singleBaseSelect")
     public User singleBaseSelect(Integer id) {
         return userMapper.selectByPrimaryKey(id);
@@ -78,6 +73,33 @@ public class UserController {
         map.put("result", userMapper.selectAll());
         return userMapper.selectAll();
     }
+    /*加密EncrypDES*/
+    @PostMapping("/singleBaseInsert")
+    public ResponseEntity<Integer> singleBaseInsert(@RequestBody @Valid User user) throws NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
+        EncrypDES de1 = new EncrypDES();
+        String msg =user.getPassword();
+        byte[] encontent = de1.Encrytor(msg);
+        byte[] decontent = de1.Decryptor(encontent);
+        System.out.println("明文是:" + msg);
+        System.out.println("加密后:" + new String(encontent));
+        System.out.println("解密后:" + new String(decontent));
+        user.setPassword(new String(encontent));
+//            user.setLastUpdateDate(new Date());
+        return Optional.of(userMapper.insert(user)).map(result -> new ResponseEntity(result, HttpStatus.OK))
+                .orElseThrow(() -> new RuntimeException("运行出错"));
+    }
+
+    @PostMapping("/singleBaseUpdate")
+    public int singleBaseUpdate(@RequestBody @Valid User user) {
+        return userMapper.updateByPrimaryKey(user);
+    }
+
+    @GetMapping("/singleBaseDelete")
+    public int singleBaseDelete(Integer id) {
+        return userMapper.deleteByPrimaryKey(id);
+    }
+
+    /***********************************example:返回map************************************/
     @GetMapping("/singleBaseSelectAll3")
     public Map<String,Object> singleBaseSelectAll3() {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -90,6 +112,7 @@ public class UserController {
         }
         return map;
     }
+    /****************example:查询 ,自定义返回json，lambda遍历判断***********/
     /*
      * @Author hzd
      * @Description 判断用户是否存在 查询全部结果集 lambda遍历判断
@@ -97,7 +120,6 @@ public class UserController {
      * @Param userName password
      * @return
      */
-
     @GetMapping("/checkUser")
     public Map<String,Object> checkUser(String userName,String password) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -116,25 +138,12 @@ public class UserController {
         }
         return map;
     }
-        @GetMapping("/testaaa")
+    @GetMapping("/testaaa")
     public List<User> pageTest2(){
         List<User> list=userMapper.queryByList();
         return  list;
     }
-        @PostMapping("/singleBaseInsert")
-    public ResponseEntity<Integer> singleBaseInsert(@RequestBody @Valid User user) throws NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
-            EncrypDES de1 = new EncrypDES();
-            String msg =user.getPassword();
-            byte[] encontent = de1.Encrytor(msg);
-            byte[] decontent = de1.Decryptor(encontent);
-            System.out.println("明文是:" + msg);
-            System.out.println("加密后:" + new String(encontent));
-            System.out.println("解密后:" + new String(decontent));
-            user.setPassword(new String(encontent));
-//            user.setLastUpdateDate(new Date());
-        return Optional.of(userMapper.insert(user)).map(result -> new ResponseEntity(result, HttpStatus.OK))
-                .orElseThrow(() -> new RuntimeException("运行出错"));
-    }
+
     @GetMapping("/page")
     @ResponseBody
     public PageInfo<User> pageTest(int pageNum, int pageSize){
@@ -142,11 +151,11 @@ public class UserController {
         return  list;
     }
 
+   /************************************example：自己前端分页 limit num, pageSize*****************************************/
     @GetMapping("/myPageTest")
     @ResponseBody
     public Map<String,User> myPageTest(int pageNum,int pageSize){
         System.out.println("当前页："+pageNum+"页数"+pageSize);
-
         List<User> list=userService.myPageTest(pageNum*pageSize,pageSize);
         for (User user:list) { System.out.println(user); }
         int total=userMapper.selectAllNumber();
@@ -160,29 +169,34 @@ public class UserController {
     public int myUpdate(@RequestBody @Valid User user) {
         return userMapper.updateByPrimaryKey(user);
     }
-
+/*************************************************************************************/
     /*
      * @Author hzd
-     * @Description 使用ObjectMapper把对象转换为json对象
+     * @Description 测试ObjectMapper把对象转换为json对象
      * @Date  2018/12/16 0:29
-     * @Param 
-     * @return 
      */
-    @GetMapping("/getUserJson2")
-    public IMoocJSONResult getUserJson1() {
+    @GetMapping("/getUserJson1")
+    public MyJSONResult getUserJson1() {
         User user=new User();
         user.setUserName("awdad");
         user.setAge(222);
         System.out.println("黄泽东3333");
-        return IMoocJSONResult.ok(user);
+        return MyJSONResult.ok(user);
     }
-    @GetMapping("/getUserJson4")
-    public IMoocJSONResult getUserJson3() {
+    @GetMapping("/getUserJson2")
+    public MyJSONResult getUserJson2() {
         User user=new User();
         user.setUserName("xzcvb");
         user.setAge(222);
         System.out.println("黄泽东3333");
-        return IMoocJSONResult.ok(user);
+        return MyJSONResult.ok(user);
+    }
+    /*******************************springboot 资源文件属性配置*****************/
+    @GetMapping("/MyResource1")
+    public MyJSONResult MyResource1() {
+        MyResource targetResource=new MyResource();
+        BeanUtils.copyProperties(sourceResource,targetResource);//将配置文件dto的属性复制到目标对象dto
+        return MyJSONResult.ok(targetResource);
     }
 }
 //}

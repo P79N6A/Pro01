@@ -21,11 +21,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Copyright: Copyright (c) 2016
  * Company:Nathan.Lee.Salvatore
  * 
- * @author leechenxiang
- * @date 2016年4月22日 下午8:33:36
- * @version V1.0
+ * @author haungzedong
+ * @date 2018年412月30日 下午8:33:36
+ * @version 1.0
  */
-public class IMoocJSONResult {
+public class MyJSONResult {
 
     // 定义jackson对象
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -41,35 +41,35 @@ public class IMoocJSONResult {
     
     private String ok;	// 不使用
 
-    public static IMoocJSONResult build(Integer status, String msg, Object data) {
-        return new IMoocJSONResult(status, msg, data);
+    public static MyJSONResult build(Integer status, String msg, Object data) {
+        return new MyJSONResult(status, msg, data);
     }
 
-    public static IMoocJSONResult ok(Object data) {
-        return new IMoocJSONResult(data);
+    public static MyJSONResult ok(Object data) {
+        return new MyJSONResult(data);
     }
 
-    public static IMoocJSONResult ok() {
-        return new IMoocJSONResult(null);
+    public static MyJSONResult ok() {
+        return new MyJSONResult(null);
     }
     
-    public static IMoocJSONResult errorMsg(String msg) {
-        return new IMoocJSONResult(500, msg, null);
+    public static MyJSONResult errorMsg(String msg) {
+        return new MyJSONResult(500, msg, null);
     }
     
-    public static IMoocJSONResult errorMap(Object data) {
-        return new IMoocJSONResult(501, "error", data);
+    public static MyJSONResult errorMap(Object data) {
+        return new MyJSONResult(501, "error", data);
     }
     
-    public static IMoocJSONResult errorTokenMsg(String msg) {
-        return new IMoocJSONResult(502, msg, null);
+    public static MyJSONResult errorTokenMsg(String msg) {
+        return new MyJSONResult(502, msg, null);
     }
     
-    public static IMoocJSONResult errorException(String msg) {
-        return new IMoocJSONResult(555, msg, null);
+    public static MyJSONResult errorException(String msg) {
+        return new MyJSONResult(555, msg, null);
     }
 
-    public IMoocJSONResult() {
+    public MyJSONResult() {
 
     }
 
@@ -77,13 +77,13 @@ public class IMoocJSONResult {
 //        return new LeeJSONResult(status, msg, null);
 //    }
 
-    public IMoocJSONResult(Integer status, String msg, Object data) {
+    public MyJSONResult(Integer status, String msg, Object data) {
         this.status = status;
         this.msg = msg;
         this.data = data;
     }
 
-    public IMoocJSONResult(Object data) {
+    public MyJSONResult(Object data) {
         this.status = 200;
         this.msg = "OK";
         this.data = data;
@@ -128,10 +128,10 @@ public class IMoocJSONResult {
      * @author leechenxiang
      * @date 2016年4月22日 下午8:34:58
      */
-    public static IMoocJSONResult formatToPojo(String jsonData, Class<?> clazz) {
+    public static MyJSONResult formatToPojo(String jsonData, Class<?> clazz) {
         try {
             if (clazz == null) {
-                return MAPPER.readValue(jsonData, IMoocJSONResult.class);
+                return MAPPER.readValue(jsonData, MyJSONResult.class);
             }
             JsonNode jsonNode = MAPPER.readTree(jsonData);
             JsonNode data = jsonNode.get("data");
@@ -158,9 +158,9 @@ public class IMoocJSONResult {
      * @author leechenxiang
      * @date 2016年4月22日 下午8:35:21
      */
-    public static IMoocJSONResult format(String json) {
+    public static MyJSONResult format(String json) {
         try {
-            return MAPPER.readValue(json, IMoocJSONResult.class);
+            return MAPPER.readValue(json, MyJSONResult.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -178,7 +178,7 @@ public class IMoocJSONResult {
      * @author leechenxiang
      * @date 2016年4月22日 下午8:35:31
      */
-    public static IMoocJSONResult formatToList(String jsonData, Class<?> clazz) {
+    public static MyJSONResult formatToList(String jsonData, Class<?> clazz) {
         try {
             JsonNode jsonNode = MAPPER.readTree(jsonData);
             JsonNode data = jsonNode.get("data");

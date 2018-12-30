@@ -1,0 +1,58 @@
+2018-12-27 10:33:53.988 [uncertain.proc] [CONFIG] Enter procedure pre-service
+2018-12-27 10:33:53.989 [leaf.application.session_check] [CONFIG] Session data copied to context
+2018-12-27 10:33:53.989 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:53.989 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:53.989 [leaf.application.session_check] [CONFIG] Checking BM access home.sys_page_menu for operation query
+2018-12-27 10:33:53.991 [leaf.application.session_check] [CONFIG] Result from leaf.bm.DefaultAccessChecker@6223ea7f is true
+2018-12-27 10:33:53.991 [uncertain.proc] [CONFIG] [action] AccessCheck
+2018-12-27 10:33:53.994 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:53.994 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:53.994 [uncertain.proc] [CONFIG] [action] CheckServiceLock
+2018-12-27 10:33:53.994 [uncertain.proc] [CONFIG] [action] ParseParameter
+2018-12-27 10:33:53.994 [uncertain.proc] [CONFIG] [action] ValidateInput
+2018-12-27 10:33:53.994 [uncertain.proc] [CONFIG] [action] InvokeService
+2018-12-27 10:33:53.995 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:53.995 [leaf.database] [CONFIG] ===================================== prepare to run model-query home.sys_page_menu==============================
+2018-12-27 10:33:54.8 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:54.9 [uncertain.proc] [CONFIG] Enter procedure procedure
+2018-12-27 10:33:54.9 [uncertain.proc] [CONFIG] [action] DecideSqlGenerationMode
+2018-12-27 10:33:54.9 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:54.9 [uncertain.proc] [CONFIG] [action] CreateOperationSql
+2018-12-27 10:33:54.9 [uncertain.proc] [CONFIG] [action] PopulateOperationSql
+2018-12-27 10:33:54.9 [uncertain.proc] [CONFIG] [action] ExecuteQuery
+2018-12-27 10:33:54.138 [uncertain.proc] [CONFIG] [action] QueryFinish
+2018-12-27 10:33:54.138 [uncertain.proc] [CONFIG] [action] FetchResultSet
+2018-12-27 10:33:54.138 [leaf.database] [CONFIG] 
+============= BEGIN [query] SQL Statement execution dump ============
+
+                SELECT
+                    v.function_id,
+                    v.function_code,
+                    v.function_name,
+                    v.menu_id,
+                    v.parent_menu_id,
+                    (select function_name from sys_role_menu_v where menu_id = v.parent_menu_id) parent_function_name,
+                    (select function_name from sys_role_menu_v where menu_id = (
+                    select
+                        parent_menu_id
+                    from
+                        sys_role_menu_v
+                    where
+                        menu_id = v.parent_menu_id)) grand_parent_function_name,
+                    (select nvl(sum(1),0) from sys_role_menu_v v1 where v1.parent_menu_id=v.menu_id) sub_menu_count
+                FROM
+                    sys_role_menu_v v
+                WHERE
+                    v.function_code = ?
+                    and v.role_id = ?
+                ORDER BY
+                    v.layout_sequence
+            
+---------------------Binding info---------------------
+No.1	Access path:@function_code	Data type of passed value :java.lang.String	Value:ANA002	Output:false	Database Type:null	
+No.2	Access path:/session/@role_id	Data type of passed value :java.lang.Long	Value:1	Output:false	Database Type:null	
+
+=============== END [query] SQL Statement execution dump ============
+
+2018-12-27 10:33:54.138 [uncertain.proc] [CONFIG] Enter procedure case
+2018-12-27 10:33:54.138 [uncertain.proc] [CONFIG] [action] CreateSuccessResponse
